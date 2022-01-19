@@ -1,0 +1,73 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>Assembly-CSharp</AssemblyName>
+    <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
+    <TargetFramework>net40</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>Preview</LangVersion>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup />
+  <ItemGroup />
+  <ItemGroup>
+    <Reference Include="UnityEngine.CoreModule" />
+    <Reference Include="UnityEngine.TerrainModule" />
+    <Reference Include="Facepunch.Network" />
+    <Reference Include="Facepunch.UnityEngine" />
+    <Reference Include="UnityEngine.PhysicsModule" />
+    <Reference Include="Facepunch.Unity" />
+    <Reference Include="Facepunch.Nexus" />
+    <Reference Include="Rust.Global" />
+    <Reference Include="System.Core" />
+    <Reference Include="Facepunch.Console" />
+    <Reference Include="UnityEngine.ParticleSystemModule" />
+    <Reference Include="Rust.Data" />
+    <Reference Include="UnityEngine.AnimationModule" />
+    <Reference Include="UnityEngine.VehiclesModule" />
+    <Reference Include="Rust.Localization" />
+    <Reference Include="UnityEngine.UI" />
+    <Reference Include="Facepunch.System" />
+    <Reference Include="UnityEngine.AIModule" />
+    <Reference Include="Rust.World" />
+    <Reference Include="System.Memory" />
+    <Reference Include="EasyAntiCheat.Server" />
+    <Reference Include="UnityEngine.UIModule" />
+    <Reference Include="UnityEngine.AudioModule" />
+    <Reference Include="Assembly-CSharp-firstpass" />
+    <Reference Include="UnityEngine.InputLegacyModule" />
+    <Reference Include="Rust.UI" />
+    <Reference Include="Rust.Platform.Common" />
+    <Reference Include="Facepunch.BurstCloth" />
+    <Reference Include="EZhex1991.EZSoftBone" />
+    <Reference Include="Unity.TextMeshPro" />
+    <Reference Include="CurvedTextMeshPro" />
+    <Reference Include="Facepunch.Skeleton" />
+    <Reference Include="Facepunch.Input" />
+    <Reference Include="UnityEngine.IMGUIModule" />
+    <Reference Include="NewAssembly" />
+    <Reference Include="UnityEngine.ClothModule" />
+    <Reference Include="UnityEngine.TerrainPhysicsModule" />
+    <Reference Include="UnityEngine.UnityWebRequestModule" />
+    <Reference Include="UnityEngine.WindModule" />
+    <Reference Include="Facepunch.Sqlite" />
+    <Reference Include="Facepunch.Steamworks.Win64" />
+    <Reference Include="Ionic.Zip.Reduced" />
+    <Reference Include="Newtonsoft.Json" />
+    <Reference Include="Rust.Workshop" />
+    <Reference Include="UnityEngine.VideoModule" />
+    <Reference Include="UnityEngine.UnityWebRequestWWWModule" />
+    <Reference Include="UnityEngine.TextRenderingModule" />
+    <Reference Include="EasyRoads3Dv3" />
+    <Reference Include="Fleck" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="Facepunch.Rcon" />
+    <Reference Include="System.Buffers" />
+    <Reference Include="Rust.Platform" />
+    <Reference Include="UnityEngine.ImageConversionModule" />
+    <Reference Include="Facepunch.SteamNetworking" />
+    <Reference Include="Facepunch.Raknet" />
+    <Reference Include="UnityEngine.JSONSerializeModule" />
+    <Reference Include="GA" />
+  </ItemGroup>
+</Project>
