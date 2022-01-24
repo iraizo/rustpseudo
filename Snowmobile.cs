@@ -82,6 +82,8 @@ public class Snowmobile : GroundVehicle, CarPhysics<Snowmobile>.ICar, TriggerHur
 	private TriggerHurtNotChild hurtTriggerRear;
 
 	[Header("Snowmobile Visuals")]
+	public float minGroundFXSpeed;
+
 	[SerializeField]
 	private SnowmobileChassisVisuals chassisVisuals;
 
@@ -407,15 +409,23 @@ public class Snowmobile : GroundVehicle, CarPhysics<Snowmobile>.ICar, TriggerHur
 	{
 		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
 		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
 		timeSinceLastUsed = TimeSince.op_Implicit(0f);
-		SteerInput = 0f;
-		if (inputState.IsDown(BUTTON.LEFT))
+		if (inputState.IsDown(BUTTON.DUCK))
 		{
-			SteerInput = -1f;
+			SteerInput += inputState.MouseDelta().x * 0.1f;
 		}
-		else if (inputState.IsDown(BUTTON.RIGHT))
+		else
 		{
-			SteerInput = 1f;
+			SteerInput = 0f;
+			if (inputState.IsDown(BUTTON.LEFT))
+			{
+				SteerInput = -1f;
+			}
+			else if (inputState.IsDown(BUTTON.RIGHT))
+			{
+				SteerInput = 1f;
+			}
 		}
 		float num = 0f;
 		if (inputState.IsDown(BUTTON.FORWARD))

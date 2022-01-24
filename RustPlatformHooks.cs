@@ -20,17 +20,17 @@ public class RustPlatformHooks : IPlatformHooks
 			{
 				return null;
 			}
-			IPAddress iPAddress = null;
+			IPAddress val = null;
 			if (!string.IsNullOrEmpty(ConVar.Server.ip))
 			{
-				iPAddress = IPAddress.Parse(ConVar.Server.ip);
+				val = IPAddress.Parse(ConVar.Server.ip);
 			}
 			bool flag = !Net.sv.get_AllowPassthroughMessages() || (ConVar.Server.queryport > 0 && ConVar.Server.queryport != ConVar.Server.port);
 			if (flag && (ConVar.Server.queryport <= 0 || ConVar.Server.queryport == ConVar.Server.port))
 			{
 				throw new Exception("Query port isn't set up properly");
 			}
-			return new ServerParameters("rust", "Rust", 2326.ToString(), ConVar.Server.secure, iPAddress, (ushort)Net.sv.port, (ushort)(flag ? ((ushort)ConVar.Server.queryport) : 0));
+			return new ServerParameters("rust", "Rust", 2326.ToString(), ConVar.Server.secure, val, (ushort)Net.sv.port, (ushort)(flag ? ((ushort)ConVar.Server.queryport) : 0));
 		}
 	}
 

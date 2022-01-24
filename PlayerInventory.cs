@@ -266,11 +266,11 @@ public class PlayerInventory : EntityComponent<BasePlayer>
 			}
 		}
 		Pool.FreeList<Item>(ref items);
-		IOrderedEnumerable<HeldEntity> orderedEnumerable = list.OrderByDescending((HeldEntity x) => x.hostileScore);
+		IOrderedEnumerable<HeldEntity> obj = Enumerable.OrderByDescending<HeldEntity, float>((IEnumerable<HeldEntity>)list, (Func<HeldEntity, float>)((HeldEntity x) => x.hostileScore));
 		bool flag = true;
 		bool flag2 = true;
 		bool flag3 = true;
-		foreach (HeldEntity item2 in orderedEnumerable)
+		foreach (HeldEntity item2 in (IEnumerable<HeldEntity>)obj)
 		{
 			if (!((Object)(object)item2 == (Object)null) && item2.holsterInfo.displayWhenHolstered)
 			{

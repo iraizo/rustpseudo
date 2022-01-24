@@ -1,10 +1,7 @@
 using UnityEngine;
 
-public class ModularCarSeat : BaseVehicleSeat
+public class ModularCarSeat : MouseSteerableSeat
 {
-	[SerializeField]
-	private bool supportsMouseSteer;
-
 	[SerializeField]
 	private Vector3 leftFootIKPos;
 

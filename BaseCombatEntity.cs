@@ -378,10 +378,10 @@ public class BaseCombatEntity : BaseEntity
 		{
 			return;
 		}
-		float num4 = list.Sum((ItemAmount x) => x.amount);
+		float num4 = Enumerable.Sum<ItemAmount>((IEnumerable<ItemAmount>)list, (Func<ItemAmount, float>)((ItemAmount x) => x.amount));
 		if (num4 > 0f)
 		{
-			float num5 = list.Min((ItemAmount x) => Mathf.Clamp01((float)player.inventory.GetAmount(x.itemid) / x.amount));
+			float num5 = Enumerable.Min<ItemAmount>((IEnumerable<ItemAmount>)list, (Func<ItemAmount, float>)((ItemAmount x) => Mathf.Clamp01((float)player.inventory.GetAmount(x.itemid) / x.amount)));
 			num5 = Mathf.Min(num5, 50f / num2);
 			if (num5 <= 0f)
 			{

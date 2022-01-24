@@ -41,7 +41,7 @@ public class ChildrenScreenshot : MonoBehaviour
 		val3.set_backgroundColor(new Color(0f, 0f, 0f, 0f));
 		val3.set_renderingPath((RenderingPath)3);
 		Texture2D val4 = new Texture2D(((Texture)val).get_width(), ((Texture)val).get_height(), (TextureFormat)5, false);
-		foreach (Transform item in ((IEnumerable)((Component)this).get_transform()).Cast<Transform>())
+		foreach (Transform item in Enumerable.Cast<Transform>((IEnumerable)((Component)this).get_transform()))
 		{
 			PositionCamera(val3, ((Component)item).get_gameObject());
 			int layer = ((Component)item).get_gameObject().get_layer();
@@ -53,14 +53,14 @@ public class ChildrenScreenshot : MonoBehaviour
 			RenderTexture.set_active(val);
 			val4.ReadPixels(new Rect(0f, 0f, (float)((Texture)val).get_width(), (float)((Texture)val).get_height()), 0, 0, false);
 			RenderTexture.set_active((RenderTexture)null);
-			byte[] bytes = ImageConversion.EncodeToPNG(val4);
-			string path = string.Format(folder, recursiveName, ((Object)item).get_name());
-			string directoryName = Path.GetDirectoryName(path);
+			byte[] array = ImageConversion.EncodeToPNG(val4);
+			string text = string.Format(folder, recursiveName, ((Object)item).get_name());
+			string directoryName = Path.GetDirectoryName(text);
 			if (!Directory.Exists(directoryName))
 			{
 				Directory.CreateDirectory(directoryName);
 			}
-			File.WriteAllBytes(path, bytes);
+			File.WriteAllBytes(text, array);
 		}
 		Object.DestroyImmediate((Object)(object)val4, true);
 		Object.DestroyImmediate((Object)(object)val, true);

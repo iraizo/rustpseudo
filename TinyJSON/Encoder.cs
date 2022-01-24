@@ -112,16 +112,16 @@ namespace TinyJSON
 		{
 			if (EnforceHierarchyOrderEnabled)
 			{
-				Stack<Type> stack = new Stack<Type>();
+				Stack<Type> val = new Stack<Type>();
 				while (type != null)
 				{
-					stack.Push(type);
+					val.Push(type);
 					type = type.BaseType;
 				}
 				List<FieldInfo> list = new List<FieldInfo>();
-				while (stack.Count > 0)
+				while (val.get_Count() > 0)
 				{
-					list.AddRange(stack.Pop().GetFields(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic));
+					list.AddRange(val.Pop().GetFields(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic));
 				}
 				return list;
 			}
@@ -132,16 +132,16 @@ namespace TinyJSON
 		{
 			if (EnforceHierarchyOrderEnabled)
 			{
-				Stack<Type> stack = new Stack<Type>();
+				Stack<Type> val = new Stack<Type>();
 				while (type != null)
 				{
-					stack.Push(type);
+					val.Push(type);
 					type = type.BaseType;
 				}
 				List<PropertyInfo> list = new List<PropertyInfo>();
-				while (stack.Count > 0)
+				while (val.get_Count() > 0)
 				{
-					list.AddRange(stack.Pop().GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic));
+					list.AddRange(val.Pop().GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic));
 				}
 				return list;
 			}
@@ -278,10 +278,10 @@ namespace TinyJSON
 			}
 			AppendOpenBrace();
 			bool firstItem = true;
-			foreach (object key in value.Keys)
+			foreach (object? key in value.Keys)
 			{
 				AppendComma(firstItem);
-				EncodeString(key.ToString());
+				EncodeString(key!.ToString());
 				AppendColon();
 				EncodeValue(value[key], forceTypeHint);
 				firstItem = false;
@@ -298,7 +298,7 @@ namespace TinyJSON
 			}
 			AppendOpenBracket();
 			bool firstItem = true;
-			foreach (object item in value)
+			foreach (object? item in value)
 			{
 				AppendComma(firstItem);
 				EncodeValue(item, forceTypeHint);

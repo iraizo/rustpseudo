@@ -16,7 +16,7 @@ public class TriggerNotify : TriggerBase, IPrefabPreProcess
 		{
 			if (contents != null)
 			{
-				return contents.Count > 0;
+				return contents.get_Count() > 0;
 			}
 			return false;
 		}

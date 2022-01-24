@@ -89,11 +89,13 @@ public static class World
 
 	public static void CleanupOldFiles()
 	{
+		//IL_000c: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0016: Expected O, but got Unknown
+		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
+		//IL_003a: Expected O, but got Unknown
 		Regex regex1 = new Regex("proceduralmap\\.[0-9]+\\.[0-9]+\\.[0-9]+\\.map");
 		Regex regex2 = new Regex("\\.[0-9]+\\.[0-9]+\\." + 220 + "\\.map");
-		foreach (string item in from path in Directory.GetFiles(MapFolderName, "*.map")
-			where regex1.IsMatch(path) && !regex2.IsMatch(path)
-			select path)
+		foreach (string item in Enumerable.Where<string>((IEnumerable<string>)Directory.GetFiles(MapFolderName, "*.map"), (Func<string, bool>)((string path) => regex1.IsMatch(path) && !regex2.IsMatch(path))))
 		{
 			try
 			{
@@ -311,8 +313,7 @@ public static class World
 
 	public static IEnumerable<PathList> GetPaths(string name)
 	{
-		return from p in Serialization.GetPaths(name)
-			select PathDataToPathList(p);
+		return Enumerable.Select<PathData, PathList>(Serialization.GetPaths(name), (Func<PathData, PathList>)((PathData p) => PathDataToPathList(p)));
 	}
 
 	public static void AddPaths(IEnumerable<PathList> paths)
@@ -333,7 +334,7 @@ public static class World
 		Stopwatch sw = Stopwatch.StartNew();
 		for (int i = 0; i < Serialization.world.prefabs.Count; i++)
 		{
-			if (sw.Elapsed.TotalSeconds > (double)deltaTime || i == 0 || i == Serialization.world.prefabs.Count - 1)
+			if (sw.get_Elapsed().TotalSeconds > (double)deltaTime || i == 0 || i == Serialization.world.prefabs.Count - 1)
 			{
 				Status(statusFunction, "Spawning World ({0}/{1})", i + 1, Serialization.world.prefabs.Count);
 				yield return CoroutineEx.waitForEndOfFrame;

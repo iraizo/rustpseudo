@@ -323,7 +323,7 @@ public class BuildingPrivlidge : StorageContainer
 			{
 				foreach (ItemAmount item in list)
 				{
-					int num3 = base.inventory.FindItemsByItemID(item.itemid).Sum((Item x) => x.amount);
+					int num3 = Enumerable.Sum<Item>((IEnumerable<Item>)base.inventory.FindItemsByItemID(item.itemid), (Func<Item, int>)((Item x) => x.amount));
 					if (num3 > 0 && item.amount > 0f)
 					{
 						float num4 = (float)num3 / item.amount * num;
@@ -562,12 +562,12 @@ public class BuildingPrivlidge : StorageContainer
 
 	public bool IsAuthed(BasePlayer player)
 	{
-		return authorizedPlayers.Any((PlayerNameID x) => x.userid == player.userID);
+		return Enumerable.Any<PlayerNameID>((IEnumerable<PlayerNameID>)authorizedPlayers, (Func<PlayerNameID, bool>)((PlayerNameID x) => x.userid == player.userID));
 	}
 
 	public bool IsAuthed(ulong userID)
 	{
-		return authorizedPlayers.Any((PlayerNameID x) => x.userid == userID);
+		return Enumerable.Any<PlayerNameID>((IEnumerable<PlayerNameID>)authorizedPlayers, (Func<PlayerNameID, bool>)((PlayerNameID x) => x.userid == userID));
 	}
 
 	public bool AnyAuthed()

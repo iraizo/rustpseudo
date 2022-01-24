@@ -61,6 +61,8 @@ namespace CompanionServer
 		{
 			//IL_00a9: Unknown result type (might be due to invalid IL or missing references)
 			//IL_00b3: Expected O, but got Unknown
+			//IL_00cb: Unknown result type (might be due to invalid IL or missing references)
+			//IL_00d5: Expected O, but got Unknown
 			Address = ipAddress;
 			Port = port;
 			Limiter = new ConnectionLimiter();
@@ -110,13 +112,13 @@ namespace CompanionServer
 			//IL_0036: Unknown result type (might be due to invalid IL or missing references)
 			lock (_messageQueue)
 			{
-				if (!App.update || _messageQueue.Count >= App.queuelimit)
+				if (!App.update || _messageQueue.get_Count() >= App.queuelimit)
 				{
 					((MemoryBuffer)(ref data)).Dispose();
 					return;
 				}
-				Message item = new Message(connection, data);
-				_messageQueue.Enqueue(item);
+				Message message = new Message(connection, data);
+				_messageQueue.Enqueue(message);
 			}
 		}
 
@@ -135,7 +137,7 @@ namespace CompanionServer
 				lock (_messageQueue)
 				{
 					_stopwatch.Restart();
-					while (_messageQueue.Count > 0 && _stopwatch.Elapsed.TotalMilliseconds < 5.0)
+					while (_messageQueue.get_Count() > 0 && _stopwatch.get_Elapsed().TotalMilliseconds < 5.0)
 					{
 						Message message = _messageQueue.Dequeue();
 						Dispatch(message);

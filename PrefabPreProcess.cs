@@ -113,7 +113,7 @@ public class PrefabPreProcess : IPrefabProcessor
 		}
 		if (!isClientside)
 		{
-			if (clientsideOnlyTypes.Any((Type type) => HasComponents(go.get_transform(), type)))
+			if (Enumerable.Any<Type>((IEnumerable<Type>)clientsideOnlyTypes, (Func<Type, bool>)((Type type) => HasComponents(go.get_transform(), type))))
 			{
 				return true;
 			}
@@ -124,7 +124,7 @@ public class PrefabPreProcess : IPrefabProcessor
 		}
 		if (!isServerside)
 		{
-			if (serversideOnlyTypes.Any((Type type) => HasComponents(go.get_transform(), type)))
+			if (Enumerable.Any<Type>((IEnumerable<Type>)serversideOnlyTypes, (Func<Type, bool>)((Type type) => HasComponents(go.get_transform(), type))))
 			{
 				return true;
 			}

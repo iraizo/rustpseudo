@@ -16,9 +16,9 @@ public class TriggerBase : BaseMonoBehaviour
 	[NonSerialized]
 	public HashSet<BaseEntity> entityContents;
 
-	public bool HasAnyContents => !contents.IsNullOrEmpty();
+	public bool HasAnyContents => !((ICollection<GameObject>)contents).IsNullOrEmpty();
 
-	public bool HasAnyEntityContents => !entityContents.IsNullOrEmpty();
+	public bool HasAnyEntityContents => !((ICollection<BaseEntity>)entityContents).IsNullOrEmpty();
 
 	internal virtual GameObject InterestedInObject(GameObject obj)
 	{
@@ -34,7 +34,7 @@ public class TriggerBase : BaseMonoBehaviour
 	{
 		if (!Application.isQuitting && contents != null)
 		{
-			GameObject[] array = contents.ToArray();
+			GameObject[] array = Enumerable.ToArray<GameObject>((IEnumerable<GameObject>)contents);
 			foreach (GameObject targetObj in array)
 			{
 				OnTriggerExit(targetObj);
@@ -78,6 +78,8 @@ public class TriggerBase : BaseMonoBehaviour
 
 	internal virtual void OnObjectRemoved(GameObject obj)
 	{
+		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
 		if ((Object)(object)obj == (Object)null)
 		{
 			return;
@@ -88,17 +90,26 @@ public class TriggerBase : BaseMonoBehaviour
 			return;
 		}
 		bool flag = false;
-		foreach (GameObject content in contents)
+		Enumerator<GameObject> enumerator = contents.GetEnumerator();
+		try
 		{
-			if ((Object)(object)content == (Object)null)
+			while (enumerator.MoveNext())
 			{
-				Debug.LogWarning((object)("Trigger " + ((object)this).ToString() + " contains null object."));
+				GameObject current = enumerator.get_Current();
+				if ((Object)(object)current == (Object)null)
+				{
+					Debug.LogWarning((object)("Trigger " + ((object)this).ToString() + " contains null object."));
+				}
+				else if ((Object)(object)current.ToBaseEntity() == (Object)(object)baseEntity)
+				{
+					flag = true;
+					break;
+				}
 			}
-			else if ((Object)(object)content.ToBaseEntity() == (Object)(object)baseEntity)
-			{
-				flag = true;
-				break;
-			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 		if (!flag)
 		{
@@ -111,9 +122,11 @@ public class TriggerBase : BaseMonoBehaviour
 	{
 		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
+		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
+		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0096: Unknown result type (might be due to invalid IL or missing references)
 		//IL_009b: Unknown result type (might be due to invalid IL or missing references)
-		if (entityContents.IsNullOrEmpty())
+		if (((ICollection<BaseEntity>)entityContents).IsNullOrEmpty())
 		{
 			return;
 		}
@@ -125,32 +138,41 @@ public class TriggerBase : BaseMonoBehaviour
 		Bounds bounds = component.get_bounds();
 		((Bounds)(ref bounds)).Expand(1f);
 		List<BaseEntity> list = null;
-		foreach (BaseEntity entityContent in entityContents)
+		Enumerator<BaseEntity> enumerator = entityContents.GetEnumerator();
+		try
 		{
-			if ((Object)(object)entityContent == (Object)null)
+			while (enumerator.MoveNext())
 			{
-				if (Debugging.checktriggers)
+				BaseEntity current = enumerator.get_Current();
+				if ((Object)(object)current == (Object)null)
 				{
-					Debug.LogWarning((object)("Trigger " + ((object)this).ToString() + " contains destroyed entity."));
+					if (Debugging.checktriggers)
+					{
+						Debug.LogWarning((object)("Trigger " + ((object)this).ToString() + " contains destroyed entity."));
+					}
+					if (list == null)
+					{
+						list = Pool.GetList<BaseEntity>();
+					}
+					list.Add(current);
 				}
-				if (list == null)
+				else if (!((Bounds)(ref bounds)).Contains(current.ClosestPoint(((Component)this).get_transform().get_position())))
 				{
-					list = Pool.GetList<BaseEntity>();
+					if (Debugging.checktriggers)
+					{
+						Debug.LogWarning((object)("Trigger " + ((object)this).ToString() + " contains entity that is too far away: " + ((object)current).ToString()));
+					}
+					if (list == null)
+					{
+						list = Pool.GetList<BaseEntity>();
+					}
+					list.Add(current);
 				}
-				list.Add(entityContent);
 			}
-			else if (!((Bounds)(ref bounds)).Contains(entityContent.ClosestPoint(((Component)this).get_transform().get_position())))
-			{
-				if (Debugging.checktriggers)
-				{
-					Debug.LogWarning((object)("Trigger " + ((object)this).ToString() + " contains entity that is too far away: " + ((object)entityContent).ToString()));
-				}
-				if (list == null)
-				{
-					list = Pool.GetList<BaseEntity>();
-				}
-				list.Add(entityContent);
-			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 		if (list == null)
 		{
@@ -207,17 +229,28 @@ public class TriggerBase : BaseMonoBehaviour
 
 	public void RemoveEntity(BaseEntity ent)
 	{
+		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
+		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
 		if ((Object)(object)this == (Object)null || contents == null || (Object)(object)ent == (Object)null)
 		{
 			return;
 		}
 		List<GameObject> list = Pool.GetList<GameObject>();
-		foreach (GameObject content in contents)
+		Enumerator<GameObject> enumerator = contents.GetEnumerator();
+		try
 		{
-			if ((Object)(object)content != (Object)null && (Object)(object)content.GetComponentInParent<BaseEntity>() == (Object)(object)ent)
+			while (enumerator.MoveNext())
 			{
-				list.Add(content);
+				GameObject current = enumerator.get_Current();
+				if ((Object)(object)current != (Object)null && (Object)(object)current.GetComponentInParent<BaseEntity>() == (Object)(object)ent)
+				{
+					list.Add(current);
+				}
 			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 		foreach (GameObject item in list)
 		{
@@ -248,10 +281,10 @@ public class TriggerBase : BaseMonoBehaviour
 			{
 				return;
 			}
-			int count = contents.Count;
+			int count = contents.get_Count();
 			contents.Add(val2);
 			OnObjectAdded(val2, collider);
-			if (count == 0 && contents.Count == 1)
+			if (count == 0 && contents.get_Count() == 1)
 			{
 				OnObjects();
 			}
@@ -294,7 +327,7 @@ public class TriggerBase : BaseMonoBehaviour
 		{
 			contents.Remove(targetObj);
 			OnObjectRemoved(targetObj);
-			if (contents == null || contents.Count == 0)
+			if (contents == null || contents.get_Count() == 0)
 			{
 				OnEmpty();
 			}

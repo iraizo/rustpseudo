@@ -120,10 +120,10 @@ public class BoomBox : EntityComponent<BaseEntity>, INotifyLOD
 
 	private static string GetStationData()
 	{
-		string path = Application.get_streamingAssetsPath() + "/RadioList.txt";
-		if (File.Exists(path))
+		string text = Application.get_streamingAssetsPath() + "/RadioList.txt";
+		if (File.Exists(text))
 		{
-			return File.ReadAllText(path);
+			return File.ReadAllText(text);
 		}
 		return string.Empty;
 	}
@@ -155,7 +155,7 @@ public class BoomBox : EntityComponent<BaseEntity>, INotifyLOD
 		ServerValidStations.Clear();
 		if (!string.IsNullOrEmpty(ServerUrlList))
 		{
-			string[] array = ServerUrlList.Split(',');
+			string[] array = ServerUrlList.Split(new char[1] { ',' });
 			if (array.Length % 2 != 0)
 			{
 				Debug.Log((object)"Invalid number of stations in BoomBox.ServerUrlList, ensure you always have a name and a url");

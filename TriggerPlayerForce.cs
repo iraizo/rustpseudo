@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class TriggerPlayerForce : TriggerBase, IServerComponent
@@ -52,26 +53,39 @@ public class TriggerPlayerForce : TriggerBase, IServerComponent
 
 	private void HackDisableTick()
 	{
+		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
+		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
 		if (entityContents == null || !((Behaviour)this).get_enabled())
 		{
 			return;
 		}
-		foreach (BaseEntity entityContent in entityContents)
+		Enumerator<BaseEntity> enumerator = entityContents.GetEnumerator();
+		try
 		{
-			if (IsInterested(entityContent))
+			while (enumerator.MoveNext())
 			{
-				BasePlayer basePlayer = entityContent.ToPlayer();
-				if ((Object)(object)basePlayer != (Object)null && !basePlayer.IsNpc)
+				BaseEntity current = enumerator.get_Current();
+				if (IsInterested(current))
 				{
-					basePlayer.PauseVehicleNoClipDetection(4f);
-					basePlayer.PauseSpeedHackDetection(4f);
+					BasePlayer basePlayer = current.ToPlayer();
+					if ((Object)(object)basePlayer != (Object)null && !basePlayer.IsNpc)
+					{
+						basePlayer.PauseVehicleNoClipDetection(4f);
+						basePlayer.PauseSpeedHackDetection(4f);
+					}
 				}
 			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 	}
 
 	protected void FixedUpdate()
 	{
+		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
 		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
@@ -81,13 +95,22 @@ public class TriggerPlayerForce : TriggerBase, IServerComponent
 		{
 			return;
 		}
-		foreach (BaseEntity entityContent in entityContents)
+		Enumerator<BaseEntity> enumerator = entityContents.GetEnumerator();
+		try
 		{
-			if ((!requireUpAxis || !(Vector3.Dot(((Component)entityContent).get_transform().get_up(), ((Component)this).get_transform().get_up()) < 0f)) && IsInterested(entityContent))
+			while (enumerator.MoveNext())
 			{
-				Vector3 velocity = GetPushVelocity(((Component)entityContent).get_gameObject());
-				entityContent.ApplyInheritedVelocity(velocity);
+				BaseEntity current = enumerator.get_Current();
+				if ((!requireUpAxis || !(Vector3.Dot(((Component)current).get_transform().get_up(), ((Component)this).get_transform().get_up()) < 0f)) && IsInterested(current))
+				{
+					Vector3 velocity = GetPushVelocity(((Component)current).get_gameObject());
+					current.ApplyInheritedVelocity(velocity);
+				}
 			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 	}
 

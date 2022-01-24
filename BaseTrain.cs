@@ -166,6 +166,8 @@ public class BaseTrain : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Trai
 	{
 		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
 		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0077: Unknown result type (might be due to invalid IL or missing references)
+		//IL_007c: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0092: Unknown result type (might be due to invalid IL or missing references)
 		if (prevTrains == null)
 		{
@@ -185,12 +187,21 @@ public class BaseTrain : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Trai
 		{
 			num2 *= -1f;
 		}
-		foreach (BaseTrain trainContent in triggerTrainCollisions.trainContents)
+		Enumerator<BaseTrain> enumerator = triggerTrainCollisions.trainContents.GetEnumerator();
+		try
 		{
-			if (!((Object)(object)trainContent == (Object)(object)this))
+			while (enumerator.MoveNext())
 			{
-				num2 += trainContent.GetTotalPushingForces(pushDirection, prevTrains);
+				BaseTrain current = enumerator.get_Current();
+				if (!((Object)(object)current == (Object)(object)this))
+				{
+					num2 += current.GetTotalPushingForces(pushDirection, prevTrains);
+				}
 			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 		Pool.FreeList<BaseTrain>(ref prevTrains);
 		return num2;
@@ -226,12 +237,18 @@ public class BaseTrain : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Trai
 	{
 		//IL_0017: Unknown result type (might be due to invalid IL or missing references)
 		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
+		//IL_004a: Unknown result type (might be due to invalid IL or missing references)
+		//IL_004f: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0073: Unknown result type (might be due to invalid IL or missing references)
 		//IL_007e: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0083: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00bb: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00c0: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00e6: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00f1: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00f6: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0154: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0159: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0179: Unknown result type (might be due to invalid IL or missing references)
 		//IL_017e: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0189: Unknown result type (might be due to invalid IL or missing references)
@@ -250,22 +267,49 @@ public class BaseTrain : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Trai
 		trackSpeed = HandleStaticCollisions(hasAnyStaticContents, atOurFront, trackSpeed, ref wasStaticColliding);
 		if (!hasAnyStaticContents)
 		{
-			foreach (BaseTrain trainContent in trigger.trainContents)
+			Enumerator<BaseTrain> enumerator = trigger.trainContents.GetEnumerator();
+			try
 			{
-				trackSpeed = HandleTrainCollision(atOurFront, trackSpeed, trainContent, deltaTime, ref wasStaticColliding);
-				num2 += Vector3.Magnitude(trainContent.rigidBody.get_velocity() - rigidBody.get_velocity()) * trainContent.rigidBody.get_mass();
+				while (enumerator.MoveNext())
+				{
+					BaseTrain current = enumerator.get_Current();
+					trackSpeed = HandleTrainCollision(atOurFront, trackSpeed, current, deltaTime, ref wasStaticColliding);
+					num2 += Vector3.Magnitude(current.rigidBody.get_velocity() - rigidBody.get_velocity()) * current.rigidBody.get_mass();
+				}
 			}
-			foreach (Rigidbody otherRigidbodyContent in trigger.otherRigidbodyContents)
+			finally
 			{
-				trackSpeed = HandleRigidbodyCollision(atOurFront, trackSpeed, otherRigidbodyContent, otherRigidbodyContent.get_mass(), deltaTime, calcSecondaryForces: true);
-				num2 += Vector3.Magnitude(otherRigidbodyContent.get_velocity() - rigidBody.get_velocity()) * otherRigidbodyContent.get_mass();
+				((IDisposable)enumerator).Dispose();
+			}
+			Enumerator<Rigidbody> enumerator2 = trigger.otherRigidbodyContents.GetEnumerator();
+			try
+			{
+				while (enumerator2.MoveNext())
+				{
+					Rigidbody current2 = enumerator2.get_Current();
+					trackSpeed = HandleRigidbodyCollision(atOurFront, trackSpeed, current2, current2.get_mass(), deltaTime, calcSecondaryForces: true);
+					num2 += Vector3.Magnitude(current2.get_velocity() - rigidBody.get_velocity()) * current2.get_mass();
+				}
+			}
+			finally
+			{
+				((IDisposable)enumerator2).Dispose();
 			}
 		}
 		if (ApplyCollisionDamage(num2) > 5f && collisionEffect.isValid && Time.get_time() > nextCollisionFXTime)
 		{
-			foreach (Collider colliderContent in trigger.colliderContents)
+			Enumerator<Collider> enumerator3 = trigger.colliderContents.GetEnumerator();
+			try
 			{
-				Effect.server.Run(collisionEffect.resourcePath, colliderContent.ClosestPointOnBounds(((Component)this).get_transform().get_position()), ((Component)this).get_transform().get_up());
+				while (enumerator3.MoveNext())
+				{
+					Collider current3 = enumerator3.get_Current();
+					Effect.server.Run(collisionEffect.resourcePath, current3.ClosestPointOnBounds(((Component)this).get_transform().get_position()), ((Component)this).get_transform().get_up());
+				}
+			}
+			finally
+			{
+				((IDisposable)enumerator3).Dispose();
 			}
 			nextCollisionFXTime = Time.get_time() + 0.5f;
 		}
@@ -391,7 +435,11 @@ public class BaseTrain : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Trai
 	{
 		//IL_0039: Unknown result type (might be due to invalid IL or missing references)
 		//IL_003e: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0093: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0098: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00b0: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00f6: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00fb: Unknown result type (might be due to invalid IL or missing references)
 		if (prevTrains == null)
 		{
 			prevTrains = Pool.GetList<BaseTrain>();
@@ -411,22 +459,40 @@ public class BaseTrain : BaseVehicle, TriggerHurtNotChild.IHurtTriggerUser, Trai
 		}
 		TriggerTrainCollisions triggerTrainCollisions = (flag ? frontCollisionTrigger : rearCollisionTrigger);
 		float num = rigidBody.get_mass();
-		foreach (BaseTrain trainContent in triggerTrainCollisions.trainContents)
+		Enumerator<BaseTrain> enumerator = triggerTrainCollisions.trainContents.GetEnumerator();
+		try
 		{
-			if (!((Object)(object)trainContent == (Object)(object)this))
+			while (enumerator.MoveNext())
 			{
-				float totalPushingMass = trainContent.GetTotalPushingMass(pushDirection, prevTrains);
-				if (totalPushingMass < 0f)
+				BaseTrain current = enumerator.get_Current();
+				if (!((Object)(object)current == (Object)(object)this))
 				{
-					Pool.FreeList<BaseTrain>(ref prevTrains);
-					return -1f;
+					float totalPushingMass = current.GetTotalPushingMass(pushDirection, prevTrains);
+					if (totalPushingMass < 0f)
+					{
+						Pool.FreeList<BaseTrain>(ref prevTrains);
+						return -1f;
+					}
+					num += totalPushingMass;
 				}
-				num += totalPushingMass;
 			}
 		}
-		foreach (Rigidbody otherRigidbodyContent in triggerTrainCollisions.otherRigidbodyContents)
+		finally
 		{
-			num += otherRigidbodyContent.get_mass();
+			((IDisposable)enumerator).Dispose();
+		}
+		Enumerator<Rigidbody> enumerator2 = triggerTrainCollisions.otherRigidbodyContents.GetEnumerator();
+		try
+		{
+			while (enumerator2.MoveNext())
+			{
+				Rigidbody current2 = enumerator2.get_Current();
+				num += current2.get_mass();
+			}
+		}
+		finally
+		{
+			((IDisposable)enumerator2).Dispose();
 		}
 		Pool.FreeList<BaseTrain>(ref prevTrains);
 		return num;

@@ -34,26 +34,48 @@ namespace CompanionServer
 
 		public void OnClose()
 		{
-			foreach (PlayerTarget subscribedPlayer in _subscribedPlayers)
+			//IL_0006: Unknown result type (might be due to invalid IL or missing references)
+			//IL_000b: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0047: Unknown result type (might be due to invalid IL or missing references)
+			//IL_004c: Unknown result type (might be due to invalid IL or missing references)
+			Enumerator<PlayerTarget> enumerator = _subscribedPlayers.GetEnumerator();
+			try
 			{
-				_listener.PlayerSubscribers.Remove(subscribedPlayer, this);
+				while (enumerator.MoveNext())
+				{
+					PlayerTarget current = enumerator.get_Current();
+					_listener.PlayerSubscribers.Remove(current, this);
+				}
 			}
-			foreach (EntityTarget subscribedEntity in _subscribedEntities)
+			finally
 			{
-				_listener.EntitySubscribers.Remove(subscribedEntity, this);
+				((IDisposable)enumerator).Dispose();
+			}
+			Enumerator<EntityTarget> enumerator2 = _subscribedEntities.GetEnumerator();
+			try
+			{
+				while (enumerator2.MoveNext())
+				{
+					EntityTarget current2 = enumerator2.get_Current();
+					_listener.EntitySubscribers.Remove(current2, this);
+				}
+			}
+			finally
+			{
+				((IDisposable)enumerator2).Dispose();
 			}
 		}
 
-		public void OnMessage(System.Span<byte> data)
+		public void OnMessage(Span<byte> data)
 		{
 			//IL_0020: Unknown result type (might be due to invalid IL or missing references)
 			//IL_003b: Unknown result type (might be due to invalid IL or missing references)
 			if (App.update && App.queuelimit > 0)
 			{
 				MemoryBuffer val = default(MemoryBuffer);
-				((MemoryBuffer)(ref val))._002Ector(data.get_Length());
+				((MemoryBuffer)(ref val))._002Ector(data.Length);
 				data.CopyTo(MemoryBuffer.op_Implicit(val));
-				_listener.Enqueue(this, ((MemoryBuffer)(ref val)).Slice(data.get_Length()));
+				_listener.Enqueue(this, ((MemoryBuffer)(ref val)).Slice(data.Length));
 			}
 		}
 

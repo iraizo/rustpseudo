@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -93,7 +94,7 @@ public class BaseProjectile : AttackEntity
 		public void SwitchAmmoTypesIfNeeded(BasePlayer owner)
 		{
 			//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-			List<Item> list = owner.inventory.FindItemIDs(ammoType.itemid).ToList();
+			List<Item> list = Enumerable.ToList<Item>((IEnumerable<Item>)owner.inventory.FindItemIDs(ammoType.itemid));
 			if (list.Count != 0)
 			{
 				return;
@@ -104,7 +105,7 @@ public class BaseProjectile : AttackEntity
 			{
 				return;
 			}
-			list = owner.inventory.FindItemIDs(list2[0].info.itemid).ToList();
+			list = Enumerable.ToList<Item>((IEnumerable<Item>)owner.inventory.FindItemIDs(list2[0].info.itemid));
 			if (list != null && list.Count != 0)
 			{
 				if (contents > 0)
@@ -119,7 +120,7 @@ public class BaseProjectile : AttackEntity
 		public bool Reload(BasePlayer owner, int desiredAmount = -1, bool canRefundAmmo = true)
 		{
 			//IL_003a: Unknown result type (might be due to invalid IL or missing references)
-			List<Item> list = owner.inventory.FindItemIDs(ammoType.itemid).ToList();
+			List<Item> list = Enumerable.ToList<Item>((IEnumerable<Item>)owner.inventory.FindItemIDs(ammoType.itemid));
 			if (list.Count == 0)
 			{
 				List<Item> list2 = new List<Item>();
@@ -128,7 +129,7 @@ public class BaseProjectile : AttackEntity
 				{
 					return false;
 				}
-				list = owner.inventory.FindItemIDs(list2[0].info.itemid).ToList();
+				list = Enumerable.ToList<Item>((IEnumerable<Item>)owner.inventory.FindItemIDs(list2[0].info.itemid));
 				if (list == null || list.Count == 0)
 				{
 					return false;
@@ -925,9 +926,7 @@ public class BaseProjectile : AttackEntity
 		{
 			return;
 		}
-		foreach (ProjectileWeaponMod item in from ProjectileWeaponMod x in children
-			where (Object)(object)x != (Object)null && x.isLight
-			select x)
+		foreach (ProjectileWeaponMod item in Enumerable.Where<ProjectileWeaponMod>(Enumerable.Cast<ProjectileWeaponMod>((IEnumerable)children), (Func<ProjectileWeaponMod, bool>)((ProjectileWeaponMod x) => (Object)(object)x != (Object)null && x.isLight)))
 		{
 			item.SetFlag(Flags.On, isOn);
 		}
@@ -1288,7 +1287,7 @@ public class BaseProjectile : AttackEntity
 				}
 			}
 			player.MakeNoise(((Component)player).get_transform().get_position(), BaseCombatEntity.ActionVolume.Loud);
-			player.stats.Add(component.category + "_fired", val.projectiles.Count(), (Stats)5);
+			player.stats.Add(component.category + "_fired", Enumerable.Count<Projectile>((IEnumerable<Projectile>)val.projectiles), (Stats)5);
 			player.LifeStoryShotFired(this);
 			StartAttackCooldown(ScaleRepeatDelay(repeatDelay) + animationDelay);
 			player.MarkHostileFor();

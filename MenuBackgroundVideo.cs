@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Rust;
@@ -31,10 +32,7 @@ public class MenuBackgroundVideo : SingletonComponent<MenuBackgroundVideo>
 
 	public void LoadVideoList()
 	{
-		videos = (from x in Directory.EnumerateFiles(Application.get_streamingAssetsPath() + "/MenuVideo/")
-			where x.EndsWith(".mp4") || x.EndsWith(".webm")
-			orderby Guid.NewGuid()
-			select x).ToArray();
+		videos = Enumerable.ToArray<string>((IEnumerable<string>)Enumerable.OrderBy<string, Guid>(Enumerable.Where<string>(Directory.EnumerateFiles(Application.get_streamingAssetsPath() + "/MenuVideo/"), (Func<string, bool>)((string x) => x.EndsWith(".mp4") || x.EndsWith(".webm"))), (Func<string, Guid>)((string x) => Guid.NewGuid())));
 	}
 
 	public void Update()
@@ -59,7 +57,7 @@ public class MenuBackgroundVideo : SingletonComponent<MenuBackgroundVideo>
 		errored = false;
 		if (Global.get_LaunchCountThisVersion() <= 3)
 		{
-			string text2 = videos.Where((string x) => x.EndsWith("whatsnew.mp4")).FirstOrDefault();
+			string text2 = Enumerable.FirstOrDefault<string>(Enumerable.Where<string>((IEnumerable<string>)videos, (Func<string, bool>)((string x) => x.EndsWith("whatsnew.mp4"))));
 			if (!string.IsNullOrEmpty(text2))
 			{
 				text = text2;

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace ConVar
 			{
 				num = 0;
 			}
-			return Output.HistoryOutput.Skip(num);
+			return Enumerable.Skip<Output.Entry>((IEnumerable<Output.Entry>)Output.HistoryOutput, num);
 		}
 
 		[ServerVar]
@@ -31,7 +32,7 @@ namespace ConVar
 			{
 				return Enumerable.Empty<Output.Entry>();
 			}
-			return Output.HistoryOutput.Where((Output.Entry x) => x.Message.Length < 4096 && StringEx.Contains(x.Message, search, CompareOptions.IgnoreCase));
+			return Enumerable.Where<Output.Entry>((IEnumerable<Output.Entry>)Output.HistoryOutput, (Func<Output.Entry, bool>)((Output.Entry x) => x.Message.Length < 4096 && StringEx.Contains(x.Message, search, CompareOptions.IgnoreCase)));
 		}
 
 		public Console()

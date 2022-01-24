@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using ConVar;
 using Network;
 using UnityEngine;
@@ -153,6 +154,8 @@ public class HBHFSensor : BaseDetector
 
 	public void UpdatePassthroughAmount()
 	{
+		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0037: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0063: Unknown result type (might be due to invalid IL or missing references)
 		//IL_006d: Unknown result type (might be due to invalid IL or missing references)
@@ -169,17 +172,26 @@ public class HBHFSensor : BaseDetector
 		detectedPlayers = 0;
 		if (myTrigger.entityContents != null)
 		{
-			foreach (BaseEntity entityContent in myTrigger.entityContents)
+			Enumerator<BaseEntity> enumerator = myTrigger.entityContents.GetEnumerator();
+			try
 			{
-				if (!((Object)(object)entityContent == (Object)null) && entityContent.IsVisible(((Component)this).get_transform().get_position() + ((Component)this).get_transform().get_forward() * 0.1f, 10f))
+				while (enumerator.MoveNext())
 				{
-					BasePlayer component = ((Component)entityContent).GetComponent<BasePlayer>();
-					bool flag = component.CanBuild();
-					if ((!flag || ShouldIncludeAuthorized()) && (flag || ShouldIncludeOthers()) && (Object)(object)component != (Object)null && component.IsAlive() && !component.IsSleeping() && component.isServer)
+					BaseEntity current = enumerator.get_Current();
+					if (!((Object)(object)current == (Object)null) && current.IsVisible(((Component)this).get_transform().get_position() + ((Component)this).get_transform().get_forward() * 0.1f, 10f))
 					{
-						detectedPlayers++;
+						BasePlayer component = ((Component)current).GetComponent<BasePlayer>();
+						bool flag = component.CanBuild();
+						if ((!flag || ShouldIncludeAuthorized()) && (flag || ShouldIncludeOthers()) && (Object)(object)component != (Object)null && component.IsAlive() && !component.IsSleeping() && component.isServer)
+						{
+							detectedPlayers++;
+						}
 					}
 				}
+			}
+			finally
+			{
+				((IDisposable)enumerator).Dispose();
 			}
 		}
 		if (num != detectedPlayers && IsPowered())

@@ -24,11 +24,11 @@ namespace Windows
 			{
 				AllocConsole();
 			}
-			oldOutput = Console.Out;
+			oldOutput = Console.get_Out();
 			try
 			{
-				Console.OutputEncoding = Encoding.UTF8;
-				Console.SetOut(new StreamWriter(new FileStream(new SafeFileHandle(GetStdHandle(-11), ownsHandle: true), FileAccess.Write), Encoding.UTF8)
+				Console.set_OutputEncoding(Encoding.UTF8);
+				Console.SetOut((TextWriter)new StreamWriter(new FileStream(new SafeFileHandle(GetStdHandle(-11), ownsHandle: true), FileAccess.Write), Encoding.UTF8)
 				{
 					AutoFlush = true
 				});

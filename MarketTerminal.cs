@@ -596,7 +596,7 @@ public class MarketTerminal : StorageContainer
 
 	public bool CanPlayerAffordOrderAndDeliveryFee(BasePlayer player, SellOrder sellOrder, int numberOfTransactions)
 	{
-		int num = player.inventory.FindItemIDs(deliveryFeeCurrency.itemid).Sum((Item i) => i.amount);
+		int num = Enumerable.Sum<Item>((IEnumerable<Item>)player.inventory.FindItemIDs(deliveryFeeCurrency.itemid), (Func<Item, int>)((Item i) => i.amount));
 		int num2 = deliveryFeeAmount;
 		if (num < num2)
 		{

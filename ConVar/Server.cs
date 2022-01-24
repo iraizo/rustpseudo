@@ -487,7 +487,7 @@ namespace ConVar
 			TextTable val = new TextTable();
 			val.AddColumn("type");
 			val.AddColumn("calls");
-			foreach (Tuple<Type, ulong> item3 in list.OrderByDescending((Tuple<Type, ulong> entry) => entry.Item2))
+			foreach (Tuple<Type, ulong> item3 in (IEnumerable<Tuple<Type, ulong>>)Enumerable.OrderByDescending<Tuple<Type, ulong>, ulong>((IEnumerable<Tuple<Type, ulong>>)list, (Func<Tuple<Type, ulong>, ulong>)((Tuple<Type, ulong> entry) => entry.Item2)))
 			{
 				if (item3.Item2 == 0L)
 				{
@@ -519,7 +519,7 @@ namespace ConVar
 			val.AddColumn("id");
 			val.AddColumn("name");
 			val.AddColumn("calls");
-			foreach (Tuple<uint, ulong> item2 in list.OrderByDescending((Tuple<uint, ulong> entry) => entry.Item2))
+			foreach (Tuple<uint, ulong> item2 in (IEnumerable<Tuple<uint, ulong>>)Enumerable.OrderByDescending<Tuple<uint, ulong>, ulong>((IEnumerable<Tuple<uint, ulong>>)list, (Func<Tuple<uint, ulong>, ulong>)((Tuple<uint, ulong> entry) => entry.Item2)))
 			{
 				if (item2.Item2 == 0L)
 				{
@@ -590,8 +590,8 @@ namespace ConVar
 		[ServerVar(Help = "Writes config files")]
 		public static void writecfg(Arg arg)
 		{
-			string contents = ConsoleSystem.SaveToConfigString(true);
-			File.WriteAllText(GetServerFolder("cfg") + "/serverauto.cfg", contents);
+			string text = ConsoleSystem.SaveToConfigString(true);
+			File.WriteAllText(GetServerFolder("cfg") + "/serverauto.cfg", text);
 			ServerUsers.Save();
 			arg.ReplyWith("Config Saved");
 		}
@@ -605,12 +605,22 @@ namespace ConVar
 		[ServerVar(Help = "Force save the current game")]
 		public static void save(Arg arg)
 		{
-			Stopwatch stopwatch = Stopwatch.StartNew();
-			foreach (BaseEntity save in BaseEntity.saveList)
+			//IL_000b: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0010: Unknown result type (might be due to invalid IL or missing references)
+			Stopwatch val = Stopwatch.StartNew();
+			Enumerator<BaseEntity> enumerator = BaseEntity.saveList.GetEnumerator();
+			try
 			{
-				save.InvalidateNetworkCache();
+				while (enumerator.MoveNext())
+				{
+					enumerator.get_Current().InvalidateNetworkCache();
+				}
 			}
-			Debug.Log((object)("Invalidate Network Cache took " + stopwatch.Elapsed.TotalSeconds.ToString("0.00") + " seconds"));
+			finally
+			{
+				((IDisposable)enumerator).Dispose();
+			}
+			Debug.Log((object)("Invalidate Network Cache took " + val.get_Elapsed().TotalSeconds.ToString("0.00") + " seconds"));
 			SaveRestore.Save(AndWait: true);
 		}
 

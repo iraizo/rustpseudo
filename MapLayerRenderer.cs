@@ -85,7 +85,7 @@ public class MapLayerRenderer : SingletonComponent<MapLayerRenderer>
 			return _underwaterLabFloorCount.Value;
 		}
 		List<DungeonBaseInfo> dungeonBaseEntrances = TerrainMeta.Path.DungeonBaseEntrances;
-		_underwaterLabFloorCount = ((dungeonBaseEntrances != null && dungeonBaseEntrances.Count > 0) ? dungeonBaseEntrances.Max((DungeonBaseInfo l) => l.Floors.Count) : 0);
+		_underwaterLabFloorCount = ((dungeonBaseEntrances != null && dungeonBaseEntrances.Count > 0) ? Enumerable.Max<DungeonBaseInfo>((IEnumerable<DungeonBaseInfo>)dungeonBaseEntrances, (Func<DungeonBaseInfo, int>)((DungeonBaseInfo l) => l.Floors.Count)) : 0);
 		return _underwaterLabFloorCount.Value;
 	}
 

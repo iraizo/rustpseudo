@@ -172,10 +172,10 @@ public class Wearable : MonoBehaviour, IItemSetup, IPrefabPreProcess
 		((Component)this).GetComponentsInChildren<SkinnedMeshRenderer>(true, skinnedRenderers);
 		((Component)this).GetComponentsInChildren<SkeletonSkin>(true, skeletonSkins);
 		((Component)this).GetComponentsInChildren<ComponentInfo>(true, componentInfos);
-		RenderersLod0 = renderers.Where((Renderer x) => ((Object)((Component)x).get_gameObject()).get_name().EndsWith("0")).ToArray();
-		RenderersLod1 = renderers.Where((Renderer x) => ((Object)((Component)x).get_gameObject()).get_name().EndsWith("1")).ToArray();
-		RenderersLod2 = renderers.Where((Renderer x) => ((Object)((Component)x).get_gameObject()).get_name().EndsWith("2")).ToArray();
-		RenderersLod3 = renderers.Where((Renderer x) => ((Object)((Component)x).get_gameObject()).get_name().EndsWith("3")).ToArray();
+		RenderersLod0 = Enumerable.ToArray<Renderer>(Enumerable.Where<Renderer>((IEnumerable<Renderer>)renderers, (Func<Renderer, bool>)((Renderer x) => ((Object)((Component)x).get_gameObject()).get_name().EndsWith("0"))));
+		RenderersLod1 = Enumerable.ToArray<Renderer>(Enumerable.Where<Renderer>((IEnumerable<Renderer>)renderers, (Func<Renderer, bool>)((Renderer x) => ((Object)((Component)x).get_gameObject()).get_name().EndsWith("1"))));
+		RenderersLod2 = Enumerable.ToArray<Renderer>(Enumerable.Where<Renderer>((IEnumerable<Renderer>)renderers, (Func<Renderer, bool>)((Renderer x) => ((Object)((Component)x).get_gameObject()).get_name().EndsWith("2"))));
+		RenderersLod3 = Enumerable.ToArray<Renderer>(Enumerable.Where<Renderer>((IEnumerable<Renderer>)renderers, (Func<Renderer, bool>)((Renderer x) => ((Object)((Component)x).get_gameObject()).get_name().EndsWith("3"))));
 		foreach (Renderer renderer in renderers)
 		{
 			((Component)renderer).get_gameObject().AddComponent<ObjectMotionVectorFix>();

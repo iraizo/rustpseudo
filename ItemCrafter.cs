@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ConVar;
@@ -35,11 +36,11 @@ public class ItemCrafter : EntityComponent<BasePlayer>
 
 	public void ServerUpdate(float delta)
 	{
-		if (queue.Count == 0)
+		if (queue.get_Count() == 0)
 		{
 			return;
 		}
-		ItemCraftTask value = queue.First.Value;
+		ItemCraftTask value = queue.get_First().get_Value();
 		if (value.cancelled)
 		{
 			value.owner.Command("note.craft_done", value.taskUID, 0);
@@ -196,7 +197,7 @@ public class ItemCrafter : EntityComponent<BasePlayer>
 			task.owner.Command("note.inv", item.info.itemid, item.amount);
 			return;
 		}
-		ItemContainer itemContainer = containers.First();
+		ItemContainer itemContainer = Enumerable.First<ItemContainer>((IEnumerable<ItemContainer>)containers);
 		task.owner.Command("note.inv", item.info.itemid, item.amount);
 		task.owner.Command("note.inv", item.info.itemid, -item.amount);
 		item.Drop(itemContainer.dropPosition, itemContainer.dropVelocity);
@@ -213,11 +214,11 @@ public class ItemCrafter : EntityComponent<BasePlayer>
 		//IL_0162: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0169: Unknown result type (might be due to invalid IL or missing references)
 		//IL_016f: Unknown result type (might be due to invalid IL or missing references)
-		if (queue.Count == 0)
+		if (queue.get_Count() == 0)
 		{
 			return false;
 		}
-		ItemCraftTask itemCraftTask = queue.FirstOrDefault((ItemCraftTask x) => x.taskUID == iID && !x.cancelled);
+		ItemCraftTask itemCraftTask = Enumerable.FirstOrDefault<ItemCraftTask>((IEnumerable<ItemCraftTask>)queue, (Func<ItemCraftTask, bool>)((ItemCraftTask x) => x.taskUID == iID && !x.cancelled));
 		if (itemCraftTask == null)
 		{
 			return false;
@@ -251,11 +252,11 @@ public class ItemCrafter : EntityComponent<BasePlayer>
 
 	public bool CancelBlueprint(int itemid)
 	{
-		if (queue.Count == 0)
+		if (queue.get_Count() == 0)
 		{
 			return false;
 		}
-		ItemCraftTask itemCraftTask = queue.FirstOrDefault((ItemCraftTask x) => x.blueprint.targetItem.itemid == itemid && !x.cancelled);
+		ItemCraftTask itemCraftTask = Enumerable.FirstOrDefault<ItemCraftTask>((IEnumerable<ItemCraftTask>)queue, (Func<ItemCraftTask, bool>)((ItemCraftTask x) => x.blueprint.targetItem.itemid == itemid && !x.cancelled));
 		if (itemCraftTask == null)
 		{
 			return false;
@@ -265,9 +266,20 @@ public class ItemCrafter : EntityComponent<BasePlayer>
 
 	public void CancelAll(bool returnItems)
 	{
-		foreach (ItemCraftTask item in queue)
+		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
+		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
+		Enumerator<ItemCraftTask> enumerator = queue.GetEnumerator();
+		try
 		{
-			CancelTask(item.taskUID, returnItems);
+			while (enumerator.MoveNext())
+			{
+				ItemCraftTask current = enumerator.get_Current();
+				CancelTask(current.taskUID, returnItems);
+			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 	}
 
@@ -283,13 +295,24 @@ public class ItemCrafter : EntityComponent<BasePlayer>
 
 	public bool CanCraft(ItemBlueprint bp, int amount = 1, bool free = false)
 	{
+		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
+		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
 		float num = (float)amount / (float)bp.targetItem.craftingStackable;
-		foreach (ItemCraftTask item in queue)
+		Enumerator<ItemCraftTask> enumerator = queue.GetEnumerator();
+		try
 		{
-			if (!item.cancelled)
+			while (enumerator.MoveNext())
 			{
-				num += (float)item.amount / (float)item.blueprint.targetItem.craftingStackable;
+				ItemCraftTask current = enumerator.get_Current();
+				if (!current.cancelled)
+				{
+					num += (float)current.amount / (float)current.blueprint.targetItem.craftingStackable;
+				}
 			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 		if (num > 8f)
 		{
@@ -321,16 +344,16 @@ public class ItemCrafter : EntityComponent<BasePlayer>
 
 	public bool FastTrackTask(int taskID)
 	{
-		if (queue.Count == 0)
+		if (queue.get_Count() == 0)
 		{
 			return false;
 		}
-		ItemCraftTask value = queue.First.Value;
+		ItemCraftTask value = queue.get_First().get_Value();
 		if (value == null)
 		{
 			return false;
 		}
-		ItemCraftTask itemCraftTask = queue.FirstOrDefault((ItemCraftTask x) => x.taskUID == taskID && !x.cancelled);
+		ItemCraftTask itemCraftTask = Enumerable.FirstOrDefault<ItemCraftTask>((IEnumerable<ItemCraftTask>)queue, (Func<ItemCraftTask, bool>)((ItemCraftTask x) => x.taskUID == taskID && !x.cancelled));
 		if (itemCraftTask == null)
 		{
 			return false;

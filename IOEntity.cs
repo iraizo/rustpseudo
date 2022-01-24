@@ -459,7 +459,7 @@ public class IOEntity : BaseCombatEntity
 	{
 		float realtimeSinceStartup = Time.get_realtimeSinceStartup();
 		float num = framebudgetms / 1000f;
-		while (_processQueue.Count > 0 && Time.get_realtimeSinceStartup() < realtimeSinceStartup + num && !_processQueue.Peek().HasBlockedUpdatedOutputsThisFrame)
+		while (_processQueue.get_Count() > 0 && Time.get_realtimeSinceStartup() < realtimeSinceStartup + num && !_processQueue.Peek().HasBlockedUpdatedOutputsThisFrame)
 		{
 			IOEntity iOEntity = _processQueue.Dequeue();
 			if (iOEntity.IsValid())

@@ -628,7 +628,7 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 		}
 		if (type == 255)
 		{
-			if (queriesPerSeconTimer.Elapsed.TotalSeconds > 1.0)
+			if (queriesPerSeconTimer.get_Elapsed().TotalSeconds > 1.0)
 			{
 				queriesPerSeconTimer.Reset();
 				queriesPerSeconTimer.Start();
@@ -650,7 +650,7 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 			{
 				return false;
 			}
-			if (queryTimer.Elapsed.TotalSeconds > 60.0)
+			if (queryTimer.get_Elapsed().TotalSeconds > 60.0)
 			{
 				queryTimer.Reset();
 				queryTimer.Start();
@@ -858,7 +858,7 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 		//IL_005d: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0060: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0066: Unknown result type (might be due to invalid IL or missing references)
-		if (!BaseNetworkable.serverEntities.Any((BaseNetworkable x) => x is T))
+		if (!Enumerable.Any<BaseNetworkable>((IEnumerable<BaseNetworkable>)BaseNetworkable.serverEntities, (Func<BaseNetworkable, bool>)((BaseNetworkable x) => x is T)))
 		{
 			Debug.LogWarning((object)("Missing " + typeof(T).Name + " - creating"));
 			BaseEntity baseEntity = GameManager.server.CreateEntity(prefabName);
@@ -903,7 +903,7 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 		{
 			return;
 		}
-		Connection val = Net.sv.connections.FirstOrDefault((Connection x) => x.userid == SteamId);
+		Connection val = Enumerable.FirstOrDefault<Connection>((IEnumerable<Connection>)Net.sv.connections, (Func<Connection, bool>)((Connection x) => x.userid == SteamId));
 		if (val == null)
 		{
 			Debug.LogWarning((object)$"Steam gave us a {Status} ticket response for unconnected id {SteamId}");
@@ -1425,12 +1425,12 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 			string text2 = $"born{Epoch.FromDateTime(SaveRestore.SaveCreatedTime)}";
 			string text3 = $"gm{GamemodeName()}";
 			string text4 = (ConVar.Server.pve ? ",pve" : string.Empty);
-			string text5 = ConVar.Server.tags?.Trim(',') ?? "";
+			string text5 = ConVar.Server.tags?.Trim(new char[1] { ',' }) ?? "";
 			string text6 = ((!string.IsNullOrWhiteSpace(text5)) ? ("," + text5) : "");
 			SteamServer.set_GameTags($"mp{ConVar.Server.maxplayers},cp{BasePlayer.activePlayerList.get_Count()},pt{Net.sv.get_ProtocolId()},qp{SingletonComponent<ServerMgr>.Instance.connectionQueue.Queued},v{2326}{text4}{text6},h{AssemblyHash},{text},{text2},{text3}");
 			if (ConVar.Server.description != null && ConVar.Server.description.Length > 100)
 			{
-				string[] array = StringEx.SplitToChunks(ConVar.Server.description, 100).ToArray();
+				string[] array = Enumerable.ToArray<string>(StringEx.SplitToChunks(ConVar.Server.description, 100));
 				for (int i = 0; i < 16; i++)
 				{
 					if (i < array.Length)
@@ -1640,7 +1640,7 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 	{
 		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
 		//IL_003b: Unknown result type (might be due to invalid IL or missing references)
-		BasePlayer[] array = ((IEnumerable<BasePlayer>)BasePlayer.activePlayerList).ToArray();
+		BasePlayer[] array = Enumerable.ToArray<BasePlayer>((IEnumerable<BasePlayer>)BasePlayer.activePlayerList);
 		for (int i = 0; i < array.Length; i++)
 		{
 			array[i].Kick("Server Shutting Down");
@@ -1670,7 +1670,7 @@ public class ServerMgr : SingletonComponent<ServerMgr>, IServerCallback
 		}
 		ConsoleNetwork.BroadcastToAllClients("chat.add", 2, 0, "<color=#fff>SERVER</color> Restarting (" + info + ")");
 		yield return CoroutineEx.waitForSeconds(2f);
-		BasePlayer[] array = ((IEnumerable<BasePlayer>)BasePlayer.activePlayerList).ToArray();
+		BasePlayer[] array = Enumerable.ToArray<BasePlayer>((IEnumerable<BasePlayer>)BasePlayer.activePlayerList);
 		for (int j = 0; j < array.Length; j++)
 		{
 			array[j].Kick("Server Restarting");

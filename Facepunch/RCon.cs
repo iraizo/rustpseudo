@@ -73,8 +73,8 @@ namespace Facepunch
 			internal RConClient(Socket cl)
 			{
 				socket = cl;
-				socket.NoDelay = true;
-				connectionName = socket.RemoteEndPoint.ToString();
+				socket.set_NoDelay(true);
+				connectionName = ((object)socket.get_RemoteEndPoint()).ToString();
 			}
 
 			internal bool IsValid()
@@ -88,12 +88,12 @@ namespace Facepunch
 				{
 					return;
 				}
-				if (!socket.Connected)
+				if (!socket.get_Connected())
 				{
 					Close("Disconnected");
 					return;
 				}
-				int available = socket.Available;
+				int available = socket.get_Available();
 				if (available < 14)
 				{
 					return;
@@ -103,9 +103,9 @@ namespace Facepunch
 					Close("overflow");
 					return;
 				}
-				byte[] buffer = new byte[available];
-				socket.Receive(buffer);
-				using BinaryReader binaryReader = new BinaryReader(new MemoryStream(buffer, writable: false), utf8Mode ? Encoding.UTF8 : Encoding.ASCII);
+				byte[] array = new byte[available];
+				socket.Receive(array);
+				using BinaryReader binaryReader = new BinaryReader(new MemoryStream(array, writable: false), utf8Mode ? Encoding.UTF8 : Encoding.ASCII);
 				int num = binaryReader.ReadInt32();
 				if (available < num)
 				{
@@ -160,7 +160,8 @@ namespace Facepunch
 			{
 				if (type != SERVERDATA_AUTH)
 				{
-					BanIP((socket.RemoteEndPoint as IPEndPoint).Address, 60f);
+					EndPoint remoteEndPoint = socket.get_RemoteEndPoint();
+					BanIP(((IPEndPoint)((remoteEndPoint is IPEndPoint) ? remoteEndPoint : null)).get_Address(), 60f);
 					Close("Invalid Command - Not Authed");
 					return false;
 				}
@@ -169,7 +170,8 @@ namespace Facepunch
 				if (!isAuthorised)
 				{
 					Reply(-1, SERVERDATA_AUTH_RESPONSE, "");
-					BanIP((socket.RemoteEndPoint as IPEndPoint).Address, 60f);
+					EndPoint remoteEndPoint2 = socket.get_RemoteEndPoint();
+					BanIP(((IPEndPoint)((remoteEndPoint2 is IPEndPoint) ? remoteEndPoint2 : null)).get_Address(), 60f);
 					Close("Invalid Password");
 					return true;
 				}
@@ -220,7 +222,7 @@ namespace Facepunch
 				binaryWriter.Flush();
 				try
 				{
-					socket.Send(memoryStream.GetBuffer(), (int)memoryStream.Position, SocketFlags.None);
+					socket.Send(memoryStream.GetBuffer(), (int)memoryStream.Position, (SocketFlags)0);
 				}
 				catch (Exception ex)
 				{
@@ -269,12 +271,14 @@ namespace Facepunch
 
 			internal RConListener()
 			{
-				IPAddress address = IPAddress.Any;
-				if (!IPAddress.TryParse(Ip, out address))
+				//IL_0032: Unknown result type (might be due to invalid IL or missing references)
+				//IL_003c: Expected O, but got Unknown
+				IPAddress any = IPAddress.Any;
+				if (!IPAddress.TryParse(Ip, ref any))
 				{
-					address = IPAddress.Any;
+					any = IPAddress.Any;
 				}
-				server = new TcpListener(address, Port);
+				server = new TcpListener(any, Port);
 				try
 				{
 					server.Start();
@@ -311,18 +315,19 @@ namespace Facepunch
 				{
 					return;
 				}
-				Socket socket = server.AcceptSocket();
-				if (socket != null)
+				Socket val = server.AcceptSocket();
+				if (val != null)
 				{
-					IPEndPoint iPEndPoint = socket.RemoteEndPoint as IPEndPoint;
-					if (IsBanned(iPEndPoint.Address))
+					EndPoint remoteEndPoint = val.get_RemoteEndPoint();
+					IPEndPoint val2 = (IPEndPoint)(object)((remoteEndPoint is IPEndPoint) ? remoteEndPoint : null);
+					if (IsBanned(val2.get_Address()))
 					{
-						Debug.Log((object)("[RCON] Ignoring connection - banned. " + iPEndPoint.Address.ToString()));
-						socket.Close();
+						Debug.Log((object)("[RCON] Ignoring connection - banned. " + ((object)val2.get_Address()).ToString()));
+						val.Close();
 					}
 					else
 					{
-						clients.Add(new RConClient(socket));
+						clients.Add(new RConClient(val));
 					}
 				}
 			}
@@ -412,10 +417,10 @@ namespace Facepunch
 				{
 					lock (Commands)
 					{
-						Command item = JsonConvert.DeserializeObject<Command>(msg);
-						item.Ip = ip;
-						item.ConnectionId = id;
-						Commands.Enqueue(item);
+						Command command = JsonConvert.DeserializeObject<Command>(msg);
+						command.Ip = ip;
+						command.ConnectionId = id;
+						Commands.Enqueue(command);
 					}
 				};
 				listenerNew.Start();
@@ -466,7 +471,7 @@ namespace Facepunch
 		{
 			lock (Commands)
 			{
-				while (Commands.Count > 0)
+				while (Commands.get_Count() > 0)
 				{
 					OnCommand(Commands.Dequeue());
 				}
@@ -498,7 +503,7 @@ namespace Facepunch
 
 		public static bool IsBanned(IPAddress addr)
 		{
-			return bannedAddresses.Count((BannedAddresses x) => x.addr == addr && x.banTime > Time.get_realtimeSinceStartup()) > 0;
+			return Enumerable.Count<BannedAddresses>((IEnumerable<BannedAddresses>)bannedAddresses, (Func<BannedAddresses, bool>)((BannedAddresses x) => x.addr == addr && x.banTime > Time.get_realtimeSinceStartup())) > 0;
 		}
 
 		private static void OnCommand(Command cmd)

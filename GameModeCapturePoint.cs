@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Facepunch;
 using ProtoBuf;
 using Rust.UI;
@@ -102,6 +103,10 @@ public class GameModeCapturePoint : BaseEntity
 
 	public void UpdateCaptureAmount()
 	{
+		//IL_0068: Unknown result type (might be due to invalid IL or missing references)
+		//IL_006d: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0285: Unknown result type (might be due to invalid IL or missing references)
+		//IL_028a: Unknown result type (might be due to invalid IL or missing references)
 		if (base.isClient)
 		{
 			return;
@@ -125,16 +130,25 @@ public class GameModeCapturePoint : BaseEntity
 			if (activeGameMode.IsTeamGame())
 			{
 				int[] array = new int[activeGameMode.GetNumTeams()];
-				foreach (BaseEntity entityContent in captureTrigger.entityContents)
+				Enumerator<BaseEntity> enumerator = captureTrigger.entityContents.GetEnumerator();
+				try
 				{
-					if (!((Object)(object)entityContent == (Object)null) && !entityContent.isClient)
+					while (enumerator.MoveNext())
 					{
-						BasePlayer component = ((Component)entityContent).GetComponent<BasePlayer>();
-						if (!((Object)(object)component == (Object)null) && component.IsAlive() && !component.IsNpc && component.gamemodeteam != -1)
+						BaseEntity current = enumerator.get_Current();
+						if (!((Object)(object)current == (Object)null) && !current.isClient)
 						{
-							array[component.gamemodeteam]++;
+							BasePlayer component = ((Component)current).GetComponent<BasePlayer>();
+							if (!((Object)(object)component == (Object)null) && component.IsAlive() && !component.IsNpc && component.gamemodeteam != -1)
+							{
+								array[component.gamemodeteam]++;
+							}
 						}
 					}
+				}
+				finally
+				{
+					((IDisposable)enumerator).Dispose();
 				}
 				int num2 = 0;
 				for (int i = 0; i < array.Length; i++)
@@ -187,45 +201,53 @@ public class GameModeCapturePoint : BaseEntity
 				{
 					captureFraction = 0f;
 				}
-				if (captureTrigger.entityContents.Count == 0)
+				if (captureTrigger.entityContents.get_Count() == 0)
 				{
 					capturingPlayer.Set(null);
 				}
-				if (captureTrigger.entityContents.Count == 1)
+				if (captureTrigger.entityContents.get_Count() == 1)
 				{
-					foreach (BaseEntity entityContent2 in captureTrigger.entityContents)
+					Enumerator<BaseEntity> enumerator = captureTrigger.entityContents.GetEnumerator();
+					try
 					{
-						BasePlayer component2 = ((Component)entityContent2).GetComponent<BasePlayer>();
-						if ((Object)(object)component2 == (Object)null)
+						while (enumerator.MoveNext())
 						{
-							continue;
-						}
-						if (!capturedPlayer.IsValid(serverside: true) && captureFraction == 0f)
-						{
-							capturingPlayer.Set(component2);
-						}
-						if (captureFraction > 0f && (Object)(object)component2 != (Object)(object)capturedPlayer.Get(serverside: true) && (Object)(object)component2 != (Object)(object)capturingPlayer.Get(serverside: true))
-						{
-							captureFraction = Mathf.Clamp01(captureFraction - Time.get_deltaTime() / timeToCapture);
-							if (captureFraction == 0f)
+							BasePlayer component2 = ((Component)enumerator.get_Current()).GetComponent<BasePlayer>();
+							if ((Object)(object)component2 == (Object)null)
 							{
-								capturedPlayer.Set(null);
+								continue;
 							}
-						}
-						else if (!Object.op_Implicit((Object)(object)capturedPlayer.Get(serverside: true)) && captureFraction < 1f && (Object)(object)capturingPlayer.Get(serverside: true) == (Object)(object)component2)
-						{
-							DoProgressEffect();
-							captureFraction = Mathf.Clamp01(captureFraction + Time.get_deltaTime() / timeToCapture);
-							if (captureFraction == 1f)
+							if (!capturedPlayer.IsValid(serverside: true) && captureFraction == 0f)
 							{
-								DoCaptureEffect();
-								capturedPlayer.Set(component2);
+								capturingPlayer.Set(component2);
 							}
+							if (captureFraction > 0f && (Object)(object)component2 != (Object)(object)capturedPlayer.Get(serverside: true) && (Object)(object)component2 != (Object)(object)capturingPlayer.Get(serverside: true))
+							{
+								captureFraction = Mathf.Clamp01(captureFraction - Time.get_deltaTime() / timeToCapture);
+								if (captureFraction == 0f)
+								{
+									capturedPlayer.Set(null);
+								}
+							}
+							else if (!Object.op_Implicit((Object)(object)capturedPlayer.Get(serverside: true)) && captureFraction < 1f && (Object)(object)capturingPlayer.Get(serverside: true) == (Object)(object)component2)
+							{
+								DoProgressEffect();
+								captureFraction = Mathf.Clamp01(captureFraction + Time.get_deltaTime() / timeToCapture);
+								if (captureFraction == 1f)
+								{
+									DoCaptureEffect();
+									capturedPlayer.Set(component2);
+								}
+							}
+							break;
 						}
-						break;
+					}
+					finally
+					{
+						((IDisposable)enumerator).Dispose();
 					}
 				}
-				SetFlag(Flags.Busy, captureTrigger.entityContents.Count > 1);
+				SetFlag(Flags.Busy, captureTrigger.entityContents.get_Count() > 1);
 			}
 			if (num != captureFraction)
 			{

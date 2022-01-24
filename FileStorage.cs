@@ -209,9 +209,7 @@ public class FileStorage : IDisposable
 			{
 				((Database)db).Execute<int, int>("DELETE FROM data WHERE entid = ? AND part = ?", (int)entityid, (int)numid);
 			}
-			uint[] array = (from x in (IEnumerable<KeyValuePair<uint, CacheData>>)_cache
-				where x.Value.entityID == entityid && x.Value.numID == numid
-				select x.Key).ToArray();
+			uint[] array = Enumerable.ToArray<uint>(Enumerable.Select<KeyValuePair<uint, CacheData>, uint>(Enumerable.Where<KeyValuePair<uint, CacheData>>((IEnumerable<KeyValuePair<uint, CacheData>>)_cache, (Func<KeyValuePair<uint, CacheData>, bool>)((KeyValuePair<uint, CacheData> x) => x.Value.entityID == entityid && x.Value.numID == numid)), (Func<KeyValuePair<uint, CacheData>, uint>)((KeyValuePair<uint, CacheData> x) => x.Key)));
 			foreach (uint num in array)
 			{
 				_cache.Remove(num);

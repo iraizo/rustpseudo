@@ -113,15 +113,15 @@ public class ResourceDispenser : EntityComponent<BaseEntity>, IServerComponent
 		if (cachedResourceItemTypes == null)
 		{
 			cachedResourceItemTypes = new Dictionary<GatherType, HashSet<int>>();
-			HashSet<int> hashSet = new HashSet<int>();
-			hashSet.Add(ItemManager.FindItemDefinition("wood").itemid);
-			cachedResourceItemTypes.Add(GatherType.Tree, hashSet);
-			HashSet<int> hashSet2 = new HashSet<int>();
-			hashSet2.Add(ItemManager.FindItemDefinition("stones").itemid);
-			hashSet2.Add(ItemManager.FindItemDefinition("sulfur.ore").itemid);
-			hashSet2.Add(ItemManager.FindItemDefinition("metal.ore").itemid);
-			hashSet2.Add(ItemManager.FindItemDefinition("hq.metal.ore").itemid);
-			cachedResourceItemTypes.Add(GatherType.Ore, hashSet2);
+			HashSet<int> val = new HashSet<int>();
+			val.Add(ItemManager.FindItemDefinition("wood").itemid);
+			cachedResourceItemTypes.Add(GatherType.Tree, val);
+			HashSet<int> val2 = new HashSet<int>();
+			val2.Add(ItemManager.FindItemDefinition("stones").itemid);
+			val2.Add(ItemManager.FindItemDefinition("sulfur.ore").itemid);
+			val2.Add(ItemManager.FindItemDefinition("metal.ore").itemid);
+			val2.Add(ItemManager.FindItemDefinition("hq.metal.ore").itemid);
+			cachedResourceItemTypes.Add(GatherType.Ore, val2);
 		}
 	}
 
@@ -402,13 +402,13 @@ public class ResourceDispenser : EntityComponent<BaseEntity>, IServerComponent
 
 	public void CountAllItems()
 	{
-		startingItemCounts = containedItems.Sum((ItemAmount x) => x.startAmount);
+		startingItemCounts = Enumerable.Sum<ItemAmount>((IEnumerable<ItemAmount>)containedItems, (Func<ItemAmount, float>)((ItemAmount x) => x.startAmount));
 	}
 
 	private void UpdateFraction()
 	{
-		float num = containedItems.Sum((ItemAmount x) => x.startAmount);
-		float num2 = containedItems.Sum((ItemAmount x) => x.amount);
+		float num = Enumerable.Sum<ItemAmount>((IEnumerable<ItemAmount>)containedItems, (Func<ItemAmount, float>)((ItemAmount x) => x.startAmount));
+		float num2 = Enumerable.Sum<ItemAmount>((IEnumerable<ItemAmount>)containedItems, (Func<ItemAmount, float>)((ItemAmount x) => x.amount));
 		if (num == 0f)
 		{
 			fractionRemaining = 0f;

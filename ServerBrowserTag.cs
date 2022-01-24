@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -14,8 +15,8 @@ public class ServerBrowserTag : MonoBehaviour
 			bool flag = false;
 			for (int i = 0; i < serverHasAnyOf.Length; i++)
 			{
-				string value = serverHasAnyOf[i];
-				if (((ServerInfo)(ref serverInfo)).get_Tags().Contains(value))
+				string text = serverHasAnyOf[i];
+				if (Enumerable.Contains<string>((IEnumerable<string>)((ServerInfo)(ref serverInfo)).get_Tags(), text))
 				{
 					flag = true;
 					break;
@@ -30,8 +31,8 @@ public class ServerBrowserTag : MonoBehaviour
 		{
 			for (int j = 0; j < serverHasNoneOf.Length; j++)
 			{
-				string value2 = serverHasNoneOf[j];
-				if (((ServerInfo)(ref serverInfo)).get_Tags().Contains(value2))
+				string text2 = serverHasNoneOf[j];
+				if (Enumerable.Contains<string>((IEnumerable<string>)((ServerInfo)(ref serverInfo)).get_Tags(), text2))
 				{
 					return false;
 				}

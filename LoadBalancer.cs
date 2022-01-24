@@ -39,11 +39,11 @@ public class LoadBalancer : SingletonComponent<LoadBalancer>
 		watch.Start();
 		for (int i = 0; i < queues.Length; i++)
 		{
-			Queue<DeferredAction> queue = queues[i];
-			while (queue.Count > 0)
+			Queue<DeferredAction> val = queues[i];
+			while (val.get_Count() > 0)
 			{
-				queue.Dequeue().Action();
-				if (watch.Elapsed.TotalMilliseconds > (double)num3)
+				val.Dequeue().Action();
+				if (watch.get_Elapsed().TotalMilliseconds > (double)num3)
 				{
 					return;
 				}
@@ -61,7 +61,7 @@ public class LoadBalancer : SingletonComponent<LoadBalancer>
 		int num = 0;
 		for (int i = 0; i < array.Length; i++)
 		{
-			num += array[i].Count;
+			num += array[i].get_Count();
 		}
 		return num;
 	}
@@ -73,11 +73,11 @@ public class LoadBalancer : SingletonComponent<LoadBalancer>
 			CreateInstance();
 		}
 		Queue<DeferredAction>[] array = SingletonComponent<LoadBalancer>.Instance.queues;
-		foreach (Queue<DeferredAction> queue in array)
+		foreach (Queue<DeferredAction> val in array)
 		{
-			while (queue.Count > 0)
+			while (val.get_Count() > 0)
 			{
-				queue.Dequeue().Action();
+				val.Dequeue().Action();
 			}
 		}
 	}

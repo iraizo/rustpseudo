@@ -103,7 +103,7 @@ public class TriggerWakeAIZ : TriggerBase, IServerComponent
 	internal override void OnEntityLeave(BaseEntity ent)
 	{
 		base.OnEntityLeave(ent);
-		if ((!((Object)(object)aiz == (Object)null) || (zones != null && zones.Count != 0)) && (entityContents == null || entityContents.Count == 0))
+		if ((!((Object)(object)aiz == (Object)null) || (zones != null && zones.Count != 0)) && (entityContents == null || entityContents.get_Count() == 0))
 		{
 			DelayedSleepAI();
 		}

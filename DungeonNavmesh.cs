@@ -264,7 +264,7 @@ public class DungeonNavmesh : FacepunchBehaviour, IServerComponent
 			{
 				NavMeshDataInstance = NavMesh.AddNavMeshData(NavMeshData);
 			}
-			Debug.Log((object)$"Monument Navmesh Build took {BuildTimer.Elapsed.TotalSeconds:0.00} seconds");
+			Debug.Log((object)$"Monument Navmesh Build took {BuildTimer.get_Elapsed().TotalSeconds:0.00} seconds");
 			BuildingOperation = null;
 		}
 	}
@@ -283,5 +283,7 @@ public class DungeonNavmesh : FacepunchBehaviour, IServerComponent
 	public DungeonNavmesh()
 		: this()
 	{
-	}
+	}//IL_0017: Unknown result type (might be due to invalid IL or missing references)
+	//IL_0021: Expected O, but got Unknown
+
 }

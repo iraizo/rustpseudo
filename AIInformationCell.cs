@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -35,8 +36,12 @@ public class AIInformationCell
 		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
 		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0063: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0091: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0096: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00a7: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00b2: Unknown result type (might be due to invalid IL or missing references)
 		Color color2 = Gizmos.get_color();
@@ -47,13 +52,31 @@ public class AIInformationCell
 		{
 			return;
 		}
-		foreach (AIMovePoint item in MovePoints.Items)
+		Enumerator<AIMovePoint> enumerator = MovePoints.Items.GetEnumerator();
+		try
 		{
-			Gizmos.DrawLine(((Bounds)(ref BoundingBox)).get_center(), ((Component)item).get_transform().get_position());
+			while (enumerator.MoveNext())
+			{
+				AIMovePoint current = enumerator.get_Current();
+				Gizmos.DrawLine(((Bounds)(ref BoundingBox)).get_center(), ((Component)current).get_transform().get_position());
+			}
 		}
-		foreach (AICoverPoint item2 in CoverPoints.Items)
+		finally
 		{
-			Gizmos.DrawLine(((Bounds)(ref BoundingBox)).get_center(), ((Component)item2).get_transform().get_position());
+			((IDisposable)enumerator).Dispose();
+		}
+		Enumerator<AICoverPoint> enumerator2 = CoverPoints.Items.GetEnumerator();
+		try
+		{
+			while (enumerator2.MoveNext())
+			{
+				AICoverPoint current2 = enumerator2.get_Current();
+				Gizmos.DrawLine(((Bounds)(ref BoundingBox)).get_center(), ((Component)current2).get_transform().get_position());
+			}
+		}
+		finally
+		{
+			((IDisposable)enumerator2).Dispose();
 		}
 	}
 }

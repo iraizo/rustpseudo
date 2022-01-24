@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -212,7 +211,7 @@ namespace CompanionServer
 				}
 				IEnumerable<string> messages = testConnectionResponse.Messages;
 				string text2 = string.Join("\n", messages ?? Enumerable.Empty<string>());
-				if (testResponse.StatusCode == (HttpStatusCode)555)
+				if ((int)testResponse.StatusCode == 555)
 				{
 					Debug.LogError((object)("Rust+ companion server connectivity test failed! Disabling Rust+ features.\n\n" + text2));
 					SetServerId(null);

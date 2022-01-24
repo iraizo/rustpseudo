@@ -28,10 +28,7 @@ public class DevDressPlayer : MonoBehaviour
 	private void DoRandomClothes(BasePlayer player)
 	{
 		string text = "";
-		foreach (ItemDefinition item in (from x in ItemManager.GetItemDefinitions()
-			where Object.op_Implicit((Object)(object)((Component)x).GetComponent<ItemModWearable>())
-			orderby Guid.NewGuid()
-			select x).Take(Random.Range(0, 4)))
+		foreach (ItemDefinition item in Enumerable.Take<ItemDefinition>((IEnumerable<ItemDefinition>)Enumerable.OrderBy<ItemDefinition, Guid>(Enumerable.Where<ItemDefinition>((IEnumerable<ItemDefinition>)ItemManager.GetItemDefinitions(), (Func<ItemDefinition, bool>)((ItemDefinition x) => Object.op_Implicit((Object)(object)((Component)x).GetComponent<ItemModWearable>()))), (Func<ItemDefinition, Guid>)((ItemDefinition x) => Guid.NewGuid())), Random.Range(0, 4)))
 		{
 			ItemManager.Create(item, 1, 0uL).MoveToContainer(player.inventory.containerWear);
 			text = text + item.shortname + " ";

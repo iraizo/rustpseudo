@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -758,7 +759,7 @@ namespace UnityEngine.Rendering.PostProcessing
 					yield return component;
 				}
 			}
-			while (queue.Count > 0)
+			while (queue.get_Count() > 0)
 			{
 				foreach (Transform item in queue.Dequeue())
 				{
@@ -857,7 +858,7 @@ namespace UnityEngine.Rendering.PostProcessing
 		{
 			if (m_AssemblyTypes == null)
 			{
-				m_AssemblyTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(delegate(Assembly t)
+				m_AssemblyTypes = Enumerable.SelectMany<Assembly, Type>((IEnumerable<Assembly>)AppDomain.CurrentDomain.GetAssemblies(), (Func<Assembly, IEnumerable<Type>>)delegate(Assembly t)
 				{
 					Type[] result = new Type[0];
 					try
@@ -882,43 +883,55 @@ namespace UnityEngine.Rendering.PostProcessing
 
 		public static Attribute[] GetMemberAttributes<TType, TValue>(Expression<Func<TType, TValue>> expr)
 		{
-			Expression expression = expr;
-			if (expression is LambdaExpression)
+			//IL_000b: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0017: Unknown result type (might be due to invalid IL or missing references)
+			//IL_001c: Unknown result type (might be due to invalid IL or missing references)
+			//IL_001d: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0020: Invalid comparison between Unknown and I4
+			//IL_0023: Unknown result type (might be due to invalid IL or missing references)
+			Expression val = (Expression)(object)expr;
+			if (val is LambdaExpression)
 			{
-				expression = ((LambdaExpression)expression).Body;
+				val = ((LambdaExpression)val).get_Body();
 			}
-			ExpressionType nodeType = expression.NodeType;
-			if (nodeType == ExpressionType.MemberAccess)
+			ExpressionType nodeType = val.get_NodeType();
+			if ((int)nodeType == 23)
 			{
-				return ((FieldInfo)((MemberExpression)expression).Member).GetCustomAttributes(inherit: false).Cast<Attribute>().ToArray();
+				return Enumerable.ToArray<Attribute>(Enumerable.Cast<Attribute>((IEnumerable)((FieldInfo)((MemberExpression)val).get_Member()).GetCustomAttributes(inherit: false)));
 			}
 			throw new InvalidOperationException();
 		}
 
 		public static string GetFieldPath<TType, TValue>(Expression<Func<TType, TValue>> expr)
 		{
-			ExpressionType nodeType = expr.Body.NodeType;
-			if (nodeType == ExpressionType.MemberAccess)
+			//IL_0006: Unknown result type (might be due to invalid IL or missing references)
+			//IL_000b: Unknown result type (might be due to invalid IL or missing references)
+			//IL_000c: Unknown result type (might be due to invalid IL or missing references)
+			//IL_000f: Invalid comparison between Unknown and I4
+			ExpressionType nodeType = ((LambdaExpression)expr).get_Body().get_NodeType();
+			if ((int)nodeType != 23)
 			{
-				MemberExpression memberExpression = expr.Body as MemberExpression;
-				List<string> list = new List<string>();
-				while (memberExpression != null)
-				{
-					list.Add(memberExpression.Member.Name);
-					memberExpression = memberExpression.Expression as MemberExpression;
-				}
-				StringBuilder stringBuilder = new StringBuilder();
-				for (int num = list.Count - 1; num >= 0; num--)
-				{
-					stringBuilder.Append(list[num]);
-					if (num > 0)
-					{
-						stringBuilder.Append('.');
-					}
-				}
-				return stringBuilder.ToString();
+				throw new InvalidOperationException();
 			}
-			throw new InvalidOperationException();
+			Expression body = ((LambdaExpression)expr).get_Body();
+			MemberExpression val = (MemberExpression)(object)((body is MemberExpression) ? body : null);
+			List<string> list = new List<string>();
+			while (val != null)
+			{
+				list.Add(val.get_Member().Name);
+				Expression expression = val.get_Expression();
+				val = (MemberExpression)(object)((expression is MemberExpression) ? expression : null);
+			}
+			StringBuilder stringBuilder = new StringBuilder();
+			for (int num = list.Count - 1; num >= 0; num--)
+			{
+				stringBuilder.Append(list[num]);
+				if (num > 0)
+				{
+					stringBuilder.Append('.');
+				}
+			}
+			return stringBuilder.ToString();
 		}
 	}
 }

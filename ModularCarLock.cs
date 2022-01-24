@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Facepunch;
 using ProtoBuf;
@@ -67,7 +69,7 @@ public class ModularCarLock
 		{
 			return false;
 		}
-		return player.inventory.FindItemIDs(owner.carKeyDefinition.itemid).Any((Item key) => KeyCanUnlockThis(key));
+		return Enumerable.Any<Item>((IEnumerable<Item>)player.inventory.FindItemIDs(owner.carKeyDefinition.itemid), (Func<Item, bool>)((Item key) => KeyCanUnlockThis(key)));
 	}
 
 	public bool PlayerCanUseThis(BasePlayer player, LockType lockType)

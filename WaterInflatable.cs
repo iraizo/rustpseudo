@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Network;
 using UnityEngine;
 
@@ -391,18 +392,28 @@ public class WaterInflatable : BaseMountable, IPoolVehicle, INotifyTrigger
 
 	public void OnObjects(TriggerNotify trigger)
 	{
+		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
 		if (base.isClient)
 		{
 			return;
 		}
-		foreach (BaseEntity entityContent in trigger.entityContents)
+		Enumerator<BaseEntity> enumerator = trigger.entityContents.GetEnumerator();
+		try
 		{
-			BaseVehicle baseVehicle;
-			if ((baseVehicle = entityContent as BaseVehicle) != null && (baseVehicle.HasDriver() || baseVehicle.IsMoving() || baseVehicle.HasFlag(Flags.On)))
+			while (enumerator.MoveNext())
 			{
-				Kill(DestroyMode.Gib);
-				break;
+				BaseVehicle baseVehicle;
+				if ((baseVehicle = enumerator.get_Current() as BaseVehicle) != null && (baseVehicle.HasDriver() || baseVehicle.IsMoving() || baseVehicle.HasFlag(Flags.On)))
+				{
+					Kill(DestroyMode.Gib);
+					break;
+				}
 			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 	}
 

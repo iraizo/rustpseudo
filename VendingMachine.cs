@@ -628,7 +628,7 @@ public class VendingMachine : StorageContainer
 			{
 				List<Item> list = Pool.GetList<Item>();
 				GetItemsToSell(sellOrder, list);
-				sellOrder.inStock = ((list.Count >= 0) ? (list.Sum((Item x) => x.amount) / sellOrder.itemToSellAmount) : 0);
+				sellOrder.inStock = ((list.Count >= 0) ? (Enumerable.Sum<Item>((IEnumerable<Item>)list, (Func<Item, int>)((Item x) => x.amount)) / sellOrder.itemToSellAmount) : 0);
 				float itemCondition = 0f;
 				float itemConditionMax = 0f;
 				if (list.Count > 0 && list[0].hasCondition)
@@ -801,26 +801,24 @@ public class VendingMachine : StorageContainer
 		}
 		numberOfTransactions = Mathf.Clamp(numberOfTransactions, 1, list[0].hasCondition ? 1 : 1000000);
 		int num = sellOrder.itemToSellAmount * numberOfTransactions;
-		int num2 = list.Sum((Item x) => x.amount);
+		int num2 = Enumerable.Sum<Item>((IEnumerable<Item>)list, (Func<Item, int>)((Item x) => x.amount));
 		if (num > num2)
 		{
 			Pool.FreeList<Item>(ref list);
 			return false;
 		}
-		List<Item> source = buyer.inventory.FindItemIDs(sellOrder.currencyID);
+		List<Item> list2 = buyer.inventory.FindItemIDs(sellOrder.currencyID);
 		if (sellOrder.currencyIsBP)
 		{
-			source = (from x in buyer.inventory.FindItemIDs(blueprintBaseDef.itemid)
-				where x.blueprintTarget == sellOrder.currencyID
-				select x).ToList();
+			list2 = Enumerable.ToList<Item>(Enumerable.Where<Item>((IEnumerable<Item>)buyer.inventory.FindItemIDs(blueprintBaseDef.itemid), (Func<Item, bool>)((Item x) => x.blueprintTarget == sellOrder.currencyID)));
 		}
-		source = source.Where((Item x) => !x.hasCondition || (x.conditionNormalized >= 0.5f && x.maxConditionNormalized > 0.5f)).ToList();
-		if (source.Count == 0)
+		list2 = Enumerable.ToList<Item>(Enumerable.Where<Item>((IEnumerable<Item>)list2, (Func<Item, bool>)((Item x) => !x.hasCondition || (x.conditionNormalized >= 0.5f && x.maxConditionNormalized > 0.5f))));
+		if (list2.Count == 0)
 		{
 			Pool.FreeList<Item>(ref list);
 			return false;
 		}
-		int num3 = source.Sum((Item x) => x.amount);
+		int num3 = Enumerable.Sum<Item>((IEnumerable<Item>)list2, (Func<Item, int>)((Item x) => x.amount));
 		int num4 = sellOrder.currencyAmountPerItem * numberOfTransactions;
 		if (num3 < num4)
 		{
@@ -829,7 +827,7 @@ public class VendingMachine : StorageContainer
 		}
 		transactionActive = true;
 		int num5 = 0;
-		foreach (Item item3 in source)
+		foreach (Item item3 in list2)
 		{
 			int num6 = Mathf.Min(num4 - num5, item3.amount);
 			Item item = ((item3.amount > num6) ? item3.SplitItem(num6) : item3);

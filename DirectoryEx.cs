@@ -8,7 +8,7 @@ public static class DirectoryEx
 	{
 		for (int i = 0; i < names.Length; i++)
 		{
-			names[i] = Path.Combine(parent.FullName, names[i]);
+			names[i] = Path.Combine(((FileSystemInfo)parent).get_FullName(), names[i]);
 		}
 		Backup(names);
 	}
@@ -33,29 +33,33 @@ public static class DirectoryEx
 
 	public static void Backup(params string[] names)
 	{
+		//IL_000e: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0014: Expected O, but got Unknown
+		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
+		//IL_001f: Expected O, but got Unknown
 		for (int num = names.Length - 2; num >= 0; num--)
 		{
-			DirectoryInfo directoryInfo = new DirectoryInfo(names[num]);
-			DirectoryInfo directoryInfo2 = new DirectoryInfo(names[num + 1]);
-			if (directoryInfo.Exists)
+			DirectoryInfo val = new DirectoryInfo(names[num]);
+			DirectoryInfo val2 = new DirectoryInfo(names[num + 1]);
+			if (((FileSystemInfo)val).get_Exists())
 			{
-				if (directoryInfo2.Exists)
+				if (((FileSystemInfo)val2).get_Exists())
 				{
-					double totalHours = (DateTime.Now - directoryInfo2.LastWriteTime).TotalHours;
+					double totalHours = (DateTime.Now - ((FileSystemInfo)val2).get_LastWriteTime()).TotalHours;
 					int num2 = ((num != 0) ? (1 << num - 1) : 0);
 					if (totalHours >= (double)num2)
 					{
-						directoryInfo2.Delete(recursive: true);
-						directoryInfo.MoveToSafe(directoryInfo2.FullName);
+						val2.Delete(true);
+						val.MoveToSafe(((FileSystemInfo)val2).get_FullName());
 					}
 				}
 				else
 				{
-					if (!directoryInfo2.Parent.Exists)
+					if (!((FileSystemInfo)val2.get_Parent()).get_Exists())
 					{
-						directoryInfo2.Parent.Create();
+						val2.get_Parent().Create();
 					}
-					directoryInfo.MoveToSafe(directoryInfo2.FullName);
+					val.MoveToSafe(((FileSystemInfo)val2).get_FullName());
 				}
 			}
 		}
@@ -63,36 +67,42 @@ public static class DirectoryEx
 
 	public static void CopyAll(string sourceDirectory, string targetDirectory)
 	{
-		DirectoryInfo source = new DirectoryInfo(sourceDirectory);
+		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0007: Unknown result type (might be due to invalid IL or missing references)
+		//IL_000d: Expected O, but got Unknown
+		//IL_0013: Expected O, but got Unknown
+		DirectoryInfo val = new DirectoryInfo(sourceDirectory);
 		DirectoryInfo target = new DirectoryInfo(targetDirectory);
-		CopyAll(source, target);
+		CopyAll(val, target);
 	}
 
 	public static void CopyAll(DirectoryInfo source, DirectoryInfo target)
 	{
-		if (!(source.FullName.ToLower() == target.FullName.ToLower()) && source.Exists)
+		//IL_0055: Unknown result type (might be due to invalid IL or missing references)
+		//IL_005b: Expected O, but got Unknown
+		if (!(((FileSystemInfo)source).get_FullName().ToLower() == ((FileSystemInfo)target).get_FullName().ToLower()) && ((FileSystemInfo)source).get_Exists())
 		{
-			if (!target.Exists)
+			if (!((FileSystemInfo)target).get_Exists())
 			{
 				target.Create();
 			}
 			FileInfo[] files = source.GetFiles();
-			foreach (FileInfo fileInfo in files)
+			foreach (FileInfo val in files)
 			{
-				FileInfo fileInfo2 = new FileInfo(Path.Combine(target.FullName, fileInfo.Name));
-				fileInfo.CopyTo(fileInfo2.FullName, overwrite: true);
-				fileInfo2.CreationTime = fileInfo.CreationTime;
-				fileInfo2.LastAccessTime = fileInfo.LastAccessTime;
-				fileInfo2.LastWriteTime = fileInfo.LastWriteTime;
+				FileInfo val2 = new FileInfo(Path.Combine(((FileSystemInfo)target).get_FullName(), ((FileSystemInfo)val).get_Name()));
+				val.CopyTo(((FileSystemInfo)val2).get_FullName(), true);
+				((FileSystemInfo)val2).set_CreationTime(((FileSystemInfo)val).get_CreationTime());
+				((FileSystemInfo)val2).set_LastAccessTime(((FileSystemInfo)val).get_LastAccessTime());
+				((FileSystemInfo)val2).set_LastWriteTime(((FileSystemInfo)val).get_LastWriteTime());
 			}
 			DirectoryInfo[] directories = source.GetDirectories();
-			foreach (DirectoryInfo directoryInfo in directories)
+			foreach (DirectoryInfo val3 in directories)
 			{
-				DirectoryInfo directoryInfo2 = target.CreateSubdirectory(directoryInfo.Name);
-				CopyAll(directoryInfo, directoryInfo2);
-				directoryInfo2.CreationTime = directoryInfo.CreationTime;
-				directoryInfo2.LastAccessTime = directoryInfo.LastAccessTime;
-				directoryInfo2.LastWriteTime = directoryInfo.LastWriteTime;
+				DirectoryInfo val4 = target.CreateSubdirectory(((FileSystemInfo)val3).get_Name());
+				CopyAll(val3, val4);
+				((FileSystemInfo)val4).set_CreationTime(((FileSystemInfo)val3).get_CreationTime());
+				((FileSystemInfo)val4).set_LastAccessTime(((FileSystemInfo)val3).get_LastAccessTime());
+				((FileSystemInfo)val4).set_LastWriteTime(((FileSystemInfo)val3).get_LastWriteTime());
 			}
 		}
 	}

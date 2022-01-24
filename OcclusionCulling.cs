@@ -216,10 +216,10 @@ public class OcclusionCulling : MonoBehaviour
 			}
 			if (culling.useAsyncReadAPI)
 			{
-				if (asyncRequests.Count < 10)
+				if (asyncRequests.get_Count() < 10)
 				{
-					AsyncGPUReadbackRequest item = ((!culling.usePixelShaderFallback) ? AsyncGPUReadback.Request(resultBuffer, (Action<AsyncGPUReadbackRequest>)null) : AsyncGPUReadback.Request((Texture)(object)resultTexture, 0, (Action<AsyncGPUReadbackRequest>)null));
-					asyncRequests.Enqueue(item);
+					AsyncGPUReadbackRequest val = ((!culling.usePixelShaderFallback) ? AsyncGPUReadback.Request(resultBuffer, (Action<AsyncGPUReadbackRequest>)null) : AsyncGPUReadback.Request((Texture)(object)resultTexture, 0, (Action<AsyncGPUReadbackRequest>)null));
+					asyncRequests.Enqueue(val);
 				}
 			}
 			else if (readbackInst != IntPtr.Zero)
@@ -247,7 +247,7 @@ public class OcclusionCulling : MonoBehaviour
 			{
 				if (culling.useAsyncReadAPI)
 				{
-					while (asyncRequests.Count > 0)
+					while (asyncRequests.get_Count() > 0)
 					{
 						AsyncGPUReadbackRequest val = asyncRequests.Peek();
 						if (((AsyncGPUReadbackRequest)(ref val)).get_hasError())
@@ -385,7 +385,7 @@ public class OcclusionCulling : MonoBehaviour
 		public ValueType Add(ulong key, int capacityGranularity = 16)
 		{
 			ValueType val;
-			if (recycled.Count > 0)
+			if (recycled.get_Count() > 0)
 			{
 				val = recycled.Dequeue();
 				list[val.hashedPoolIndex] = val;
@@ -562,7 +562,7 @@ public class OcclusionCulling : MonoBehaviour
 
 		public int Size => count;
 
-		public int Count => count - recycled.Count;
+		public int Count => count - recycled.get_Count();
 
 		public OccludeeState this[int i]
 		{
@@ -619,7 +619,7 @@ public class OcclusionCulling : MonoBehaviour
 		public void Add(OccludeeState value, int capacityGranularity = 16)
 		{
 			int num;
-			if (recycled.Count > 0)
+			if (recycled.get_Count() > 0)
 			{
 				num = recycled.Dequeue();
 				list[num] = value;
@@ -889,7 +889,7 @@ public class OcclusionCulling : MonoBehaviour
 
 	public static OcclusionCulling Instance => instance;
 
-	public static bool Supported => supportedDeviceTypes.Contains(SystemInfo.get_graphicsDeviceType());
+	public static bool Supported => Enumerable.Contains<GraphicsDeviceType>((IEnumerable<GraphicsDeviceType>)supportedDeviceTypes, SystemInfo.get_graphicsDeviceType());
 
 	public static bool Enabled
 	{
@@ -1382,8 +1382,8 @@ public class OcclusionCulling : MonoBehaviour
 				}
 			}
 		}
-		bool flag = gridChanged.Count > 0;
-		while (gridChanged.Count > 0)
+		bool flag = gridChanged.get_Count() > 0;
+		while (gridChanged.get_Count() > 0)
 		{
 			Cell cell = gridChanged.Dequeue();
 			gridSet.inputData[cell.hashedPoolIndex] = Color.op_Implicit(cell.sphereBounds);
@@ -1404,7 +1404,7 @@ public class OcclusionCulling : MonoBehaviour
 
 	private static OccludeeState Allocate()
 	{
-		if (statePool.Count == 0)
+		if (statePool.get_Count() == 0)
 		{
 			GrowStatePool();
 		}
@@ -1578,7 +1578,7 @@ public class OcclusionCulling : MonoBehaviour
 	private static int FindFreeSlot(SimpleList<OccludeeState> occludees, SimpleList<OccludeeState.State> states, Queue<int> recycled)
 	{
 		int result;
-		if (recycled.Count > 0)
+		if (recycled.get_Count() > 0)
 		{
 			result = recycled.Dequeue();
 		}

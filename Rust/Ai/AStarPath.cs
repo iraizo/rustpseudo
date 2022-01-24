@@ -22,14 +22,14 @@ namespace Rust.AI
 				return false;
 			}
 			AStarNodeList aStarNodeList = new AStarNodeList();
-			HashSet<BasePathNode> hashSet = new HashSet<BasePathNode>();
+			HashSet<BasePathNode> val = new HashSet<BasePathNode>();
 			AStarNode item = new AStarNode(0f, Heuristic(start, goal), null, start);
 			aStarNodeList.Add(item);
 			while (aStarNodeList.Count > 0)
 			{
 				AStarNode aStarNode = aStarNodeList[0];
 				aStarNodeList.RemoveAt(0);
-				hashSet.Add(aStarNode.Node);
+				val.Add(aStarNode.Node);
 				if (aStarNode.Satisfies(goal))
 				{
 					path = new Stack<BasePathNode>();
@@ -49,7 +49,7 @@ namespace Rust.AI
 				}
 				foreach (BasePathNode item2 in aStarNode.Node.linked)
 				{
-					if (!hashSet.Contains(item2))
+					if (!val.Contains(item2))
 					{
 						float num = aStarNode.G + Heuristic(aStarNode.Node, item2);
 						AStarNode aStarNodeOf = aStarNodeList.GetAStarNodeOf(item2);

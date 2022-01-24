@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -42,7 +43,7 @@ public class FileSystem_Warmup : MonoBehaviour
 		Stopwatch sw = Stopwatch.StartNew();
 		for (int i = 0; i < prewarmAssets.Length; i++)
 		{
-			if (sw.Elapsed.TotalSeconds > (double)deltaTime || i == 0 || i == prewarmAssets.Length - 1)
+			if (sw.get_Elapsed().TotalSeconds > (double)deltaTime || i == 0 || i == prewarmAssets.Length - 1)
 			{
 				statusFunction?.Invoke(string.Format((format != null) ? format : "{0}/{1}", i + 1, prewarmAssets.Length));
 				yield return CoroutineEx.waitForEndOfFrame;
@@ -68,10 +69,7 @@ public class FileSystem_Warmup : MonoBehaviour
 
 	public static string[] GetAssetList()
 	{
-		return (from x in GameManifest.Current.prefabProperties
-			select x.name into x
-			where !ShouldIgnore(x)
-			select x).ToArray();
+		return Enumerable.ToArray<string>(Enumerable.Where<string>(Enumerable.Select<GameManifest.PrefabProperties, string>((IEnumerable<GameManifest.PrefabProperties>)GameManifest.Current.prefabProperties, (Func<GameManifest.PrefabProperties, string>)((GameManifest.PrefabProperties x) => x.name)), (Func<string, bool>)((string x) => !ShouldIgnore(x))));
 	}
 
 	private static void PrefabWarmup(string path)

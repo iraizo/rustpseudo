@@ -455,9 +455,9 @@ namespace ConVar
 			if (!((Object)(object)basePlayer == (Object)null) && (basePlayer.IsAdmin || basePlayer.IsDeveloper || Server.cinematic))
 			{
 				string @string = arg.GetString(0, "");
-				string contents = JsonConvert.SerializeObject((object)new SavedLoadout(basePlayer), (Formatting)1);
+				string text = JsonConvert.SerializeObject((object)new SavedLoadout(basePlayer), (Formatting)1);
 				string loadoutPath = GetLoadoutPath(@string);
-				File.WriteAllText(loadoutPath, contents);
+				File.WriteAllText(loadoutPath, text);
 				arg.ReplyWith("Saved loadout to " + loadoutPath);
 			}
 		}
@@ -509,8 +509,7 @@ namespace ConVar
 				arg.ReplyWith("0 definitions");
 				return;
 			}
-			string[] array = (from x in SteamInventory.get_Definitions()
-				select x.get_Name()).ToArray();
+			string[] array = Enumerable.ToArray<string>(Enumerable.Select<InventoryDef, string>((IEnumerable<InventoryDef>)SteamInventory.get_Definitions(), (Func<InventoryDef, string>)((InventoryDef x) => x.get_Name())));
 			arg.ReplyWith((object)array);
 		}
 

@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis;
 namespace System.Runtime.CompilerServices
 {
 	[CompilerGenerated]
-	[Embedded]
+	[Microsoft.CodeAnalysis.Embedded]
 	internal sealed class IsUnmanagedAttribute : Attribute
 	{
 	}

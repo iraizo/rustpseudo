@@ -596,10 +596,10 @@ public class ComputerStation : BaseMountable
 			{
 				return;
 			}
-			string[] array = info.msg.computerStation.bookmarks.Split(';');
+			string[] array = info.msg.computerStation.bookmarks.Split(new char[1] { ';' });
 			for (int i = 0; i < array.Length; i++)
 			{
-				string[] array2 = array[i].Split(':');
+				string[] array2 = array[i].Split(new char[1] { ':' });
 				if (array2.Length >= 2)
 				{
 					string text = array2[0];

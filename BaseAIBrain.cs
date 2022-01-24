@@ -1252,7 +1252,7 @@ public class BaseAIBrain<T> : EntityComponent<T>, IPet, IAISleepable, IAIDesign,
 
 	public List<AIState> GetStateList()
 	{
-		return states.Keys.ToList();
+		return Enumerable.ToList<AIState>((IEnumerable<AIState>)states.Keys);
 	}
 
 	public T GetEntity()

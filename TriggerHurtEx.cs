@@ -180,7 +180,7 @@ public class TriggerHurtEx : TriggerBase, IServerComponent, IHurtTrigger
 		{
 			return;
 		}
-		KeyValuePair<BaseEntity, EntityTriggerInfo>[] array = entityInfo.ToArray();
+		KeyValuePair<BaseEntity, EntityTriggerInfo>[] array = Enumerable.ToArray<KeyValuePair<BaseEntity, EntityTriggerInfo>>((IEnumerable<KeyValuePair<BaseEntity, EntityTriggerInfo>>)entityInfo);
 		for (int i = 0; i < array.Length; i++)
 		{
 			KeyValuePair<BaseEntity, EntityTriggerInfo> keyValuePair = array[i];

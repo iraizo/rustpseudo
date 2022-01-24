@@ -34,7 +34,7 @@ public class PrefabPoolWarmup
 		Stopwatch sw = Stopwatch.StartNew();
 		for (int i = 0; i < prewarmAssets.Length; i++)
 		{
-			if (sw.Elapsed.TotalSeconds > (double)deltaTime || i == 0 || i == prewarmAssets.Length - 1)
+			if (sw.get_Elapsed().TotalSeconds > (double)deltaTime || i == 0 || i == prewarmAssets.Length - 1)
 			{
 				statusFunction?.Invoke(string.Format((format != null) ? format : "{0}/{1}", i + 1, prewarmAssets.Length));
 				yield return CoroutineEx.waitForEndOfFrame;
@@ -48,9 +48,7 @@ public class PrefabPoolWarmup
 
 	public static string[] GetAssetList()
 	{
-		return (from x in GameManifest.Current.prefabProperties
-			where x.pool
-			select x.name).ToArray();
+		return Enumerable.ToArray<string>(Enumerable.Select<GameManifest.PrefabProperties, string>(Enumerable.Where<GameManifest.PrefabProperties>((IEnumerable<GameManifest.PrefabProperties>)GameManifest.Current.prefabProperties, (Func<GameManifest.PrefabProperties, bool>)((GameManifest.PrefabProperties x) => x.pool)), (Func<GameManifest.PrefabProperties, string>)((GameManifest.PrefabProperties x) => x.name)));
 	}
 
 	private static void PrefabWarmup(string path)

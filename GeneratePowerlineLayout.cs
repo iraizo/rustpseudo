@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -79,15 +80,15 @@ public class GeneratePowerlineLayout : ProceduralComponent
 		while (list4.Count != 0)
 		{
 			list7.Clear();
-			list7.AddRange(list4.Select((PathNode x) => x.node.point));
+			list7.AddRange(Enumerable.Select<PathNode, PathFinder.Point>((IEnumerable<PathNode>)list4, (Func<PathNode, PathFinder.Point>)((PathNode x) => x.node.point)));
 			list6.Clear();
-			list6.AddRange(list3.Select((PathNode x) => x.node.point));
+			list6.AddRange(Enumerable.Select<PathNode, PathFinder.Point>((IEnumerable<PathNode>)list3, (Func<PathNode, PathFinder.Point>)((PathNode x) => x.node.point)));
 			list6.AddRange(list5);
 			PathFinder.Node node3 = pathFinder.FindPathUndirected(list6, list7, 100000);
 			if (node3 == null)
 			{
 				PathNode copy2 = list4[0];
-				list3.AddRange(list4.Where((PathNode x) => (Object)(object)x.monument == (Object)(object)copy2.monument));
+				list3.AddRange(Enumerable.Where<PathNode>((IEnumerable<PathNode>)list4, (Func<PathNode, bool>)((PathNode x) => (Object)(object)x.monument == (Object)(object)copy2.monument)));
 				list4.RemoveAll((PathNode x) => (Object)(object)x.monument == (Object)(object)copy2.monument);
 				continue;
 			}
@@ -105,7 +106,7 @@ public class GeneratePowerlineLayout : ProceduralComponent
 			}
 			list2.Add(segment);
 			PathNode copy = list4.Find((PathNode x) => x.node.point == segment.start.point || x.node.point == segment.end.point);
-			list3.AddRange(list4.Where((PathNode x) => (Object)(object)x.monument == (Object)(object)copy.monument));
+			list3.AddRange(Enumerable.Where<PathNode>((IEnumerable<PathNode>)list4, (Func<PathNode, bool>)((PathNode x) => (Object)(object)x.monument == (Object)(object)copy.monument)));
 			list4.RemoveAll((PathNode x) => (Object)(object)x.monument == (Object)(object)copy.monument);
 			int num2 = 1;
 			for (PathFinder.Node node5 = node3; node5 != null; node5 = node5.next)

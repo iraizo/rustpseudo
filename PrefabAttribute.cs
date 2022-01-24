@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -33,7 +34,7 @@ public abstract class PrefabAttribute : MonoBehaviour, IPrefabPreProcess
 			{
 				return (T[])value;
 			}
-			value = Find(typeof(T)).Cast<T>().ToArray();
+			value = Enumerable.ToArray<T>(Enumerable.Cast<T>((IEnumerable)Find(typeof(T))));
 			cache.Add(typeof(T), value);
 			return (T[])value;
 		}

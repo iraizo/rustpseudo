@@ -55,4 +55,7 @@ public class SnowmobileChassisVisuals : VehicleWheelVisuals<Snowmobile>, IClient
 
 	[SerializeField]
 	private float treadVisualMaxExtension;
+
+	[SerializeField]
+	private float wheelSizeVisualMultiplier = 1f;
 }

@@ -737,12 +737,23 @@ public class WaterDynamics : MonoBehaviour
 
 	private void ProcessInteractions()
 	{
-		foreach (WaterInteraction interaction in interactions)
+		//IL_0005: Unknown result type (might be due to invalid IL or missing references)
+		//IL_000a: Unknown result type (might be due to invalid IL or missing references)
+		Enumerator<WaterInteraction> enumerator = interactions.GetEnumerator();
+		try
 		{
-			if (!((Object)(object)interaction == (Object)null))
+			while (enumerator.MoveNext())
 			{
-				interaction.UpdateTransform();
+				WaterInteraction current = enumerator.get_Current();
+				if (!((Object)(object)current == (Object)null))
+				{
+					current.UpdateTransform();
+				}
 			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 	}
 

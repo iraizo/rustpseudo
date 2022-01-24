@@ -176,19 +176,30 @@ public class LiquidContainer : ContainerIOEntity
 
 	public override void OnItemAddedOrRemoved(Item item, bool added)
 	{
+		//IL_003f: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0044: Unknown result type (might be due to invalid IL or missing references)
 		base.OnItemAddedOrRemoved(item, added);
 		UpdateOnFlag();
 		MarkDirtyForceUpdateOutputs();
 		((FacepunchBehaviour)this).Invoke(updateDrainAmountAction, 0.1f);
-		if (connectedList.Count > 0)
+		if (connectedList.get_Count() > 0)
 		{
 			List<IOEntity> list = Pool.GetList<IOEntity>();
-			foreach (IOEntity connected in connectedList)
+			Enumerator<IOEntity> enumerator = connectedList.GetEnumerator();
+			try
 			{
-				if ((Object)(object)connected != (Object)null)
+				while (enumerator.MoveNext())
 				{
-					list.Add(connected);
+					IOEntity current = enumerator.get_Current();
+					if ((Object)(object)current != (Object)null)
+					{
+						list.Add(current);
+					}
 				}
+			}
+			finally
+			{
+				((IDisposable)enumerator).Dispose();
 			}
 			foreach (IOEntity item2 in list)
 			{
@@ -204,12 +215,23 @@ public class LiquidContainer : ContainerIOEntity
 
 	private void ClearDrains()
 	{
-		foreach (IOEntity connected in connectedList)
+		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
+		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
+		Enumerator<IOEntity> enumerator = connectedList.GetEnumerator();
+		try
 		{
-			if ((Object)(object)connected != (Object)null)
+			while (enumerator.MoveNext())
 			{
-				connected.SetFuelType(null, null);
+				IOEntity current = enumerator.get_Current();
+				if ((Object)(object)current != (Object)null)
+				{
+					current.SetFuelType(null, null);
+				}
 			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 		connectedList.Clear();
 	}
@@ -406,7 +428,7 @@ public class LiquidContainer : ContainerIOEntity
 		{
 			((IDisposable)val)?.Dispose();
 		}
-		if (pushTargets.Count > 0)
+		if (pushTargets.get_Count() > 0)
 		{
 			((FacepunchBehaviour)this).InvokeRandomized(pushLiquidAction, 0f, autofillTickRate, autofillTickRate * 0.2f);
 		}
@@ -414,35 +436,46 @@ public class LiquidContainer : ContainerIOEntity
 
 	private void PushLiquidThroughOutputs()
 	{
+		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
+		//IL_006a: Unknown result type (might be due to invalid IL or missing references)
 		if (!HasLiquidItem())
 		{
 			((FacepunchBehaviour)this).CancelInvoke(pushLiquidAction);
 			return;
 		}
 		Item liquidItem = GetLiquidItem();
-		if (pushTargets.Count > 0)
+		if (pushTargets.get_Count() > 0)
 		{
-			int num = Mathf.Clamp(autofillTickAmount, 0, liquidItem.amount) / pushTargets.Count;
+			int num = Mathf.Clamp(autofillTickAmount, 0, liquidItem.amount) / pushTargets.get_Count();
 			if (num == 0 && liquidItem.amount > 0)
 			{
 				num = liquidItem.amount;
 			}
-			foreach (ContainerIOEntity pushTarget in pushTargets)
+			Enumerator<ContainerIOEntity> enumerator = pushTargets.GetEnumerator();
+			try
 			{
-				if (pushTarget.inventory.CanAcceptItem(liquidItem, 0) == ItemContainer.CanAcceptResult.CanAccept && (pushTarget.inventory.CanAccept(liquidItem) || pushTarget.inventory.FindItemByItemID(liquidItem.info.itemid) != null))
+				while (enumerator.MoveNext())
 				{
-					int num2 = Mathf.Clamp(num, 0, pushTarget.inventory.GetMaxTransferAmount(liquidItem.info));
-					pushTarget.inventory.AddItem(liquidItem.info, num2, 0uL);
-					liquidItem.amount -= num2;
-					liquidItem.MarkDirty();
-					if (liquidItem.amount <= 0)
+					ContainerIOEntity current = enumerator.get_Current();
+					if (current.inventory.CanAcceptItem(liquidItem, 0) == ItemContainer.CanAcceptResult.CanAccept && (current.inventory.CanAccept(liquidItem) || current.inventory.FindItemByItemID(liquidItem.info.itemid) != null))
 					{
-						break;
+						int num2 = Mathf.Clamp(num, 0, current.inventory.GetMaxTransferAmount(liquidItem.info));
+						current.inventory.AddItem(liquidItem.info, num2, 0uL);
+						liquidItem.amount -= num2;
+						liquidItem.MarkDirty();
+						if (liquidItem.amount <= 0)
+						{
+							break;
+						}
 					}
 				}
 			}
+			finally
+			{
+				((IDisposable)enumerator).Dispose();
+			}
 		}
-		if (liquidItem.amount <= 0 || pushTargets.Count == 0)
+		if (liquidItem.amount <= 0 || pushTargets.get_Count() == 0)
 		{
 			if (liquidItem.amount <= 0)
 			{
@@ -485,7 +518,7 @@ public class LiquidContainer : ContainerIOEntity
 			if ((Object)(object)iOEntity2 != (Object)null && (Object)(object)iOEntity2 != (Object)(object)fromSource && iOEntity2.AllowLiquidPassthrough(connected, sourceWorldPosition))
 			{
 				CheckPushLiquid(iOEntity2, ourFuel, fromSource, depth - 1);
-				if (pushTargets.Count >= 3)
+				if (pushTargets.get_Count() >= 3)
 				{
 					break;
 				}

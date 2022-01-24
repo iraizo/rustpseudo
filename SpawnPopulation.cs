@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using ConVar;
 using UnityEngine;
@@ -61,7 +63,7 @@ public class SpawnPopulation : BaseScriptableObject
 			}
 			if (ResourceList != null && ResourceList.Length != 0)
 			{
-				Prefabs = Prefab.Load<Spawnable>(ResourceList.Select((GameObjectRef x) => x.resourcePath).ToArray(), GameManager.server, PrefabAttribute.server);
+				Prefabs = Prefab.Load<Spawnable>(Enumerable.ToArray<string>(Enumerable.Select<GameObjectRef, string>((IEnumerable<GameObjectRef>)ResourceList, (Func<GameObjectRef, string>)((GameObjectRef x) => x.resourcePath))), GameManager.server, PrefabAttribute.server);
 			}
 			if (Prefabs == null || Prefabs.Length == 0)
 			{

@@ -683,9 +683,7 @@ public class Item
 			}
 			if (iTargetPos == -1 && allowStack && info.stackable > 1)
 			{
-				Item item2 = (from x in newcontainer.FindItemsByItemID(info.itemid)
-					orderby x.amount
-					select x).FirstOrDefault();
+				Item item2 = Enumerable.FirstOrDefault<Item>((IEnumerable<Item>)Enumerable.OrderBy<Item, int>((IEnumerable<Item>)newcontainer.FindItemsByItemID(info.itemid), (Func<Item, int>)((Item x) => x.amount)));
 				if (item2 != null && item2.CanStack(this))
 				{
 					int num3 = item2.MaxStackable();

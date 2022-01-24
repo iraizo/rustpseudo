@@ -44,29 +44,25 @@ public class ItemManager
 
 	public static void Initialize()
 	{
+		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
+		//IL_000e: Expected O, but got Unknown
 		if (itemList != null)
 		{
 			return;
 		}
-		Stopwatch stopwatch = new Stopwatch();
-		stopwatch.Start();
+		Stopwatch val = new Stopwatch();
+		val.Start();
 		GameObject[] array = FileSystem.LoadAllFromBundle<GameObject>("items.preload.bundle", "l:ItemDefinition");
 		if (array.Length == 0)
 		{
 			throw new Exception("items.preload.bundle has no items!");
 		}
-		if (stopwatch.Elapsed.TotalSeconds > 1.0)
+		if (val.get_Elapsed().TotalSeconds > 1.0)
 		{
-			Debug.Log((object)("Loading Items Took: " + stopwatch.Elapsed.TotalMilliseconds / 1000.0 + " seconds"));
+			Debug.Log((object)("Loading Items Took: " + val.get_Elapsed().TotalMilliseconds / 1000.0 + " seconds"));
 		}
-		List<ItemDefinition> list = (from x in array
-			select x.GetComponent<ItemDefinition>() into x
-			where (Object)(object)x != (Object)null
-			select x).ToList();
-		List<ItemBlueprint> list2 = (from x in array
-			select x.GetComponent<ItemBlueprint>() into x
-			where (Object)(object)x != (Object)null && x.userCraftable
-			select x).ToList();
+		List<ItemDefinition> list = Enumerable.ToList<ItemDefinition>(Enumerable.Where<ItemDefinition>(Enumerable.Select<GameObject, ItemDefinition>((IEnumerable<GameObject>)array, (Func<GameObject, ItemDefinition>)((GameObject x) => x.GetComponent<ItemDefinition>())), (Func<ItemDefinition, bool>)((ItemDefinition x) => (Object)(object)x != (Object)null)));
+		List<ItemBlueprint> list2 = Enumerable.ToList<ItemBlueprint>(Enumerable.Where<ItemBlueprint>(Enumerable.Select<GameObject, ItemBlueprint>((IEnumerable<GameObject>)array, (Func<GameObject, ItemBlueprint>)((GameObject x) => x.GetComponent<ItemBlueprint>())), (Func<ItemBlueprint, bool>)((ItemBlueprint x) => (Object)(object)x != (Object)null && x.userCraftable)));
 		Dictionary<int, ItemDefinition> dictionary = new Dictionary<int, ItemDefinition>();
 		Dictionary<string, ItemDefinition> dictionary2 = new Dictionary<string, ItemDefinition>(StringComparer.OrdinalIgnoreCase);
 		foreach (ItemDefinition item in list)
@@ -88,14 +84,12 @@ public class ItemManager
 				dictionary2.Add(item.shortname, item);
 			}
 		}
-		stopwatch.Stop();
-		if (stopwatch.Elapsed.TotalSeconds > 1.0)
+		val.Stop();
+		if (val.get_Elapsed().TotalSeconds > 1.0)
 		{
-			Debug.Log((object)("Building Items Took: " + stopwatch.Elapsed.TotalMilliseconds / 1000.0 + " seconds / Items: " + list.Count + " / Blueprints: " + list2.Count));
+			Debug.Log((object)("Building Items Took: " + val.get_Elapsed().TotalMilliseconds / 1000.0 + " seconds / Items: " + list.Count + " / Blueprints: " + list2.Count));
 		}
-		defaultBlueprints = (from x in list2
-			where !x.NeedsSteamItem && !x.NeedsSteamDLC && x.defaultBlueprint
-			select x.targetItem.itemid).ToArray();
+		defaultBlueprints = Enumerable.ToArray<int>(Enumerable.Select<ItemBlueprint, int>(Enumerable.Where<ItemBlueprint>((IEnumerable<ItemBlueprint>)list2, (Func<ItemBlueprint, bool>)((ItemBlueprint x) => !x.NeedsSteamItem && !x.NeedsSteamDLC && x.defaultBlueprint)), (Func<ItemBlueprint, int>)((ItemBlueprint x) => x.targetItem.itemid)));
 		itemList = list;
 		bpList = list2;
 		itemDictionary = dictionary;

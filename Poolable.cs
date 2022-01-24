@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Linq;
 using ConVar;
 using UnityEngine;
@@ -86,8 +87,7 @@ public class Poolable : MonoBehaviour, IClientComponent, IPrefabPostProcess
 	public void Initialize(uint id)
 	{
 		prefabID = id;
-		behaviours = ((Component)this).get_gameObject().GetComponentsInChildren(typeof(Behaviour), true).OfType<Behaviour>()
-			.ToArray();
+		behaviours = Enumerable.ToArray<Behaviour>(Enumerable.OfType<Behaviour>((IEnumerable)((Component)this).get_gameObject().GetComponentsInChildren(typeof(Behaviour), true)));
 		rigidbodies = ((Component)this).get_gameObject().GetComponentsInChildren<Rigidbody>(true);
 		colliders = ((Component)this).get_gameObject().GetComponentsInChildren<Collider>(true);
 		lodgroups = ((Component)this).get_gameObject().GetComponentsInChildren<LODGroup>(true);

@@ -11,42 +11,50 @@ namespace Windows
 
 		internal float nextUpdate;
 
-		public bool valid => Console.BufferWidth > 0;
+		public bool valid => Console.get_BufferWidth() > 0;
 
-		public int lineWidth => Console.BufferWidth;
+		public int lineWidth => Console.get_BufferWidth();
 
 		public event Action<string> OnInputText;
 
 		public void ClearLine(int numLines)
 		{
-			Console.CursorLeft = 0;
+			Console.set_CursorLeft(0);
 			Console.Write(new string(' ', lineWidth * numLines));
-			Console.CursorTop -= numLines;
-			Console.CursorLeft = 0;
+			Console.set_CursorTop(Console.get_CursorTop() - numLines);
+			Console.set_CursorLeft(0);
 		}
 
 		public void RedrawInputLine()
 		{
-			ConsoleColor backgroundColor = Console.BackgroundColor;
-			ConsoleColor foregroundColor = Console.ForegroundColor;
+			//IL_0000: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0005: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0006: Unknown result type (might be due to invalid IL or missing references)
+			//IL_000b: Unknown result type (might be due to invalid IL or missing references)
+			//IL_008c: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0092: Unknown result type (might be due to invalid IL or missing references)
+			//IL_00e5: Unknown result type (might be due to invalid IL or missing references)
+			//IL_00eb: Unknown result type (might be due to invalid IL or missing references)
+			ConsoleColor backgroundColor = Console.get_BackgroundColor();
+			ConsoleColor foregroundColor = Console.get_ForegroundColor();
 			try
 			{
-				Console.ForegroundColor = ConsoleColor.White;
-				Console.CursorTop++;
+				Console.set_ForegroundColor((ConsoleColor)15);
+				Console.set_CursorTop(Console.get_CursorTop() + 1);
 				for (int i = 0; i < statusText.Length; i++)
 				{
-					Console.CursorLeft = 0;
+					Console.set_CursorLeft(0);
 					Console.Write(statusText[i].PadRight(lineWidth));
 				}
-				Console.CursorTop -= statusText.Length + 1;
-				Console.CursorLeft = 0;
-				Console.BackgroundColor = ConsoleColor.Black;
-				Console.ForegroundColor = ConsoleColor.Green;
+				Console.set_CursorTop(Console.get_CursorTop() - (statusText.Length + 1));
+				Console.set_CursorLeft(0);
+				Console.set_BackgroundColor((ConsoleColor)0);
+				Console.set_ForegroundColor((ConsoleColor)10);
 				ClearLine(1);
 				if (inputString.Length == 0)
 				{
-					Console.BackgroundColor = backgroundColor;
-					Console.ForegroundColor = foregroundColor;
+					Console.set_BackgroundColor(backgroundColor);
+					Console.set_ForegroundColor(foregroundColor);
 					return;
 				}
 				if (inputString.Length < lineWidth - 2)
@@ -61,8 +69,8 @@ namespace Windows
 			catch (Exception)
 			{
 			}
-			Console.BackgroundColor = backgroundColor;
-			Console.ForegroundColor = foregroundColor;
+			Console.set_BackgroundColor(backgroundColor);
+			Console.set_ForegroundColor(foregroundColor);
 		}
 
 		internal void OnBackspace()
@@ -83,7 +91,7 @@ namespace Windows
 		internal void OnEnter()
 		{
 			ClearLine(statusText.Length);
-			Console.ForegroundColor = ConsoleColor.Green;
+			Console.set_ForegroundColor((ConsoleColor)10);
 			Console.WriteLine("> " + inputString);
 			string obj = inputString;
 			inputString = "";
@@ -96,6 +104,14 @@ namespace Windows
 
 		public void Update()
 		{
+			//IL_003c: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0041: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0044: Unknown result type (might be due to invalid IL or missing references)
+			//IL_004b: Invalid comparison between Unknown and I4
+			//IL_0056: Unknown result type (might be due to invalid IL or missing references)
+			//IL_005c: Invalid comparison between Unknown and I4
+			//IL_0067: Unknown result type (might be due to invalid IL or missing references)
+			//IL_006e: Invalid comparison between Unknown and I4
 			if (!valid)
 			{
 				return;
@@ -107,7 +123,7 @@ namespace Windows
 			}
 			try
 			{
-				if (!Console.KeyAvailable)
+				if (!Console.get_KeyAvailable())
 				{
 					return;
 				}
@@ -116,22 +132,22 @@ namespace Windows
 			{
 				return;
 			}
-			ConsoleKeyInfo consoleKeyInfo = Console.ReadKey();
-			if (consoleKeyInfo.Key == ConsoleKey.Enter)
+			ConsoleKeyInfo val = Console.ReadKey();
+			if ((int)((ConsoleKeyInfo)(ref val)).get_Key() == 13)
 			{
 				OnEnter();
 			}
-			else if (consoleKeyInfo.Key == ConsoleKey.Backspace)
+			else if ((int)((ConsoleKeyInfo)(ref val)).get_Key() == 8)
 			{
 				OnBackspace();
 			}
-			else if (consoleKeyInfo.Key == ConsoleKey.Escape)
+			else if ((int)((ConsoleKeyInfo)(ref val)).get_Key() == 27)
 			{
 				OnEscape();
 			}
-			else if (consoleKeyInfo.KeyChar != 0)
+			else if (((ConsoleKeyInfo)(ref val)).get_KeyChar() != 0)
 			{
-				inputString += consoleKeyInfo.KeyChar;
+				inputString += ((ConsoleKeyInfo)(ref val)).get_KeyChar();
 				RedrawInputLine();
 			}
 		}

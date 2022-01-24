@@ -28,11 +28,11 @@ public class TriggerTrainCollisions : TriggerBase
 	[NonSerialized]
 	public HashSet<Collider> colliderContents = new HashSet<Collider>();
 
-	public bool HasAnyStaticContents => staticContents.Count > 0;
+	public bool HasAnyStaticContents => staticContents.get_Count() > 0;
 
-	public bool HasAnyTrainContents => trainContents.Count > 0;
+	public bool HasAnyTrainContents => trainContents.get_Count() > 0;
 
-	public bool HasAnyOtherRigidbodyContents => otherRigidbodyContents.Count > 0;
+	public bool HasAnyOtherRigidbodyContents => otherRigidbodyContents.get_Count() > 0;
 
 	public bool HasAnyNonStaticContents
 	{
@@ -94,9 +94,9 @@ public class TriggerTrainCollisions : TriggerBase
 			return;
 		}
 		Collider[] components = obj.GetComponents<Collider>();
-		foreach (Collider item in components)
+		foreach (Collider val in components)
 		{
-			colliderContents.Remove(item);
+			colliderContents.Remove(val);
 		}
 		if (!staticContents.Remove(obj))
 		{
@@ -120,12 +120,23 @@ public class TriggerTrainCollisions : TriggerBase
 		base.OnObjectRemoved(obj);
 		bool HasAnotherColliderFor<T>(T component) where T : Component
 		{
-			foreach (Collider colliderContent in colliderContents)
+			//IL_0006: Unknown result type (might be due to invalid IL or missing references)
+			//IL_000b: Unknown result type (might be due to invalid IL or missing references)
+			Enumerator<Collider> enumerator = colliderContents.GetEnumerator();
+			try
 			{
-				if ((Object)(object)colliderContent != (Object)null && (Object)(object)((Component)colliderContent).GetComponentInParent<T>() == (Object)(object)component)
+				while (enumerator.MoveNext())
 				{
-					return true;
+					Collider current = enumerator.get_Current();
+					if ((Object)(object)current != (Object)null && (Object)(object)((Component)current).GetComponentInParent<T>() == (Object)(object)component)
+					{
+						return true;
+					}
 				}
+			}
+			finally
+			{
+				((IDisposable)enumerator).Dispose();
 			}
 			return false;
 		}

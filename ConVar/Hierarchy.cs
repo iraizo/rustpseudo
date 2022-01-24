@@ -14,7 +14,7 @@ namespace ConVar
 		{
 			if ((Object)(object)currentDir == (Object)null)
 			{
-				return TransformUtil.GetRootObjects().ToArray();
+				return Enumerable.ToArray<Transform>((IEnumerable<Transform>)TransformUtil.GetRootObjects());
 			}
 			List<Transform> list = new List<Transform>();
 			for (int i = 0; i < currentDir.get_transform().get_childCount(); i++)
@@ -30,9 +30,7 @@ namespace ConVar
 			string text = "";
 			string filter = args.GetString(0, "");
 			text = ((!Object.op_Implicit((Object)(object)currentDir)) ? (text + "Listing .\n\n") : (text + "Listing " + currentDir.get_transform().GetRecursiveName() + "\n\n"));
-			foreach (Transform item in (from x in GetCurrent()
-				where string.IsNullOrEmpty(filter) || ((Object)x).get_name().Contains(filter)
-				select x).Take(40))
+			foreach (Transform item in Enumerable.Take<Transform>(Enumerable.Where<Transform>((IEnumerable<Transform>)GetCurrent(), (Func<Transform, bool>)((Transform x) => string.IsNullOrEmpty(filter) || ((Object)x).get_name().Contains(filter))), 40))
 			{
 				text += $"   {((Object)item).get_name()} [{item.get_childCount()}]\n";
 			}
@@ -66,10 +64,10 @@ namespace ConVar
 				}
 				return;
 			}
-			Transform val = GetCurrent().FirstOrDefault((Transform x) => ((Object)x).get_name().ToLower() == args.FullString.ToLower());
+			Transform val = Enumerable.FirstOrDefault<Transform>((IEnumerable<Transform>)GetCurrent(), (Func<Transform, bool>)((Transform x) => ((Object)x).get_name().ToLower() == args.FullString.ToLower()));
 			if ((Object)(object)val == (Object)null)
 			{
-				val = GetCurrent().FirstOrDefault((Transform x) => ((Object)x).get_name().StartsWith(args.FullString, StringComparison.CurrentCultureIgnoreCase));
+				val = Enumerable.FirstOrDefault<Transform>((IEnumerable<Transform>)GetCurrent(), (Func<Transform, bool>)((Transform x) => ((Object)x).get_name().StartsWith(args.FullString, StringComparison.CurrentCultureIgnoreCase)));
 			}
 			if (Object.op_Implicit((Object)(object)val))
 			{
@@ -89,16 +87,12 @@ namespace ConVar
 			{
 				return;
 			}
-			IEnumerable<Transform> enumerable = from x in GetCurrent()
-				where ((Object)x).get_name().ToLower() == args.FullString.ToLower()
-				select x;
-			if (enumerable.Count() == 0)
+			IEnumerable<Transform> enumerable = Enumerable.Where<Transform>((IEnumerable<Transform>)GetCurrent(), (Func<Transform, bool>)((Transform x) => ((Object)x).get_name().ToLower() == args.FullString.ToLower()));
+			if (Enumerable.Count<Transform>(enumerable) == 0)
 			{
-				enumerable = from x in GetCurrent()
-					where ((Object)x).get_name().StartsWith(args.FullString, StringComparison.CurrentCultureIgnoreCase)
-					select x;
+				enumerable = Enumerable.Where<Transform>((IEnumerable<Transform>)GetCurrent(), (Func<Transform, bool>)((Transform x) => ((Object)x).get_name().StartsWith(args.FullString, StringComparison.CurrentCultureIgnoreCase)));
 			}
-			if (enumerable.Count() == 0)
+			if (Enumerable.Count<Transform>(enumerable) == 0)
 			{
 				args.ReplyWith("Couldn't find  " + args.FullString);
 				return;
@@ -118,7 +112,7 @@ namespace ConVar
 					GameManager.Destroy(((Component)item).get_gameObject());
 				}
 			}
-			args.ReplyWith("Deleted " + enumerable.Count() + " objects");
+			args.ReplyWith("Deleted " + Enumerable.Count<Transform>(enumerable) + " objects");
 		}
 
 		public Hierarchy()

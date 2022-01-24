@@ -437,6 +437,8 @@ public class WaterSystem : MonoBehaviour
 	{
 		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
 		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
+		//IL_004c: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0051: Unknown result type (might be due to invalid IL or missing references)
 		if ((Object)(object)Ocean != (Object)null)
 		{
 			Ocean.Transform.set_position(Vector3Ex.WithY(Ocean.Transform.get_position(), OceanLevel));
@@ -445,9 +447,17 @@ public class WaterSystem : MonoBehaviour
 		{
 			UpdateOceanLevel_Native(OceanLevel);
 		}
-		foreach (WaterBody waterBody in WaterBodies)
+		Enumerator<WaterBody> enumerator = WaterBodies.GetEnumerator();
+		try
 		{
-			waterBody.OnOceanLevelChanged(OceanLevel);
+			while (enumerator.MoveNext())
+			{
+				enumerator.get_Current().OnOceanLevelChanged(OceanLevel);
+			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 	}
 

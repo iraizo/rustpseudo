@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Facepunch;
 using ProtoBuf;
@@ -138,7 +139,7 @@ namespace Rust.Modular
 
 		public void RefreshLoadoutData()
 		{
-			isUsable = base.inventory.IsFull() && base.inventory.itemList.All((Item item) => !item.isBroken);
+			isUsable = base.inventory.IsFull() && Enumerable.All<Item>((IEnumerable<Item>)base.inventory.itemList, (Func<Item, bool>)((Item item) => !item.isBroken));
 			accelerationBoostPercent = GetContainerItemsValueFor(EngineItemTypeEx.BoostsAcceleration) / (float)accelerationBoostSlots;
 			topSpeedBoostPercent = GetContainerItemsValueFor(EngineItemTypeEx.BoostsTopSpeed) / (float)topSpeedBoostSlots;
 			fuelEconomyBoostPercent = GetContainerItemsValueFor(EngineItemTypeEx.BoostsFuelEconomy) / (float)fuelEconomyBoostSlots;

@@ -121,7 +121,7 @@ public class CoverageQueries : MonoBehaviour
 		public void IssueRead()
 		{
 			//IL_001d: Unknown result type (might be due to invalid IL or missing references)
-			if (asyncRequests.Count < 10)
+			if (asyncRequests.get_Count() < 10)
 			{
 				asyncRequests.Enqueue(AsyncGPUReadback.Request((Texture)(object)resultTexture, 0, (Action<AsyncGPUReadbackRequest>)null));
 			}
@@ -141,7 +141,7 @@ public class CoverageQueries : MonoBehaviour
 			{
 				return;
 			}
-			while (asyncRequests.Count > 0)
+			while (asyncRequests.get_Count() > 0)
 			{
 				AsyncGPUReadbackRequest val = asyncRequests.Peek();
 				if (((AsyncGPUReadbackRequest)(ref val)).get_hasError())

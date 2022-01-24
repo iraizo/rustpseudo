@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Rust;
 using UnityEngine;
@@ -70,7 +71,7 @@ public class TeslaCoil : IOEntity
 		lastDischargeTime = Time.get_time();
 		if (targetTrigger.entityContents != null)
 		{
-			BaseEntity[] array = targetTrigger.entityContents.ToArray();
+			BaseEntity[] array = Enumerable.ToArray<BaseEntity>((IEnumerable<BaseEntity>)targetTrigger.entityContents);
 			if (array != null)
 			{
 				BaseEntity[] array2 = array;

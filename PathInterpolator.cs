@@ -38,7 +38,7 @@ public class PathInterpolator
 		Points = points;
 		MinIndex = DefaultMinIndex;
 		MaxIndex = DefaultMaxIndex;
-		Circular = Vector3.Distance(points[0], points[points.Length - 1]) < 0.1f;
+		Circular = Vector3.Distance(points[0], points[^1]) < 0.1f;
 	}
 
 	public PathInterpolator(Vector3[] points, Vector3[] tangents)

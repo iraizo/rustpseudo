@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ConVar;
@@ -62,7 +63,7 @@ public class CombatLog
 	public void Init()
 	{
 		storage = Get(player.userID);
-		LastActive = storage.LastOrDefault().time;
+		LastActive = Enumerable.LastOrDefault<Event>((IEnumerable<Event>)storage).time;
 	}
 
 	public void Save()
@@ -131,7 +132,7 @@ public class CombatLog
 		{
 			storage.Enqueue(val);
 			int num = Mathf.Max(0, Server.combatlogsize);
-			while (storage.Count > num)
+			while (storage.get_Count() > num)
 			{
 				storage.Dequeue();
 			}
@@ -142,11 +143,13 @@ public class CombatLog
 	{
 		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0027: Expected O, but got Unknown
+		//IL_00f3: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00f8: Unknown result type (might be due to invalid IL or missing references)
 		if (storage == null)
 		{
 			return string.Empty;
 		}
-		if (storage.Count == 0)
+		if (storage.get_Count() == 0)
 		{
 			return "Combat log empty.";
 		}
@@ -167,56 +170,65 @@ public class CombatLog
 		val.AddColumn("integrity");
 		val.AddColumn("travel");
 		val.AddColumn("mismatch");
-		int num = storage.Count - count;
+		int num = storage.get_Count() - count;
 		int combatlogdelay = Server.combatlogdelay;
 		int num2 = 0;
-		foreach (Event item in storage)
+		Enumerator<Event> enumerator = storage.GetEnumerator();
+		try
 		{
-			if (num > 0)
+			while (enumerator.MoveNext())
 			{
-				num--;
-			}
-			else if (filterByAttacker == 0 || item.attacker_id == filterByAttacker)
-			{
-				float num3 = Time.get_realtimeSinceStartup() - item.time;
-				if (num3 >= (float)combatlogdelay)
+				Event current = enumerator.get_Current();
+				if (num > 0)
 				{
-					string text = num3.ToString("0.00s");
-					string attacker = item.attacker;
-					uint attacker_id = item.attacker_id;
-					string text2 = attacker_id.ToString();
-					string target = item.target;
-					attacker_id = item.target_id;
-					string text3 = attacker_id.ToString();
-					string weapon = item.weapon;
-					string ammo = item.ammo;
-					string text4 = HitAreaUtil.Format(item.area).ToLower();
-					float distance = item.distance;
-					string text5 = distance.ToString("0.0m");
-					distance = item.health_old;
-					string text6 = distance.ToString("0.0");
-					distance = item.health_new;
-					string text7 = distance.ToString("0.0");
-					string info = item.info;
-					int proj_hits = item.proj_hits;
-					string text8 = proj_hits.ToString();
-					distance = item.proj_integrity;
-					string text9 = distance.ToString("0.00");
-					distance = item.proj_travel;
-					string text10 = distance.ToString("0.00s");
-					distance = item.proj_mismatch;
-					string text11 = distance.ToString("0.00m");
-					val.AddRow(new string[16]
+					num--;
+				}
+				else if (filterByAttacker == 0 || current.attacker_id == filterByAttacker)
+				{
+					float num3 = Time.get_realtimeSinceStartup() - current.time;
+					if (num3 >= (float)combatlogdelay)
 					{
-						text, attacker, text2, target, text3, weapon, ammo, text4, text5, text6,
-						text7, info, text8, text9, text10, text11
-					});
-				}
-				else
-				{
-					num2++;
+						string text = num3.ToString("0.00s");
+						string attacker = current.attacker;
+						uint attacker_id = current.attacker_id;
+						string text2 = attacker_id.ToString();
+						string target = current.target;
+						attacker_id = current.target_id;
+						string text3 = attacker_id.ToString();
+						string weapon = current.weapon;
+						string ammo = current.ammo;
+						string text4 = HitAreaUtil.Format(current.area).ToLower();
+						float distance = current.distance;
+						string text5 = distance.ToString("0.0m");
+						distance = current.health_old;
+						string text6 = distance.ToString("0.0");
+						distance = current.health_new;
+						string text7 = distance.ToString("0.0");
+						string info = current.info;
+						int proj_hits = current.proj_hits;
+						string text8 = proj_hits.ToString();
+						distance = current.proj_integrity;
+						string text9 = distance.ToString("0.00");
+						distance = current.proj_travel;
+						string text10 = distance.ToString("0.00s");
+						distance = current.proj_mismatch;
+						string text11 = distance.ToString("0.00m");
+						val.AddRow(new string[16]
+						{
+							text, attacker, text2, target, text3, weapon, ammo, text4, text5, text6,
+							text7, info, text8, text9, text10, text11
+						});
+					}
+					else
+					{
+						num2++;
+					}
 				}
 			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 		string text12 = ((object)val).ToString();
 		if (num2 > 0)

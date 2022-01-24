@@ -192,7 +192,7 @@ public class WildlifeTrap : StorageContainer
 
 	public TrappableWildlife GetRandomWildlife()
 	{
-		int num = targetWildlife.Sum((WildlifeWeight x) => x.weight);
+		int num = Enumerable.Sum<WildlifeWeight>((IEnumerable<WildlifeWeight>)targetWildlife, (Func<WildlifeWeight, int>)((WildlifeWeight x) => x.weight));
 		int num2 = Random.Range(0, num);
 		for (int i = 0; i < targetWildlife.Count; i++)
 		{

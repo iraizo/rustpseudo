@@ -1,5 +1,6 @@
 using System;
 using System.Buffers;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -46,7 +47,7 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel
 
 		public int MaxLength;
 
-		public int Length => queueInternal.Count;
+		public int Length => queueInternal.get_Count();
 
 		public bool Contains(BaseNetworkable ent)
 		{
@@ -59,7 +60,7 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel
 			{
 				queueInternal.Add(ent);
 			}
-			MaxLength = Mathf.Max(MaxLength, queueInternal.Count);
+			MaxLength = Mathf.Max(MaxLength, queueInternal.get_Count());
 		}
 
 		public void Add(BaseNetworkable[] ent)
@@ -72,6 +73,8 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel
 
 		public void Clear(Group group)
 		{
+			//IL_002b: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0030: Unknown result type (might be due to invalid IL or missing references)
 			TimeWarning val = TimeWarning.New("NetworkQueueList.Clear", 0);
 			try
 			{
@@ -82,21 +85,30 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel
 						return;
 					}
 					List<BaseNetworkable> list = Pool.GetList<BaseNetworkable>();
-					foreach (BaseNetworkable item in queueInternal)
+					Enumerator<BaseNetworkable> enumerator = queueInternal.GetEnumerator();
+					try
 					{
-						if ((Object)(object)item == (Object)null || item.net?.group == null || item.net.group == group)
+						while (enumerator.MoveNext())
 						{
-							list.Add(item);
+							BaseNetworkable current = enumerator.get_Current();
+							if ((Object)(object)current == (Object)null || current.net?.group == null || current.net.group == group)
+							{
+								list.Add(current);
+							}
 						}
 					}
-					foreach (BaseNetworkable item2 in list)
+					finally
 					{
-						queueInternal.Remove(item2);
+						((IDisposable)enumerator).Dispose();
+					}
+					foreach (BaseNetworkable item in list)
+					{
+						queueInternal.Remove(item);
 					}
 					Pool.FreeList<BaseNetworkable>(ref list);
 					return;
 				}
-				queueInternal.RemoveWhere((BaseNetworkable x) => (Object)(object)x == (Object)null || x.net?.group == null || !x.net.group.get_isGlobal());
+				queueInternal.RemoveWhere((Predicate<BaseNetworkable>)((BaseNetworkable x) => (Object)(object)x == (Object)null || x.net?.group == null || !x.net.group.get_isGlobal()));
 			}
 			finally
 			{
@@ -2445,7 +2457,9 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel
 
 	private void SendEntityUpdates(NetworkQueueList queue)
 	{
-		if (queue.queueInternal.Count == 0)
+		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0042: Unknown result type (might be due to invalid IL or missing references)
+		if (queue.queueInternal.get_Count() == 0)
 		{
 			return;
 		}
@@ -2455,22 +2469,31 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel
 		try
 		{
 			int num2 = 0;
-			foreach (BaseNetworkable item in queue.queueInternal)
+			Enumerator<BaseNetworkable> enumerator = queue.queueInternal.GetEnumerator();
+			try
 			{
-				SendEntitySnapshot(item);
-				list.Add(item);
-				num2++;
-				if (num2 > num)
+				while (enumerator.MoveNext())
 				{
-					break;
+					BaseNetworkable current = enumerator.get_Current();
+					SendEntitySnapshot(current);
+					list.Add(current);
+					num2++;
+					if (num2 > num)
+					{
+						break;
+					}
 				}
+			}
+			finally
+			{
+				((IDisposable)enumerator).Dispose();
 			}
 		}
 		finally
 		{
 			((IDisposable)val)?.Dispose();
 		}
-		if (num > queue.queueInternal.Count)
+		if (num > queue.queueInternal.get_Count())
 		{
 			queue.queueInternal.Clear();
 		}
@@ -2489,7 +2512,7 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel
 				((IDisposable)val)?.Dispose();
 			}
 		}
-		if (queue.queueInternal.Count == 0 && queue.MaxLength > 2048)
+		if (queue.queueInternal.get_Count() == 0 && queue.MaxLength > 2048)
 		{
 			queue.queueInternal.Clear();
 			queue.queueInternal = new HashSet<BaseNetworkable>();
@@ -3526,7 +3549,7 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel
 					return default(ArraySegment<byte>);
 				}
 				byte[] array2 = ArrayPool<byte>.Shared.Rent(array.Length);
-				new System.Span<byte>(array).CopyTo(System.Span<byte>.op_Implicit(array2));
+				new Span<byte>(array).CopyTo(array2);
 				return new ArraySegment<byte>(array2, 0, array.Length);
 			}
 			catch (Exception ex)
@@ -3566,7 +3589,7 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel
 				try
 				{
 					byte[] array = new byte[relationship.mugshotData.Count];
-					MemoryExtensions.AsSpan<byte>(relationship.mugshotData).CopyTo(System.Span<byte>.op_Implicit(array));
+					relationship.mugshotData.AsSpan().CopyTo(array);
 					uint steamIdHash = RelationshipManager.GetSteamIdHash(userID, relationship.info.playerID);
 					uint num = FileStorage.server.Store(array, FileStorage.Type.jpg, RelationshipManager.ServerInstance.net.ID, steamIdHash);
 					if (num != relationship.info.mugshotCrc)
@@ -4709,7 +4732,7 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel
 
 	public void CleanupExpiredProjectiles()
 	{
-		foreach (KeyValuePair<int, FiredProjectile> item in firedProjectiles.Where((KeyValuePair<int, FiredProjectile> x) => x.Value.firedTime < Time.get_realtimeSinceStartup() - 8f - 1f).ToList())
+		foreach (KeyValuePair<int, FiredProjectile> item in Enumerable.ToList<KeyValuePair<int, FiredProjectile>>(Enumerable.Where<KeyValuePair<int, FiredProjectile>>((IEnumerable<KeyValuePair<int, FiredProjectile>>)firedProjectiles, (Func<KeyValuePair<int, FiredProjectile>, bool>)((KeyValuePair<int, FiredProjectile> x) => x.Value.firedTime < Time.get_realtimeSinceStartup() - 8f - 1f))))
 		{
 			firedProjectiles.Remove(item.Key);
 		}
@@ -6893,17 +6916,17 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel
 
 	private static BasePlayer Find(string strNameOrIDOrIP, IEnumerable<BasePlayer> list)
 	{
-		BasePlayer basePlayer = list.FirstOrDefault((BasePlayer x) => x.UserIDString == strNameOrIDOrIP);
+		BasePlayer basePlayer = Enumerable.FirstOrDefault<BasePlayer>(list, (Func<BasePlayer, bool>)((BasePlayer x) => x.UserIDString == strNameOrIDOrIP));
 		if (Object.op_Implicit((Object)(object)basePlayer))
 		{
 			return basePlayer;
 		}
-		BasePlayer basePlayer2 = list.FirstOrDefault((BasePlayer x) => x.displayName.StartsWith(strNameOrIDOrIP, StringComparison.CurrentCultureIgnoreCase));
+		BasePlayer basePlayer2 = Enumerable.FirstOrDefault<BasePlayer>(list, (Func<BasePlayer, bool>)((BasePlayer x) => x.displayName.StartsWith(strNameOrIDOrIP, StringComparison.CurrentCultureIgnoreCase)));
 		if (Object.op_Implicit((Object)(object)basePlayer2))
 		{
 			return basePlayer2;
 		}
-		BasePlayer basePlayer3 = list.FirstOrDefault((BasePlayer x) => x.net != null && x.net.get_connection() != null && x.net.get_connection().ipaddress == strNameOrIDOrIP);
+		BasePlayer basePlayer3 = Enumerable.FirstOrDefault<BasePlayer>(list, (Func<BasePlayer, bool>)((BasePlayer x) => x.net != null && x.net.get_connection() != null && x.net.get_connection().ipaddress == strNameOrIDOrIP));
 		if (Object.op_Implicit((Object)(object)basePlayer3))
 		{
 			return basePlayer3;
@@ -7325,25 +7348,19 @@ public class BasePlayer : BaseCombatEntity, LootPanel.IHasLootPanel
 		if (spectateFilter.StartsWith("@"))
 		{
 			string filter = spectateFilter.Substring(1);
-			enumerable = (from x in BaseNetworkable.serverEntities
-				where StringEx.Contains(((Object)x).get_name(), filter, CompareOptions.IgnoreCase)
-				where (Object)(object)x != (Object)(object)this
-				select x).Cast<BaseEntity>();
+			enumerable = Enumerable.Cast<BaseEntity>((IEnumerable)Enumerable.Where<BaseNetworkable>(Enumerable.Where<BaseNetworkable>((IEnumerable<BaseNetworkable>)BaseNetworkable.serverEntities, (Func<BaseNetworkable, bool>)((BaseNetworkable x) => StringEx.Contains(((Object)x).get_name(), filter, CompareOptions.IgnoreCase))), (Func<BaseNetworkable, bool>)((BaseNetworkable x) => (Object)(object)x != (Object)(object)this)));
 		}
 		else
 		{
-			IEnumerable<BasePlayer> source = ((IEnumerable<BasePlayer>)activePlayerList).Where((BasePlayer x) => !x.IsSpectating() && !x.IsDead() && !x.IsSleeping());
+			IEnumerable<BasePlayer> enumerable2 = Enumerable.Where<BasePlayer>((IEnumerable<BasePlayer>)activePlayerList, (Func<BasePlayer, bool>)((BasePlayer x) => !x.IsSpectating() && !x.IsDead() && !x.IsSleeping()));
 			if (strName.Length > 0)
 			{
-				source = from x in source
-					where StringEx.Contains(x.displayName, spectateFilter, CompareOptions.IgnoreCase) || x.UserIDString.Contains(spectateFilter)
-					where (Object)(object)x != (Object)(object)this
-					select x;
+				enumerable2 = Enumerable.Where<BasePlayer>(Enumerable.Where<BasePlayer>(enumerable2, (Func<BasePlayer, bool>)((BasePlayer x) => StringEx.Contains(x.displayName, spectateFilter, CompareOptions.IgnoreCase) || x.UserIDString.Contains(spectateFilter))), (Func<BasePlayer, bool>)((BasePlayer x) => (Object)(object)x != (Object)(object)this));
 			}
-			source = source.OrderBy((BasePlayer x) => x.displayName);
-			enumerable = source.Cast<BaseEntity>();
+			enumerable2 = (IEnumerable<BasePlayer>)Enumerable.OrderBy<BasePlayer, string>(enumerable2, (Func<BasePlayer, string>)((BasePlayer x) => x.displayName));
+			enumerable = Enumerable.Cast<BaseEntity>((IEnumerable)enumerable2);
 		}
-		BaseEntity[] array = enumerable.ToArray();
+		BaseEntity[] array = Enumerable.ToArray<BaseEntity>(enumerable);
 		if (array.Length == 0)
 		{
 			ChatMessage("No valid spectate targets!");

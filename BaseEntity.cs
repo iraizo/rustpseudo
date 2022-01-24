@@ -562,108 +562,105 @@ public class BaseEntity : BaseNetworkable, IOnParentSpawning, IPrefabPreProcess
 	{
 		public static BaseEntity[] FindTargets(string strFilter, bool onlyPlayers)
 		{
-			return (from x in BaseNetworkable.serverEntities.Where(delegate(BaseNetworkable x)
+			return Enumerable.ToArray<BaseEntity>(Enumerable.Select<BaseNetworkable, BaseEntity>(Enumerable.Where<BaseNetworkable>((IEnumerable<BaseNetworkable>)BaseNetworkable.serverEntities, (Func<BaseNetworkable, bool>)delegate(BaseNetworkable x)
+			{
+				if (x is BasePlayer)
 				{
-					if (x is BasePlayer)
-					{
-						BasePlayer basePlayer = x as BasePlayer;
-						if (string.IsNullOrEmpty(strFilter))
-						{
-							return true;
-						}
-						if (strFilter == "!alive" && basePlayer.IsAlive())
-						{
-							return true;
-						}
-						if (strFilter == "!sleeping" && basePlayer.IsSleeping())
-						{
-							return true;
-						}
-						if (strFilter[0] != '!' && !StringEx.Contains(basePlayer.displayName, strFilter, CompareOptions.IgnoreCase) && !basePlayer.UserIDString.Contains(strFilter))
-						{
-							return false;
-						}
-						return true;
-					}
-					if (onlyPlayers)
-					{
-						return false;
-					}
+					BasePlayer basePlayer = x as BasePlayer;
 					if (string.IsNullOrEmpty(strFilter))
 					{
+						return true;
+					}
+					if (strFilter == "!alive" && basePlayer.IsAlive())
+					{
+						return true;
+					}
+					if (strFilter == "!sleeping" && basePlayer.IsSleeping())
+					{
+						return true;
+					}
+					if (strFilter[0] != '!' && !StringEx.Contains(basePlayer.displayName, strFilter, CompareOptions.IgnoreCase) && !basePlayer.UserIDString.Contains(strFilter))
+					{
 						return false;
 					}
-					return x.ShortPrefabName.Contains(strFilter) ? true : false;
-				})
-				select x as BaseEntity).ToArray();
+					return true;
+				}
+				if (onlyPlayers)
+				{
+					return false;
+				}
+				if (string.IsNullOrEmpty(strFilter))
+				{
+					return false;
+				}
+				return x.ShortPrefabName.Contains(strFilter) ? true : false;
+			}), (Func<BaseNetworkable, BaseEntity>)((BaseNetworkable x) => x as BaseEntity)));
 		}
 
 		public static BaseEntity[] FindTargetsOwnedBy(ulong ownedBy, string strFilter)
 		{
 			bool hasFilter = !string.IsNullOrEmpty(strFilter);
-			return (from x in BaseNetworkable.serverEntities.Where(delegate(BaseNetworkable x)
+			return Enumerable.ToArray<BaseEntity>(Enumerable.Select<BaseNetworkable, BaseEntity>(Enumerable.Where<BaseNetworkable>((IEnumerable<BaseNetworkable>)BaseNetworkable.serverEntities, (Func<BaseNetworkable, bool>)delegate(BaseNetworkable x)
+			{
+				BaseEntity baseEntity;
+				if ((baseEntity = x as BaseEntity) != null)
 				{
-					BaseEntity baseEntity;
-					if ((baseEntity = x as BaseEntity) != null)
+					if (baseEntity.OwnerID != ownedBy)
 					{
-						if (baseEntity.OwnerID != ownedBy)
-						{
-							return false;
-						}
-						if (!hasFilter || baseEntity.ShortPrefabName.Contains(strFilter))
-						{
-							return true;
-						}
+						return false;
 					}
-					return false;
-				})
-				select x as BaseEntity).ToArray();
+					if (!hasFilter || baseEntity.ShortPrefabName.Contains(strFilter))
+					{
+						return true;
+					}
+				}
+				return false;
+			}), (Func<BaseNetworkable, BaseEntity>)((BaseNetworkable x) => x as BaseEntity)));
 		}
 
 		public static BaseEntity[] FindTargetsAuthedTo(ulong authId, string strFilter)
 		{
 			bool hasFilter = !string.IsNullOrEmpty(strFilter);
-			return (from x in BaseNetworkable.serverEntities.Where(delegate(BaseNetworkable x)
+			return Enumerable.ToArray<BaseEntity>(Enumerable.Select<BaseNetworkable, BaseEntity>(Enumerable.Where<BaseNetworkable>((IEnumerable<BaseNetworkable>)BaseNetworkable.serverEntities, (Func<BaseNetworkable, bool>)delegate(BaseNetworkable x)
+			{
+				BuildingPrivlidge buildingPrivlidge;
+				AutoTurret autoTurret;
+				CodeLock codeLock;
+				if ((buildingPrivlidge = x as BuildingPrivlidge) != null)
 				{
-					BuildingPrivlidge buildingPrivlidge;
-					AutoTurret autoTurret;
-					CodeLock codeLock;
-					if ((buildingPrivlidge = x as BuildingPrivlidge) != null)
+					if (!buildingPrivlidge.IsAuthed(authId))
 					{
-						if (!buildingPrivlidge.IsAuthed(authId))
-						{
-							return false;
-						}
-						if (!hasFilter || x.ShortPrefabName.Contains(strFilter))
-						{
-							return true;
-						}
+						return false;
 					}
-					else if ((autoTurret = x as AutoTurret) != null)
+					if (!hasFilter || x.ShortPrefabName.Contains(strFilter))
 					{
-						if (!autoTurret.IsAuthed(authId))
-						{
-							return false;
-						}
-						if (!hasFilter || x.ShortPrefabName.Contains(strFilter))
-						{
-							return true;
-						}
+						return true;
 					}
-					else if ((codeLock = x as CodeLock) != null)
+				}
+				else if ((autoTurret = x as AutoTurret) != null)
+				{
+					if (!autoTurret.IsAuthed(authId))
 					{
-						if (!codeLock.whitelistPlayers.Contains(authId))
-						{
-							return false;
-						}
-						if (!hasFilter || x.ShortPrefabName.Contains(strFilter))
-						{
-							return true;
-						}
+						return false;
 					}
-					return false;
-				})
-				select x as BaseEntity).ToArray();
+					if (!hasFilter || x.ShortPrefabName.Contains(strFilter))
+					{
+						return true;
+					}
+				}
+				else if ((codeLock = x as CodeLock) != null)
+				{
+					if (!codeLock.whitelistPlayers.Contains(authId))
+					{
+						return false;
+					}
+					if (!hasFilter || x.ShortPrefabName.Contains(strFilter))
+					{
+						return true;
+					}
+				}
+				return false;
+			}), (Func<BaseNetworkable, BaseEntity>)((BaseNetworkable x) => x as BaseEntity)));
 		}
 	}
 
@@ -1274,7 +1271,7 @@ public class BaseEntity : BaseNetworkable, IOnParentSpawning, IPrefabPreProcess
 		{
 			action(this as T);
 		}
-		while (globalBroadcastQueue.Count > 0)
+		while (globalBroadcastQueue.get_Count() > 0)
 		{
 			List<EntityLink> entityLinks = globalBroadcastQueue.Dequeue().GetEntityLinks();
 			for (int i = 0; i < entityLinks.Count; i++)
@@ -1311,7 +1308,7 @@ public class BaseEntity : BaseNetworkable, IOnParentSpawning, IPrefabPreProcess
 		{
 			action(this as T);
 		}
-		while (globalBroadcastQueue.Count > 0)
+		while (globalBroadcastQueue.get_Count() > 0)
 		{
 			List<EntityLink> entityLinks = globalBroadcastQueue.Dequeue().GetEntityLinks();
 			for (int i = 0; i < entityLinks.Count; i++)
@@ -1340,7 +1337,7 @@ public class BaseEntity : BaseNetworkable, IOnParentSpawning, IPrefabPreProcess
 		globalBroadcastQueue.Clear();
 		broadcastProtocol = globalBroadcastProtocol;
 		globalBroadcastQueue.Enqueue(this);
-		while (globalBroadcastQueue.Count > 0)
+		while (globalBroadcastQueue.get_Count() > 0)
 		{
 			List<EntityLink> entityLinks = globalBroadcastQueue.Dequeue().GetEntityLinks();
 			for (int i = 0; i < entityLinks.Count; i++)

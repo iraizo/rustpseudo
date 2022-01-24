@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -93,10 +94,7 @@ public static class ServerUsers
 
 	public static IEnumerable<User> GetAll(UserGroup group)
 	{
-		return from x in users.Values
-			where x.@group == @group
-			where !x.IsExpired
-			select x;
+		return Enumerable.Where<User>(Enumerable.Where<User>((IEnumerable<User>)users.Values, (Func<User, bool>)((User x) => x.group == group)), (Func<User, bool>)((User x) => !x.IsExpired));
 	}
 
 	public static void Clear()
@@ -139,9 +137,7 @@ public static class ServerUsers
 
 	public static void Save()
 	{
-		foreach (ulong item in (from kv in users
-			where kv.Value.IsExpired
-			select kv.Key).ToList())
+		foreach (ulong item in Enumerable.ToList<ulong>(Enumerable.Select<KeyValuePair<ulong, User>, ulong>(Enumerable.Where<KeyValuePair<ulong, User>>((IEnumerable<KeyValuePair<ulong, User>>)users, (Func<KeyValuePair<ulong, User>, bool>)((KeyValuePair<ulong, User> kv) => kv.Value.IsExpired)), (Func<KeyValuePair<ulong, User>, ulong>)((KeyValuePair<ulong, User> kv) => kv.Key))))
 		{
 			Remove(item);
 		}
@@ -190,7 +186,7 @@ public static class ServerUsers
 
 	public static string BanListString(bool bHeader = false)
 	{
-		List<User> list = GetAll(UserGroup.Banned).ToList();
+		List<User> list = Enumerable.ToList<User>(GetAll(UserGroup.Banned));
 		StringBuilder stringBuilder = new StringBuilder(67108864);
 		if (bHeader)
 		{

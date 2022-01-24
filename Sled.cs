@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Sled : BaseVehicle, INotifyTrigger
@@ -304,23 +305,34 @@ public class Sled : BaseVehicle, INotifyTrigger
 
 	public void OnObjects(TriggerNotify trigger)
 	{
-		foreach (BaseEntity entityContent in trigger.entityContents)
+		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
+		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
+		Enumerator<BaseEntity> enumerator = trigger.entityContents.GetEnumerator();
+		try
 		{
-			if (!(entityContent is Sled))
+			while (enumerator.MoveNext())
 			{
-				BaseVehicleModule baseVehicleModule;
-				if ((baseVehicleModule = entityContent as BaseVehicleModule) != null && (Object)(object)baseVehicleModule.Vehicle != (Object)null && (baseVehicleModule.Vehicle.IsOn() || !baseVehicleModule.Vehicle.IsStationary()))
+				BaseEntity current = enumerator.get_Current();
+				if (!(current is Sled))
 				{
-					Kill(DestroyMode.Gib);
-					break;
-				}
-				BaseVehicle baseVehicle;
-				if ((baseVehicle = entityContent as BaseVehicle) != null && baseVehicle.HasDriver() && (baseVehicle.IsMoving() || baseVehicle.HasFlag(Flags.On)))
-				{
-					Kill(DestroyMode.Gib);
-					break;
+					BaseVehicleModule baseVehicleModule;
+					if ((baseVehicleModule = current as BaseVehicleModule) != null && (Object)(object)baseVehicleModule.Vehicle != (Object)null && (baseVehicleModule.Vehicle.IsOn() || !baseVehicleModule.Vehicle.IsStationary()))
+					{
+						Kill(DestroyMode.Gib);
+						break;
+					}
+					BaseVehicle baseVehicle;
+					if ((baseVehicle = current as BaseVehicle) != null && baseVehicle.HasDriver() && (baseVehicle.IsMoving() || baseVehicle.HasFlag(Flags.On)))
+					{
+						Kill(DestroyMode.Gib);
+						break;
+					}
 				}
 			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 	}
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -8,9 +9,7 @@ public class UIBelt : SingletonComponent<UIBelt>
 
 	protected override void Awake()
 	{
-		ItemIcons = (from s in ((Component)this).GetComponentsInChildren<ItemIcon>()
-			orderby s.slot
-			select s).ToList();
+		ItemIcons = Enumerable.ToList<ItemIcon>((IEnumerable<ItemIcon>)Enumerable.OrderBy<ItemIcon, int>((IEnumerable<ItemIcon>)((Component)this).GetComponentsInChildren<ItemIcon>(), (Func<ItemIcon, int>)((ItemIcon s) => s.slot)));
 	}
 
 	public ItemIcon GetItemIconAtSlot(int slot)

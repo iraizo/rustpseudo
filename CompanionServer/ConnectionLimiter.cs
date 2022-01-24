@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -89,11 +90,11 @@ namespace CompanionServer
 			val.AddColumns(new string[2] { "IP", "connections" });
 			lock (_sync)
 			{
-				foreach (KeyValuePair<IPAddress, int> item in _addressCounts.OrderByDescending((KeyValuePair<IPAddress, int> t) => t.Value))
+				foreach (KeyValuePair<IPAddress, int> item in (IEnumerable<KeyValuePair<IPAddress, int>>)Enumerable.OrderByDescending<KeyValuePair<IPAddress, int>, int>((IEnumerable<KeyValuePair<IPAddress, int>>)_addressCounts, (Func<KeyValuePair<IPAddress, int>, int>)((KeyValuePair<IPAddress, int> t) => t.Value)))
 				{
 					val.AddRow(new string[2]
 					{
-						item.Key.ToString(),
+						((object)item.Key).ToString(),
 						item.Value.ToString()
 					});
 				}

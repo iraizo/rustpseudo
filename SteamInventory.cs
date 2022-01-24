@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ConVar;
@@ -116,7 +117,7 @@ public class SteamInventory : EntityComponent<BasePlayer>
 		}
 		else if (Object.op_Implicit((Object)(object)((Component)this).get_gameObject()))
 		{
-			Items = val.get_Items().ToArray();
+			Items = Enumerable.ToArray<IPlayerItem>((IEnumerable<IPlayerItem>)val.get_Items());
 			((IDisposable)val).Dispose();
 		}
 	}

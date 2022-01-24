@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Facepunch;
@@ -143,8 +144,6 @@ public static class TransformUtil
 
 	public static Transform[] GetRootObjects()
 	{
-		return (from x in Object.FindObjectsOfType<Transform>()
-			where (Object)(object)((Component)x).get_transform() == (Object)(object)((Component)x).get_transform().get_root()
-			select x).ToArray();
+		return Enumerable.ToArray<Transform>(Enumerable.Where<Transform>((IEnumerable<Transform>)Object.FindObjectsOfType<Transform>(), (Func<Transform, bool>)((Transform x) => (Object)(object)((Component)x).get_transform() == (Object)(object)((Component)x).get_transform().get_root())));
 	}
 }

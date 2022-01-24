@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class TriggerParent : TriggerBase, IServerComponent
@@ -48,7 +49,7 @@ public class TriggerParent : TriggerBase, IServerComponent
 				Parent(ent);
 			}
 			base.OnEntityEnter(ent);
-			if (entityContents != null && entityContents.Count == 1)
+			if (entityContents != null && entityContents.get_Count() == 1)
 			{
 				((FacepunchBehaviour)this).InvokeRepeating((Action)OnTick, 0f, 0f);
 			}
@@ -58,7 +59,7 @@ public class TriggerParent : TriggerBase, IServerComponent
 	internal override void OnEntityLeave(BaseEntity ent)
 	{
 		base.OnEntityLeave(ent);
-		if (entityContents == null || entityContents.Count == 0)
+		if (entityContents == null || entityContents.get_Count() == 0)
 		{
 			((FacepunchBehaviour)this).CancelInvoke((Action)OnTick);
 		}
@@ -129,6 +130,8 @@ public class TriggerParent : TriggerBase, IServerComponent
 
 	private void OnTick()
 	{
+		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
 		if (entityContents == null)
 		{
 			return;
@@ -138,19 +141,28 @@ public class TriggerParent : TriggerBase, IServerComponent
 		{
 			return;
 		}
-		foreach (BaseEntity entityContent in entityContents)
+		Enumerator<BaseEntity> enumerator = entityContents.GetEnumerator();
+		try
 		{
-			if (entityContent.IsValid() && !entityContent.IsDestroyed)
+			while (enumerator.MoveNext())
 			{
-				if (ShouldParent(entityContent))
+				BaseEntity current = enumerator.get_Current();
+				if (current.IsValid() && !current.IsDestroyed)
 				{
-					Parent(entityContent);
-				}
-				else
-				{
-					Unparent(entityContent);
+					if (ShouldParent(current))
+					{
+						Parent(current);
+					}
+					else
+					{
+						Unparent(current);
+					}
 				}
 			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 	}
 

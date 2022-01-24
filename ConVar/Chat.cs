@@ -161,7 +161,7 @@ namespace ConVar
 			text = StringEx.EscapeRichText(text);
 			if (serverlog)
 			{
-				ServerConsole.PrintColoured(ConsoleColor.DarkYellow, string.Concat("[", targetChannel, "] ", username, ": "), ConsoleColor.DarkGreen, text);
+				ServerConsole.PrintColoured((object)(ConsoleColor)6, string.Concat("[", targetChannel, "] ", username, ": "), (object)(ConsoleColor)2, text);
 				string text2 = ((object)player)?.ToString() ?? $"{username}[{userId}]";
 				switch (targetChannel)
 				{
@@ -283,7 +283,7 @@ namespace ConVar
 			{
 				num = 0;
 			}
-			return History.Skip(num);
+			return Enumerable.Skip<ChatEntry>((IEnumerable<ChatEntry>)History, num);
 		}
 
 		[ServerVar]
@@ -295,7 +295,7 @@ namespace ConVar
 			{
 				return Enumerable.Empty<ChatEntry>();
 			}
-			return History.Where((ChatEntry x) => x.Message.Length < 4096 && StringEx.Contains(x.Message, search, CompareOptions.IgnoreCase));
+			return Enumerable.Where<ChatEntry>((IEnumerable<ChatEntry>)History, (Func<ChatEntry, bool>)((ChatEntry x) => x.Message.Length < 4096 && StringEx.Contains(x.Message, search, CompareOptions.IgnoreCase)));
 		}
 
 		public Chat()

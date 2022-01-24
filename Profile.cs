@@ -13,6 +13,8 @@ public class Profile
 
 	public Profile(string cat, string nam, float WarnTime = 1f)
 	{
+		//IL_0001: Unknown result type (might be due to invalid IL or missing references)
+		//IL_000b: Expected O, but got Unknown
 		category = cat;
 		name = nam;
 		warnTime = WarnTime;
@@ -27,9 +29,9 @@ public class Profile
 	public void Stop()
 	{
 		watch.Stop();
-		if ((float)watch.Elapsed.Seconds > warnTime)
+		if ((float)watch.get_Elapsed().Seconds > warnTime)
 		{
-			Debug.Log((object)(category + "." + name + ": Took " + watch.Elapsed.Seconds + " seconds"));
+			Debug.Log((object)(category + "." + name + ": Took " + watch.get_Elapsed().Seconds + " seconds"));
 		}
 	}
 }

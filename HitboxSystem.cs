@@ -188,7 +188,7 @@ public class HitboxSystem : MonoBehaviour, IPrefabPreProcess
 		if (clientside)
 		{
 			hitboxes.Clear();
-			foreach (HitboxDefinition item3 in list.OrderBy((HitboxDefinition x) => x.priority))
+			foreach (HitboxDefinition item3 in (IEnumerable<HitboxDefinition>)Enumerable.OrderBy<HitboxDefinition, int>((IEnumerable<HitboxDefinition>)list, (Func<HitboxDefinition, int>)((HitboxDefinition x) => x.priority)))
 			{
 				HitboxShape item = new HitboxShape
 				{

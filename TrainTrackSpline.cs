@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Facepunch;
 using UnityEngine;
@@ -257,6 +258,8 @@ public class TrainTrackSpline : WorldSpline
 
 	public bool HasValidHazardWithin(ITrainTrackUser asker, Vector3 askerForward, float askerSplineDist, float minHazardDist, float maxHazardDist, TrackSelection trackSelection, bool movingForward, TrainTrackSpline preferredAltTrack = null)
 	{
+		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
 		//IL_002b: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0030: Unknown result type (might be due to invalid IL or missing references)
@@ -270,26 +273,35 @@ public class TrainTrackSpline : WorldSpline
 		//IL_0138: Unknown result type (might be due to invalid IL or missing references)
 		//IL_01c6: Unknown result type (might be due to invalid IL or missing references)
 		WorldSplineData data = GetData();
-		foreach (ITrainTrackUser trackUser in trackUsers)
+		Enumerator<ITrainTrackUser> enumerator = trackUsers.GetEnumerator();
+		try
 		{
-			if (trackUser == asker)
+			while (enumerator.MoveNext())
 			{
-				continue;
-			}
-			Vector3 val = trackUser.Position - asker.Position;
-			if (!(Vector3.Dot(askerForward, val) >= 0f))
-			{
-				continue;
-			}
-			float magnitude = ((Vector3)(ref val)).get_magnitude();
-			if (magnitude > minHazardDist && magnitude < maxHazardDist)
-			{
-				Vector3 worldVelocity = trackUser.GetWorldVelocity();
-				if (((Vector3)(ref worldVelocity)).get_sqrMagnitude() < 4f || Vector3.Dot(worldVelocity, val) < 0f)
+				ITrainTrackUser current = enumerator.get_Current();
+				if (current == asker)
 				{
-					return true;
+					continue;
+				}
+				Vector3 val = current.Position - asker.Position;
+				if (!(Vector3.Dot(askerForward, val) >= 0f))
+				{
+					continue;
+				}
+				float magnitude = ((Vector3)(ref val)).get_magnitude();
+				if (magnitude > minHazardDist && magnitude < maxHazardDist)
+				{
+					Vector3 worldVelocity = current.GetWorldVelocity();
+					if (((Vector3)(ref worldVelocity)).get_sqrMagnitude() < 4f || Vector3.Dot(worldVelocity, val) < 0f)
+					{
+						return true;
+					}
 				}
 			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 		float num = (movingForward ? (askerSplineDist + minHazardDist) : (askerSplineDist - minHazardDist));
 		float num2 = (movingForward ? (askerSplineDist + maxHazardDist) : (askerSplineDist - maxHazardDist));
@@ -362,15 +374,26 @@ public class TrainTrackSpline : WorldSpline
 
 	private bool HasClearTrackSpace(ITrainTrackUser asker)
 	{
+		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
+		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
 		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
-		foreach (ITrainTrackUser trackUser in trackUsers)
+		Enumerator<ITrainTrackUser> enumerator = trackUsers.GetEnumerator();
+		try
 		{
-			if (trackUser != asker && Vector3.SqrMagnitude(trackUser.Position - asker.Position) < 144f)
+			while (enumerator.MoveNext())
 			{
-				return false;
+				ITrainTrackUser current = enumerator.get_Current();
+				if (current != asker && Vector3.SqrMagnitude(current.Position - asker.Position) < 144f)
+				{
+					return false;
+				}
 			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 		return true;
 	}

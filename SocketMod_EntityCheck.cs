@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Facepunch;
@@ -39,7 +40,7 @@ public class SocketMod_EntityCheck : SocketMod
 		Vis.Entities(position, sphereRadius, list, ((LayerMask)(ref layerMask)).get_value(), queryTriggers);
 		foreach (BaseEntity ent in list)
 		{
-			bool flag = entityTypes.Any((BaseEntity x) => x.prefabID == ent.prefabID);
+			bool flag = Enumerable.Any<BaseEntity>((IEnumerable<BaseEntity>)entityTypes, (Func<BaseEntity, bool>)((BaseEntity x) => x.prefabID == ent.prefabID));
 			if (flag && wantsCollide)
 			{
 				Pool.FreeList<BaseEntity>(ref list);

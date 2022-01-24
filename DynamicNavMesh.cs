@@ -197,7 +197,7 @@ public class DynamicNavMesh : SingletonComponent<DynamicNavMesh>, IServerCompone
 			{
 				NavMeshDataInstance = NavMesh.AddNavMeshData(NavMeshData);
 			}
-			Debug.Log((object)$"Navmesh Build took {BuildTimer.Elapsed.TotalSeconds:0.00} seconds");
+			Debug.Log((object)$"Navmesh Build took {BuildTimer.get_Elapsed().TotalSeconds:0.00} seconds");
 			BuildingOperation = null;
 		}
 	}

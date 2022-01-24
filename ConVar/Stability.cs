@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 
@@ -27,7 +28,7 @@ namespace ConVar
 		[ServerVar]
 		public static void refresh_stability(Arg args)
 		{
-			StabilityEntity[] array = BaseNetworkable.serverEntities.OfType<StabilityEntity>().ToArray();
+			StabilityEntity[] array = Enumerable.ToArray<StabilityEntity>(Enumerable.OfType<StabilityEntity>((IEnumerable)BaseNetworkable.serverEntities));
 			Debug.Log((object)("Refreshing stability on " + array.Length + " entities..."));
 			for (int i = 0; i < array.Length; i++)
 			{

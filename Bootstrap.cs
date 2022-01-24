@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -44,7 +45,7 @@ public class Bootstrap : SingletonComponent<Bootstrap>
 			{
 				return true;
 			}
-			if (Object.FindObjectsOfType<GameSetup>().Count() > 0)
+			if (Enumerable.Count<GameSetup>((IEnumerable<GameSetup>)Object.FindObjectsOfType<GameSetup>()) > 0)
 			{
 				return true;
 			}

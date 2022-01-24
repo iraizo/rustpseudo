@@ -12,7 +12,7 @@ using UnityEngine.UI;
 
 public class NewsSource : MonoBehaviour
 {
-	private static readonly Regex BbcodeParse = new Regex("([^\\[]*)(?:\\[(\\w+)(?:=([^\\]]+))?\\](.*?)\\[\\/\\2\\])?", RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.Singleline);
+	private static readonly Regex BbcodeParse = new Regex("([^\\[]*)(?:\\[(\\w+)(?:=([^\\]]+))?\\](.*?)\\[\\/\\2\\])?", (RegexOptions)25);
 
 	public RustText title;
 
@@ -75,19 +75,23 @@ public class NewsSource : MonoBehaviour
 
 	private void ParseBbcode(StringBuilder currentParagraph, string bbcode, ref string firstImage, int depth = 0)
 	{
+		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0045: Unknown result type (might be due to invalid IL or missing references)
 		foreach (Match item in BbcodeParse.Matches(bbcode))
 		{
-			string value = item.Groups[1].Value;
-			string value2 = item.Groups[2].Value;
-			string value3 = item.Groups[3].Value;
-			string value4 = item.Groups[4].Value;
+			string value = ((Capture)item.get_Groups().get_Item(1)).get_Value();
+			string value2 = ((Capture)item.get_Groups().get_Item(2)).get_Value();
+			string value3 = ((Capture)item.get_Groups().get_Item(3)).get_Value();
+			string value4 = ((Capture)item.get_Groups().get_Item(4)).get_Value();
 			currentParagraph.Append(value);
 			switch (value2.ToLowerInvariant())
 			{
 			case "previewyoutube":
 				if (depth == 0)
 				{
-					string[] array2 = value3.Split(';');
+					string[] array2 = value3.Split(new char[1] { ';' });
 					AppendYouTube(currentParagraph, array2[0]);
 				}
 				break;

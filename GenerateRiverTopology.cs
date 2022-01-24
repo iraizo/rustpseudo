@@ -25,7 +25,7 @@ public class GenerateRiverTopology : ProceduralComponent
 			item.AdjustTerrainHeight();
 			heightMap.Pop();
 		}
-		foreach (PathList item2 in rivers.AsEnumerable().Reverse())
+		foreach (PathList item2 in Enumerable.Reverse<PathList>(Enumerable.AsEnumerable<PathList>((IEnumerable<PathList>)rivers)))
 		{
 			item2.AdjustTerrainTexture();
 			item2.AdjustTerrainTopology();

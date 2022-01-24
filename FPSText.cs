@@ -10,7 +10,7 @@ public class FPSText : MonoBehaviour
 
 	protected void Update()
 	{
-		if (!(fpsTimer.Elapsed.TotalSeconds < 0.5))
+		if (!(fpsTimer.get_Elapsed().TotalSeconds < 0.5))
 		{
 			((Behaviour)this.text).set_enabled(true);
 			fpsTimer.Reset();

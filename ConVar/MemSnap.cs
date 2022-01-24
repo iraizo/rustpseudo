@@ -9,12 +9,13 @@ namespace ConVar
 	{
 		private static string NeedProfileFolder()
 		{
-			string path = "profile";
-			if (!Directory.Exists(path))
+			//IL_001b: Unknown result type (might be due to invalid IL or missing references)
+			string text = "profile";
+			if (!Directory.Exists(text))
 			{
-				return Directory.CreateDirectory(path).FullName;
+				return ((FileSystemInfo)Directory.CreateDirectory(text)).get_FullName();
 			}
-			return new DirectoryInfo(path).FullName;
+			return ((FileSystemInfo)new DirectoryInfo(text)).get_FullName();
 		}
 
 		[ClientVar]

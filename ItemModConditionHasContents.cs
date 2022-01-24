@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -18,7 +20,7 @@ public class ItemModConditionHasContents : ItemMod
 		{
 			return !requiredState;
 		}
-		if (Object.op_Implicit((Object)(object)itemDef) && !item.contents.itemList.Any((Item x) => (Object)(object)x.info == (Object)(object)itemDef))
+		if (Object.op_Implicit((Object)(object)itemDef) && !Enumerable.Any<Item>((IEnumerable<Item>)item.contents.itemList, (Func<Item, bool>)((Item x) => (Object)(object)x.info == (Object)(object)itemDef)))
 		{
 			return !requiredState;
 		}

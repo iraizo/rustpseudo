@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Facepunch;
@@ -72,14 +73,10 @@ public class ServerPerformance : BaseMonoBehaviour
 		objects = (Object[])(object)Object.FindObjectsOfType<Rigidbody>();
 		ComponentReport(filename3, "Rigidbodies", objects);
 		string filename4 = text;
-		objects = (Object[])(object)(from x in Object.FindObjectsOfType<Collider>()
-			where !x.get_enabled()
-			select x).ToArray();
+		objects = (Object[])(object)Enumerable.ToArray<Collider>(Enumerable.Where<Collider>((IEnumerable<Collider>)Object.FindObjectsOfType<Collider>(), (Func<Collider, bool>)((Collider x) => !x.get_enabled())));
 		ComponentReport(filename4, "Disabled Colliders", objects);
 		string filename5 = text;
-		objects = (Object[])(object)(from x in Object.FindObjectsOfType<Collider>()
-			where x.get_enabled()
-			select x).ToArray();
+		objects = (Object[])(object)Enumerable.ToArray<Collider>(Enumerable.Where<Collider>((IEnumerable<Collider>)Object.FindObjectsOfType<Collider>(), (Func<Collider, bool>)((Collider x) => x.get_enabled())));
 		ComponentReport(filename5, "Enabled Colliders", objects);
 		if (Object.op_Implicit((Object)(object)SingletonComponent<SpawnHandler>.Instance))
 		{
@@ -105,13 +102,10 @@ public class ServerPerformance : BaseMonoBehaviour
 	public static void ComponentReport(string filename, string Title, Object[] objects)
 	{
 		File.AppendAllText(filename, "\r\n\r\n" + Title + ":\r\n\r\n");
-		foreach (IGrouping<string, Object> item in from x in objects
-			group x by WorkoutPrefabName(((Component)((x is Component) ? x : null)).get_gameObject()) into x
-			orderby x.Count() descending
-			select x)
+		foreach (IGrouping<string, Object> item in (IEnumerable<IGrouping<string, Object>>)Enumerable.OrderByDescending<IGrouping<string, Object>, int>(Enumerable.GroupBy<Object, string>((IEnumerable<Object>)objects, (Func<Object, string>)((Object x) => WorkoutPrefabName(((Component)((x is Component) ? x : null)).get_gameObject()))), (Func<IGrouping<string, Object>, int>)((IGrouping<string, Object> x) => Enumerable.Count<Object>((IEnumerable<Object>)x))))
 		{
-			File.AppendAllText(filename, "\t" + WorkoutPrefabName(((Component)/*isinst with value type is only supported in some contexts*/).get_gameObject()) + " - " + item.Count() + "\r\n");
+			File.AppendAllText(filename, "\t" + WorkoutPrefabName(((Component)/*isinst with value type is only supported in some contexts*/).get_gameObject()) + " - " + Enumerable.Count<Object>((IEnumerable<Object>)item) + "\r\n");
 		}
-		File.AppendAllText(filename, "\r\nTotal: " + objects.Count() + "\r\n\r\n\r\n");
+		File.AppendAllText(filename, "\r\nTotal: " + Enumerable.Count<Object>((IEnumerable<Object>)objects) + "\r\n\r\n\r\n");
 	}
 }

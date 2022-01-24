@@ -468,7 +468,7 @@ public class Construction : PrefabAttribute
 		placeholder = ((Component)this).GetComponentInChildren<ConstructionPlaceholder>();
 		allSockets = ((Component)this).GetComponentsInChildren<Socket_Base>(true);
 		allProximities = ((Component)this).GetComponentsInChildren<BuildingProximity>(true);
-		socketHandle = ((Component)this).GetComponentsInChildren<SocketHandle>(true).FirstOrDefault();
+		socketHandle = Enumerable.FirstOrDefault<SocketHandle>((IEnumerable<SocketHandle>)((Component)this).GetComponentsInChildren<SocketHandle>(true));
 		ConstructionGrade[] components = rootObj.GetComponents<ConstructionGrade>();
 		grades = new ConstructionGrade[5];
 		ConstructionGrade[] array = components;

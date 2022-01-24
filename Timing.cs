@@ -14,9 +14,9 @@ public struct Timing
 
 	public void End()
 	{
-		if (sw.Elapsed.TotalSeconds > 0.30000001192092896)
+		if (sw.get_Elapsed().TotalSeconds > 0.30000001192092896)
 		{
-			Debug.Log((object)("[" + sw.Elapsed.TotalSeconds.ToString("0.0") + "s] " + name));
+			Debug.Log((object)("[" + sw.get_Elapsed().TotalSeconds.ToString("0.0") + "s] " + name));
 		}
 	}
 

@@ -473,7 +473,7 @@ public class Climate : SingletonComponent<Climate>
 
 	private WeatherPreset[] CacheWeatherPresets(WeatherPresetType type)
 	{
-		return WeatherPresets.Where((WeatherPreset x) => x.Type == type).ToArray();
+		return Enumerable.ToArray<WeatherPreset>(Enumerable.Where<WeatherPreset>((IEnumerable<WeatherPreset>)WeatherPresets, (Func<WeatherPreset, bool>)((WeatherPreset x) => x.Type == type)));
 	}
 
 	private float FindBlendParameters(Vector3 pos, out ClimateParameters src, out ClimateParameters dst)

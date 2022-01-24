@@ -98,7 +98,7 @@ public class Planner : HeldEntity
 
 	public Socket_Base FindSocket(string name, uint prefabIDToFind)
 	{
-		return PrefabAttribute.server.FindAll<Socket_Base>(prefabIDToFind).FirstOrDefault((Socket_Base s) => s.socketName == name);
+		return Enumerable.FirstOrDefault<Socket_Base>((IEnumerable<Socket_Base>)PrefabAttribute.server.FindAll<Socket_Base>(prefabIDToFind), (Func<Socket_Base, bool>)((Socket_Base s) => s.socketName == name));
 	}
 
 	public void DoBuild(CreateBuilding msg)

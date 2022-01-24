@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class BaseMagnet : MonoBehaviour
@@ -107,6 +109,8 @@ public class BaseMagnet : MonoBehaviour
 	{
 		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
+		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0084: Unknown result type (might be due to invalid IL or missing references)
 		//IL_008f: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0095: Unknown result type (might be due to invalid IL or missing references)
@@ -134,38 +138,47 @@ public class BaseMagnet : MonoBehaviour
 		{
 			return;
 		}
-		OBB val = default(OBB);
-		foreach (BaseEntity entityContent in magnetTrigger.entityContents)
+		Enumerator<BaseEntity> enumerator = magnetTrigger.entityContents.GetEnumerator();
+		try
 		{
-			if (!entityContent.syncPosition)
+			OBB val = default(OBB);
+			while (enumerator.MoveNext())
 			{
-				continue;
-			}
-			Rigidbody component = ((Component)entityContent).GetComponent<Rigidbody>();
-			if ((Object)(object)component == (Object)null || component.get_isKinematic() || entityContent.isClient)
-			{
-				continue;
-			}
-			((OBB)(ref val))._002Ector(((Component)entityContent).get_transform().get_position(), ((Component)entityContent).get_transform().get_rotation(), entityContent.bounds);
-			if (((OBB)(ref val)).Contains(attachDepthPoint.get_position()))
-			{
-				((Component)entityContent).GetComponent<MagnetLiftable>().SetMagnetized(wantsOn: true, this);
-				if ((Object)(object)((Joint)fixedJoint).get_connectedBody() == (Object)null)
+				BaseEntity current = enumerator.get_Current();
+				if (!current.syncPosition)
 				{
-					Effect.server.Run(attachEffect.resourcePath, attachDepthPoint.get_position(), -attachDepthPoint.get_up());
-					((Joint)fixedJoint).set_connectedBody(component);
-					SetCollisionsEnabled(((Component)component).get_gameObject(), wants: false);
 					continue;
 				}
+				Rigidbody component = ((Component)current).GetComponent<Rigidbody>();
+				if ((Object)(object)component == (Object)null || component.get_isKinematic() || current.isClient)
+				{
+					continue;
+				}
+				((OBB)(ref val))._002Ector(((Component)current).get_transform().get_position(), ((Component)current).get_transform().get_rotation(), current.bounds);
+				if (((OBB)(ref val)).Contains(attachDepthPoint.get_position()))
+				{
+					((Component)current).GetComponent<MagnetLiftable>().SetMagnetized(wantsOn: true, this);
+					if ((Object)(object)((Joint)fixedJoint).get_connectedBody() == (Object)null)
+					{
+						Effect.server.Run(attachEffect.resourcePath, attachDepthPoint.get_position(), -attachDepthPoint.get_up());
+						((Joint)fixedJoint).set_connectedBody(component);
+						SetCollisionsEnabled(((Component)component).get_gameObject(), wants: false);
+						continue;
+					}
+				}
+				if ((Object)(object)((Joint)fixedJoint).get_connectedBody() == (Object)null)
+				{
+					Vector3 position2 = ((Component)current).get_transform().get_position();
+					float num = Vector3.Distance(position2, position);
+					Vector3 val2 = Vector3Ex.Direction(position, position2);
+					float num2 = 1f / Mathf.Max(1f, num);
+					component.AddForce(val2 * magnetForce * num2, (ForceMode)5);
+				}
 			}
-			if ((Object)(object)((Joint)fixedJoint).get_connectedBody() == (Object)null)
-			{
-				Vector3 position2 = ((Component)entityContent).get_transform().get_position();
-				float num = Vector3.Distance(position2, position);
-				Vector3 val2 = Vector3Ex.Direction(position, position2);
-				float num2 = 1f / Mathf.Max(1f, num);
-				component.AddForce(val2 * magnetForce * num2, (ForceMode)5);
-			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 	}
 

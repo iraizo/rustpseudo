@@ -64,6 +64,8 @@ public class Sprinkler : IOEntity
 		//IL_00ca: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00d3: Unknown result type (might be due to invalid IL or missing references)
 		//IL_013e: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01b8: Unknown result type (might be due to invalid IL or missing references)
+		//IL_01bd: Unknown result type (might be due to invalid IL or missing references)
 		TimeWarning val = TimeWarning.New("SprinklerSplash", 0);
 		try
 		{
@@ -97,20 +99,29 @@ public class Sprinkler : IOEntity
 				}
 				Pool.FreeList<BaseEntity>(ref list);
 			}
-			if (cachedSplashables.Count > 0)
+			if (cachedSplashables.get_Count() > 0)
 			{
-				int amount = num / cachedSplashables.Count;
-				foreach (ISplashable cachedSplashable in cachedSplashables)
+				int amount = num / cachedSplashables.get_Count();
+				Enumerator<ISplashable> enumerator2 = cachedSplashables.GetEnumerator();
+				try
 				{
-					if (!cachedSplashable.IsUnityNull() && cachedSplashable.WantsSplash(currentFuelType, amount))
+					while (enumerator2.MoveNext())
 					{
-						int num3 = cachedSplashable.DoSplash(currentFuelType, amount);
-						num -= num3;
-						if (num <= 0)
+						ISplashable current2 = enumerator2.get_Current();
+						if (!current2.IsUnityNull() && current2.WantsSplash(currentFuelType, amount))
 						{
-							break;
+							int num3 = current2.DoSplash(currentFuelType, amount);
+							num -= num3;
+							if (num <= 0)
+							{
+								break;
+							}
 						}
 					}
+				}
+				finally
+				{
+					((IDisposable)enumerator2).Dispose();
 				}
 			}
 			if (DecayPerSplash > 0f)

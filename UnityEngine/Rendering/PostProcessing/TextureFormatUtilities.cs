@@ -172,7 +172,7 @@ namespace UnityEngine.Rendering.PostProcessing
 				}
 			};
 			s_SupportedRenderTextureFormats = new Dictionary<int, bool>();
-			foreach (object value3 in Enum.GetValues(typeof(RenderTextureFormat)))
+			foreach (object? value3 in Enum.GetValues(typeof(RenderTextureFormat)))
 			{
 				if ((int)value3 >= 0 && !IsObsolete(value3))
 				{
@@ -181,7 +181,7 @@ namespace UnityEngine.Rendering.PostProcessing
 				}
 			}
 			s_SupportedTextureFormats = new Dictionary<int, bool>();
-			foreach (object value4 in Enum.GetValues(typeof(TextureFormat)))
+			foreach (object? value4 in Enum.GetValues(typeof(TextureFormat)))
 			{
 				if ((int)value4 >= 0 && !IsObsolete(value4))
 				{
@@ -193,7 +193,7 @@ namespace UnityEngine.Rendering.PostProcessing
 
 		private static bool IsObsolete(object value)
 		{
-			ObsoleteAttribute[] array = (ObsoleteAttribute[])value.GetType().GetField(value.ToString()).GetCustomAttributes(typeof(ObsoleteAttribute), inherit: false);
+			ObsoleteAttribute[] array = (ObsoleteAttribute[])value.GetType().GetField(value.ToString())!.GetCustomAttributes(typeof(ObsoleteAttribute), inherit: false);
 			if (array != null)
 			{
 				return array.Length != 0;

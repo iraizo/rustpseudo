@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Facepunch;
 using ProtoBuf;
@@ -91,6 +92,8 @@ public class PaddlingPool : LiquidContainer, ISplashable
 		//IL_0049: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0058: Unknown result type (might be due to invalid IL or missing references)
 		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
+		//IL_009f: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00a4: Unknown result type (might be due to invalid IL or missing references)
 		poolWaterVisual.get_gameObject().SetActive(normalisedAmount > 0f);
 		waterVolume.waterEnabled = normalisedAmount > 0f;
 		float y = Mathf.Lerp(minimumWaterHeight, maximumWaterHeight, normalisedAmount);
@@ -103,13 +106,21 @@ public class PaddlingPool : LiquidContainer, ISplashable
 		}
 		if (normalisedAmount > 0f && lastFillAmount < normalisedAmount && waterVolume.entityContents != null)
 		{
-			foreach (BaseEntity entityContent in waterVolume.entityContents)
+			Enumerator<BaseEntity> enumerator = waterVolume.entityContents.GetEnumerator();
+			try
 			{
-				IPoolVehicle poolVehicle;
-				if ((poolVehicle = entityContent as IPoolVehicle) != null)
+				while (enumerator.MoveNext())
 				{
-					poolVehicle.WakeUp();
+					IPoolVehicle poolVehicle;
+					if ((poolVehicle = enumerator.get_Current() as IPoolVehicle) != null)
+					{
+						poolVehicle.WakeUp();
+					}
 				}
+			}
+			finally
+			{
+				((IDisposable)enumerator).Dispose();
 			}
 		}
 		lastFillAmount = normalisedAmount;
@@ -122,6 +133,8 @@ public class PaddlingPool : LiquidContainer, ISplashable
 
 	public override void DestroyShared()
 	{
+		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0034: Unknown result type (might be due to invalid IL or missing references)
 		base.DestroyShared();
 		if (!base.isServer)
 		{
@@ -130,13 +143,21 @@ public class PaddlingPool : LiquidContainer, ISplashable
 		List<IPoolVehicle> list = Pool.GetList<IPoolVehicle>();
 		if (waterVolume.entityContents != null)
 		{
-			foreach (BaseEntity entityContent in waterVolume.entityContents)
+			Enumerator<BaseEntity> enumerator = waterVolume.entityContents.GetEnumerator();
+			try
 			{
-				IPoolVehicle item;
-				if ((item = entityContent as IPoolVehicle) != null)
+				while (enumerator.MoveNext())
 				{
-					list.Add(item);
+					IPoolVehicle item;
+					if ((item = enumerator.get_Current() as IPoolVehicle) != null)
+					{
+						list.Add(item);
+					}
 				}
+			}
+			finally
+			{
+				((IDisposable)enumerator).Dispose();
 			}
 		}
 		foreach (IPoolVehicle item2 in list)

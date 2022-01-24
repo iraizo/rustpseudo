@@ -53,12 +53,12 @@ namespace UnityEngine
 
 		public static List<Transform> GetChildren(this Transform transform)
 		{
-			return ((IEnumerable)transform).Cast<Transform>().ToList();
+			return Enumerable.ToList<Transform>(Enumerable.Cast<Transform>((IEnumerable)transform));
 		}
 
 		public static void OrderChildren(this Transform tx, Func<Transform, object> selector)
 		{
-			foreach (Transform item in ((IEnumerable)tx).Cast<Transform>().OrderBy(selector))
+			foreach (Transform item in (IEnumerable<Transform>)Enumerable.OrderBy<Transform, object>(Enumerable.Cast<Transform>((IEnumerable)tx), selector))
 			{
 				item.SetAsLastSibling();
 			}
@@ -89,9 +89,7 @@ namespace UnityEngine
 
 		public static Transform[] GetChildrenWithTag(this Transform transform, string strTag)
 		{
-			return (from x in transform.GetAllChildren()
-				where ((Component)x).CompareTag(strTag)
-				select x).ToArray();
+			return Enumerable.ToArray<Transform>(Enumerable.Where<Transform>((IEnumerable<Transform>)transform.GetAllChildren(), (Func<Transform, bool>)((Transform x) => ((Component)x).CompareTag(strTag))));
 		}
 
 		public static void Identity(this GameObject go)

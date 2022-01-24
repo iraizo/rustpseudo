@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
@@ -20,10 +21,7 @@ namespace UnityEngine.Rendering.PostProcessing
 
 		private void OnEnable()
 		{
-			parameters = (from t in ((object)this).GetType().GetFields(BindingFlags.Instance | BindingFlags.Public)
-				where t.FieldType.IsSubclassOf(typeof(ParameterOverride))
-				orderby t.MetadataToken
-				select (ParameterOverride)t.GetValue(this)).ToList().AsReadOnly();
+			parameters = Enumerable.ToList<ParameterOverride>(Enumerable.Select<FieldInfo, ParameterOverride>((IEnumerable<FieldInfo>)Enumerable.OrderBy<FieldInfo, int>(Enumerable.Where<FieldInfo>((IEnumerable<FieldInfo>)((object)this).GetType().GetFields(BindingFlags.Instance | BindingFlags.Public), (Func<FieldInfo, bool>)((FieldInfo t) => t.FieldType.IsSubclassOf(typeof(ParameterOverride)))), (Func<FieldInfo, int>)((FieldInfo t) => t.MetadataToken)), (Func<FieldInfo, ParameterOverride>)((FieldInfo t) => (ParameterOverride)t.GetValue(this)))).AsReadOnly();
 			foreach (ParameterOverride parameter in parameters)
 			{
 				parameter.OnEnable();

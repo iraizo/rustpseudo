@@ -12,6 +12,13 @@ using UnityEngine.Serialization;
 
 public class BaseVehicle : BaseMountable
 {
+	public enum ClippingCheckMode
+	{
+		OnMountOnly,
+		Always,
+		AlwaysRayOnly
+	}
+
 	[Serializable]
 	public class MountPointInfo
 	{
@@ -191,8 +198,7 @@ public class BaseVehicle : BaseMountable
 	[Tooltip("Allow players to mount other mountables/ladders from this vehicle")]
 	public bool mountChaining = true;
 
-	[FormerlySerializedAs("seatClipCheck")]
-	public bool continuousClippingCheck;
+	public ClippingCheckMode clippingChecks;
 
 	public bool shouldShowHudHealth;
 
@@ -385,16 +391,17 @@ public class BaseVehicle : BaseMountable
 		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0047: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0052: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00b5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_00bb: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00c3: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00c9: Unknown result type (might be due to invalid IL or missing references)
 		base.VehicleFixedUpdate();
-		if (continuousClippingCheck && AnyMounted())
+		if (clippingChecks != 0 && AnyMounted())
 		{
 			Vector3 val = ((Component)this).get_transform().TransformPoint(((Bounds)(ref bounds)).get_center());
 			int num = (IsFlipped() ? 1218511105 : 1210122497);
 			if (Physics.OverlapBox(val, ((Bounds)(ref bounds)).get_extents(), ((Component)this).get_transform().get_rotation(), num).Length != 0)
 			{
-				CheckSeatsForClipping(num);
+				bool fullCapsuleCheck = clippingChecks != ClippingCheckMode.AlwaysRayOnly;
+				CheckSeatsForClipping(fullCapsuleCheck, num);
 			}
 		}
 		if (Object.op_Implicit((Object)(object)rigidBody))
@@ -483,7 +490,7 @@ public class BaseVehicle : BaseMountable
 		return GamePhysics.LineOfSight(eyePos, p, mask);
 	}
 
-	public virtual bool IsSeatClipping(BaseMountable mountable, int mask = 1218511105)
+	public virtual bool IsSeatClipping(BaseMountable mountable, bool fullCapsuleCheck, int mask = 1218511105)
 	{
 		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
@@ -492,15 +499,15 @@ public class BaseVehicle : BaseMountable
 		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0059: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0061: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0066: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
-		//IL_006c: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0062: Unknown result type (might be due to invalid IL or missing references)
+		//IL_006a: Unknown result type (might be due to invalid IL or missing references)
+		//IL_006f: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0074: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0079: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007e: Unknown result type (might be due to invalid IL or missing references)
-		//IL_007f: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0075: Unknown result type (might be due to invalid IL or missing references)
+		//IL_007d: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0082: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0087: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0088: Unknown result type (might be due to invalid IL or missing references)
 		if (!doClippingAndVisChecks)
 		{
 			return false;
@@ -512,22 +519,26 @@ public class BaseVehicle : BaseMountable
 		Vector3 position = ((Component)mountable).get_transform().get_position();
 		Vector3 position2 = ((Component)mountable.eyePositionOverride).get_transform().get_position();
 		Vector3 val = position2 - position;
-		float num = 0.4f;
-		if (mountable.modifiesPlayerCollider)
+		float num = 0.05f;
+		if (fullCapsuleCheck)
 		{
-			num = Mathf.Min(num, mountable.customPlayerCollider.radius);
+			num = 0.4f;
+			if (mountable.modifiesPlayerCollider)
+			{
+				num = Mathf.Min(num, mountable.customPlayerCollider.radius);
+			}
 		}
 		Vector3 start = position2 - val * (num - 0.15f);
 		Vector3 end = position + val * (num + 0.05f);
 		return GamePhysics.CheckCapsule(start, end, num, mask, (QueryTriggerInteraction)1);
 	}
 
-	public virtual void CheckSeatsForClipping(int mask)
+	public virtual void CheckSeatsForClipping(bool fullCapsuleCheck, int mask)
 	{
 		foreach (MountPointInfo mountPoint in mountPoints)
 		{
 			BaseMountable mountable = mountPoint.mountable;
-			if (!((Object)(object)mountable == (Object)null) && mountable.IsMounted() && IsSeatClipping(mountable, mask))
+			if (!((Object)(object)mountable == (Object)null) && mountable.IsMounted() && IsSeatClipping(mountable, fullCapsuleCheck, mask))
 			{
 				SeatClippedWorld(mountable);
 			}
@@ -780,7 +791,7 @@ public class BaseVehicle : BaseMountable
 		{
 			return GetDriver();
 		}
-		if (recentDrivers.Count <= 0)
+		if (recentDrivers.get_Count() <= 0)
 		{
 			return null;
 		}
@@ -823,7 +834,7 @@ public class BaseVehicle : BaseMountable
 
 	public void SwapSeats(BasePlayer player, int targetSeat = 0)
 	{
-		//IL_00b4: Unknown result type (might be due to invalid IL or missing references)
+		//IL_00b5: Unknown result type (might be due to invalid IL or missing references)
 		if (!HasMountPoints() || !CanSwapSeats)
 		{
 			return;
@@ -847,7 +858,7 @@ public class BaseVehicle : BaseMountable
 					num = 0;
 				}
 				MountPointInfo mountPoint = GetMountPoint(num);
-				if ((Object)(object)mountPoint?.mountable != (Object)null && !mountPoint.mountable.IsMounted() && mountPoint.mountable.CanSwapToThis(player) && !IsSeatClipping(mountPoint.mountable) && IsSeatVisible(mountPoint.mountable, player.eyes.position))
+				if ((Object)(object)mountPoint?.mountable != (Object)null && !mountPoint.mountable.IsMounted() && mountPoint.mountable.CanSwapToThis(player) && !IsSeatClipping(mountPoint.mountable, fullCapsuleCheck: true) && IsSeatVisible(mountPoint.mountable, player.eyes.position))
 				{
 					baseMountable = mountPoint.mountable;
 					break;
@@ -949,7 +960,7 @@ public class BaseVehicle : BaseMountable
 	{
 		//IL_00c0: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00c5: Unknown result type (might be due to invalid IL or missing references)
-		//IL_0111: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0112: Unknown result type (might be due to invalid IL or missing references)
 		if (!HasMountPoints())
 		{
 			return this;
@@ -975,7 +986,7 @@ public class BaseVehicle : BaseMountable
 			{
 				continue;
 			}
-			if (IsSeatClipping(allMountPoint.mountable))
+			if (IsSeatClipping(allMountPoint.mountable, fullCapsuleCheck: true))
 			{
 				if (Application.get_isEditor())
 				{
@@ -1052,11 +1063,11 @@ public class BaseVehicle : BaseMountable
 
 	private void ClearRecentDriver()
 	{
-		if (recentDrivers.Count > 0)
+		if (recentDrivers.get_Count() > 0)
 		{
 			recentDrivers.Dequeue();
 		}
-		if (recentDrivers.Count > 0)
+		if (recentDrivers.get_Count() > 0)
 		{
 			((FacepunchBehaviour)this).Invoke(clearRecentDriverAction, 3f);
 		}

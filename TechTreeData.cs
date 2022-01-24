@@ -50,7 +50,7 @@ public class TechTreeData : ScriptableObject
 		{
 			if (_idToNode == null)
 			{
-				_idToNode = nodes.ToDictionary((NodeInstance n) => n.id, (NodeInstance n) => n);
+				_idToNode = Enumerable.ToDictionary<NodeInstance, int, NodeInstance>((IEnumerable<NodeInstance>)nodes, (Func<NodeInstance, int>)((NodeInstance n) => n.id), (Func<NodeInstance, NodeInstance>)((NodeInstance n) => n));
 			}
 			_idToNode.TryGetValue(id, out var value);
 			return value;

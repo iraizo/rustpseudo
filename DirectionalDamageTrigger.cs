@@ -61,7 +61,7 @@ public class DirectionalDamageTrigger : TriggerBase
 		{
 			return;
 		}
-		BaseEntity[] array = entityContents.ToArray();
+		BaseEntity[] array = Enumerable.ToArray<BaseEntity>((IEnumerable<BaseEntity>)entityContents);
 		foreach (BaseEntity baseEntity in array)
 		{
 			if (baseEntity.IsValid())

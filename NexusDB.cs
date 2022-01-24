@@ -81,7 +81,7 @@ public class NexusDB : Database
 	public List<(Guid Id, long Time, byte[] Data)> ReadJournal()
 	{
 		IntPtr intPtr = ((Database)this).Prepare("SELECT id, time, data FROM journal ORDER BY time ASC");
-		return ((Database)this).ExecuteAndReadQueryResults<(Guid, long, byte[])>(intPtr, (Func<IntPtr, (Guid, long, byte[])>)ReadJournalRow, true).ToList();
+		return Enumerable.ToList<(Guid, long, byte[])>(((Database)this).ExecuteAndReadQueryResults<(Guid, long, byte[])>(intPtr, (Func<IntPtr, (Guid, long, byte[])>)ReadJournalRow, true));
 	}
 
 	private static (Guid, long, byte[]) ReadJournalRow(IntPtr stmHandle)
@@ -134,7 +134,7 @@ public class NexusDB : Database
 	public List<uint> ReadTransferred()
 	{
 		IntPtr intPtr = ((Database)this).Prepare("SELECT id FROM transferred");
-		return ((Database)this).ExecuteAndReadQueryResults<uint>(intPtr, (Func<IntPtr, uint>)((IntPtr h) => Database.GetColumnValue<uint>(h, 0)), true).ToList();
+		return Enumerable.ToList<uint>(((Database)this).ExecuteAndReadQueryResults<uint>(intPtr, (Func<IntPtr, uint>)((IntPtr h) => Database.GetColumnValue<uint>(h, 0)), true));
 	}
 
 	public void ClearTransferred()

@@ -181,7 +181,7 @@ namespace Facepunch.CardGames
 
 		public bool PlayerIsInGame(BasePlayer player)
 		{
-			return playerData.Any((CardPlayerData data) => data.HasUserInGame && data.UserID == player.userID);
+			return Enumerable.Any<CardPlayerData>((IEnumerable<CardPlayerData>)playerData, (Func<CardPlayerData, bool>)((CardPlayerData data) => data.HasUserInGame && data.UserID == player.userID));
 		}
 
 		public bool IsAtTable(BasePlayer player)
@@ -206,7 +206,7 @@ namespace Facepunch.CardGames
 
 		private bool IsAtTable(ulong userID)
 		{
-			return playerData.Any((CardPlayerData data) => data.UserID == userID);
+			return Enumerable.Any<CardPlayerData>((IEnumerable<CardPlayerData>)playerData, (Func<CardPlayerData, bool>)((CardPlayerData data) => data.UserID == userID));
 		}
 
 		public int GetScrapInPot()

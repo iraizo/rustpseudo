@@ -45,7 +45,7 @@ public class GameSetup : MonoBehaviour
 		}
 		if (initializationCommands.Length > 0)
 		{
-			string[] array = initializationCommands.Split(';');
+			string[] array = initializationCommands.Split(new char[1] { ';' });
 			foreach (string text in array)
 			{
 				ConsoleSystem.Run(Option.get_Server(), text.Trim(), Array.Empty<object>());

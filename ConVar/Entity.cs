@@ -252,20 +252,18 @@ namespace ConVar
 			{
 				return "No entity name provided";
 			}
-			string[] array = (from x in GameManifest.Current.entities
-				where StringEx.Contains(Path.GetFileNameWithoutExtension(x), name, CompareOptions.IgnoreCase)
-				select x.ToLower()).ToArray();
+			string[] array = Enumerable.ToArray<string>(Enumerable.Select<string, string>(Enumerable.Where<string>((IEnumerable<string>)GameManifest.Current.entities, (Func<string, bool>)((string x) => StringEx.Contains(Path.GetFileNameWithoutExtension(x), name, CompareOptions.IgnoreCase))), (Func<string, string>)((string x) => x.ToLower())));
 			if (array.Length == 0)
 			{
 				return "Entity type not found";
 			}
 			if (array.Length > 1)
 			{
-				string text = array.FirstOrDefault((string x) => string.Compare(Path.GetFileNameWithoutExtension(x), name, StringComparison.OrdinalIgnoreCase) == 0);
+				string text = Enumerable.FirstOrDefault<string>((IEnumerable<string>)array, (Func<string, bool>)((string x) => string.Compare(Path.GetFileNameWithoutExtension(x), name, StringComparison.OrdinalIgnoreCase) == 0));
 				if (text == null)
 				{
 					Debug.Log((object)$"{arg} failed to spawn \"{name}\"");
-					return "Unknown entity - could be:\n\n" + string.Join("\n", array.Select(Path.GetFileNameWithoutExtension).ToArray());
+					return "Unknown entity - could be:\n\n" + string.Join("\n", Enumerable.ToArray<string>(Enumerable.Select<string, string>((IEnumerable<string>)array, (Func<string, string>)Path.GetFileNameWithoutExtension)));
 				}
 				array[0] = text;
 			}
@@ -299,17 +297,14 @@ namespace ConVar
 			{
 				return "No entity name provided";
 			}
-			string[] array = (from x in ItemManager.itemList
-				select x.shortname into x
-				where StringEx.Contains(x, name, CompareOptions.IgnoreCase)
-				select x).ToArray();
+			string[] array = Enumerable.ToArray<string>(Enumerable.Where<string>(Enumerable.Select<ItemDefinition, string>((IEnumerable<ItemDefinition>)ItemManager.itemList, (Func<ItemDefinition, string>)((ItemDefinition x) => x.shortname)), (Func<string, bool>)((string x) => StringEx.Contains(x, name, CompareOptions.IgnoreCase))));
 			if (array.Length == 0)
 			{
 				return "Entity type not found";
 			}
 			if (array.Length > 1)
 			{
-				string text = array.FirstOrDefault((string x) => string.Compare(x, name, StringComparison.OrdinalIgnoreCase) == 0);
+				string text = Enumerable.FirstOrDefault<string>((IEnumerable<string>)array, (Func<string, bool>)((string x) => string.Compare(x, name, StringComparison.OrdinalIgnoreCase) == 0));
 				if (text == null)
 				{
 					Debug.Log((object)$"{arg} failed to spawn \"{name}\"");
@@ -435,16 +430,17 @@ namespace ConVar
 		[ServerVar(Help = "Destroy all entities created by users in the provided text block (can use with copied results from ent auth)")]
 		public static void DeleteByTextBlock(Arg arg)
 		{
+			//IL_0042: Unknown result type (might be due to invalid IL or missing references)
 			if (arg.Args.Length != 1)
 			{
 				arg.ReplyWith("Invalid arguments, provide a text block surrounded by \" and listing player id's at the start of each line");
 				return;
 			}
-			MatchCollection matchCollection = Regex.Matches(arg.GetString(0, ""), "^\\b\\d{17}", RegexOptions.Multiline);
+			MatchCollection obj = Regex.Matches(arg.GetString(0, ""), "^\\b\\d{17}", (RegexOptions)2);
 			List<ulong> list = Pool.GetList<ulong>();
-			foreach (Match item in matchCollection)
+			foreach (Match item in obj)
 			{
-				if (ulong.TryParse(item.Value, out var result))
+				if (ulong.TryParse(((Capture)item).get_Value(), out var result))
 				{
 					list.Add(result);
 				}

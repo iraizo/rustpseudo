@@ -1628,46 +1628,57 @@ public class AutoTurret : ContainerIOEntity, IRemoteControllable
 
 	public void TargetScan()
 	{
+		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
+		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
 		if (HasTarget() || IsOffline() || IsBeingRemoteControlled() || targetTrigger.entityContents == null)
 		{
 			return;
 		}
-		foreach (BaseEntity entityContent in targetTrigger.entityContents)
+		Enumerator<BaseEntity> enumerator = targetTrigger.entityContents.GetEnumerator();
+		try
 		{
-			if ((Object)(object)entityContent == (Object)null)
+			while (enumerator.MoveNext())
 			{
-				continue;
-			}
-			BaseCombatEntity component = ((Component)entityContent).GetComponent<BaseCombatEntity>();
-			if ((Object)(object)component == (Object)null || !component.IsAlive() || !InFiringArc(component) || !ObjectVisible(component))
-			{
-				continue;
-			}
-			if (!Sentry.targetall)
-			{
-				BasePlayer basePlayer = component as BasePlayer;
-				if (Object.op_Implicit((Object)(object)basePlayer) && (IsAuthed(basePlayer) || Ignore(basePlayer)))
+				BaseEntity current = enumerator.get_Current();
+				if ((Object)(object)current == (Object)null)
 				{
 					continue;
 				}
-			}
-			if (!ShouldTarget(component))
-			{
-				continue;
-			}
-			if (PeacekeeperMode())
-			{
-				if (!IsEntityHostile(component))
+				BaseCombatEntity component = ((Component)current).GetComponent<BaseCombatEntity>();
+				if ((Object)(object)component == (Object)null || !component.IsAlive() || !InFiringArc(component) || !ObjectVisible(component))
 				{
 					continue;
 				}
-				if ((Object)(object)target == (Object)null)
+				if (!Sentry.targetall)
 				{
-					nextShotTime = Time.get_time() + 1f;
+					BasePlayer basePlayer = component as BasePlayer;
+					if (Object.op_Implicit((Object)(object)basePlayer) && (IsAuthed(basePlayer) || Ignore(basePlayer)))
+					{
+						continue;
+					}
 				}
+				if (!ShouldTarget(component))
+				{
+					continue;
+				}
+				if (PeacekeeperMode())
+				{
+					if (!IsEntityHostile(component))
+					{
+						continue;
+					}
+					if ((Object)(object)target == (Object)null)
+					{
+						nextShotTime = Time.get_time() + 1f;
+					}
+				}
+				SetTarget(component);
+				break;
 			}
-			SetTarget(component);
-			break;
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 	}
 
@@ -2049,12 +2060,12 @@ public class AutoTurret : ContainerIOEntity, IRemoteControllable
 
 	public bool IsAuthed(ulong id)
 	{
-		return authorizedPlayers.Any((PlayerNameID x) => x.userid == id);
+		return Enumerable.Any<PlayerNameID>((IEnumerable<PlayerNameID>)authorizedPlayers, (Func<PlayerNameID, bool>)((PlayerNameID x) => x.userid == id));
 	}
 
 	public bool IsAuthed(BasePlayer player)
 	{
-		return authorizedPlayers.Any((PlayerNameID x) => x.userid == player.userID);
+		return Enumerable.Any<PlayerNameID>((IEnumerable<PlayerNameID>)authorizedPlayers, (Func<PlayerNameID, bool>)((PlayerNameID x) => x.userid == player.userID));
 	}
 
 	public bool AnyAuthed()

@@ -636,7 +636,7 @@ public class BradleyAPC : BaseCombatEntity
 			}
 		}
 		Pool.FreeList<BaseEntity>(ref list);
-		targetList.Sort(SortTargets);
+		targetList.Sort(new Comparison<TargetInfo>(SortTargets));
 	}
 
 	public int SortTargets(TargetInfo t1, TargetInfo t2)
@@ -1212,6 +1212,8 @@ public class BradleyAPC : BaseCombatEntity
 		//IL_0112: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0117: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0154: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0173: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0178: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0192: Unknown result type (might be due to invalid IL or missing references)
 		//IL_01ca: Unknown result type (might be due to invalid IL or missing references)
 		//IL_01cf: Unknown result type (might be due to invalid IL or missing references)
@@ -1264,9 +1266,18 @@ public class BradleyAPC : BaseCombatEntity
 					currentPath.Add(((Component)nodes[i]).get_transform().get_position());
 				}
 			}
-			foreach (BasePathNode item in path)
+			Enumerator<BasePathNode> enumerator = path.GetEnumerator();
+			try
 			{
-				currentPath.Add(((Component)item).get_transform().get_position());
+				while (enumerator.MoveNext())
+				{
+					BasePathNode current = enumerator.get_Current();
+					currentPath.Add(((Component)current).get_transform().get_position());
+				}
+			}
+			finally
+			{
+				((IDisposable)enumerator).Dispose();
 			}
 			currentPathIndex = -1;
 			pathLooping = false;
@@ -1288,6 +1299,8 @@ public class BradleyAPC : BaseCombatEntity
 		//IL_0155: Unknown result type (might be due to invalid IL or missing references)
 		//IL_015a: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0219: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0238: Unknown result type (might be due to invalid IL or missing references)
+		//IL_023d: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0257: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0290: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0295: Unknown result type (might be due to invalid IL or missing references)
@@ -1328,7 +1341,7 @@ public class BradleyAPC : BaseCombatEntity
 			BasePathNode basePathNode = null;
 			List<BasePathNode> nearNodes = Pool.GetList<BasePathNode>();
 			patrolPath.GetNodesNear(targetInfo.lastSeenPosition, ref nearNodes, 30f);
-			Stack<BasePathNode> stack = null;
+			Stack<BasePathNode> val = null;
 			float num = float.PositiveInfinity;
 			float y = mainTurretEyePos.get_localPosition().y;
 			foreach (BasePathNode item2 in nearNodes)
@@ -1336,22 +1349,22 @@ public class BradleyAPC : BaseCombatEntity
 				Stack<BasePathNode> path = new Stack<BasePathNode>();
 				if (targetInfo.entity.IsVisible(((Component)item2).get_transform().get_position() + new Vector3(0f, y, 0f)) && AStarPath.FindPath(start, item2, out path, out var pathCost) && pathCost < num)
 				{
-					stack = path;
+					val = path;
 					num = pathCost;
 					basePathNode = item2;
 				}
 			}
-			if (stack == null && nearNodes.Count > 0)
+			if (val == null && nearNodes.Count > 0)
 			{
 				Stack<BasePathNode> path2 = new Stack<BasePathNode>();
 				BasePathNode basePathNode2 = nearNodes[Random.Range(0, nearNodes.Count)];
 				if (AStarPath.FindPath(start, basePathNode2, out path2, out var pathCost2) && pathCost2 < num)
 				{
-					stack = path2;
+					val = path2;
 					basePathNode = basePathNode2;
 				}
 			}
-			if (stack != null)
+			if (val != null)
 			{
 				currentPath.Clear();
 				if (flag)
@@ -1361,9 +1374,18 @@ public class BradleyAPC : BaseCombatEntity
 						currentPath.Add(((Component)nodes[i]).get_transform().get_position());
 					}
 				}
-				foreach (BasePathNode item3 in stack)
+				Enumerator<BasePathNode> enumerator2 = val.GetEnumerator();
+				try
 				{
-					currentPath.Add(((Component)item3).get_transform().get_position());
+					while (enumerator2.MoveNext())
+					{
+						BasePathNode current2 = enumerator2.get_Current();
+						currentPath.Add(((Component)current2).get_transform().get_position());
+					}
+				}
+				finally
+				{
+					((IDisposable)enumerator2).Dispose();
 				}
 				currentPathIndex = -1;
 				pathLooping = false;

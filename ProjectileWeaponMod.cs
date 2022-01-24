@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -92,9 +93,9 @@ public class ProjectileWeaponMod : BaseEntity
 			return def;
 		}
 		IEnumerable<float> mods = GetMods(parentEnt, selector_modifier, selector_value);
-		if (mods.Count() != 0)
+		if (Enumerable.Count<float>(mods) != 0)
 		{
-			return mods.Sum();
+			return Enumerable.Sum(mods);
 		}
 		return def;
 	}
@@ -106,9 +107,9 @@ public class ProjectileWeaponMod : BaseEntity
 			return def;
 		}
 		IEnumerable<float> mods = GetMods(parentEnt, selector_modifier, selector_value);
-		if (mods.Count() != 0)
+		if (Enumerable.Count<float>(mods) != 0)
 		{
-			return mods.Average();
+			return Enumerable.Average(mods);
 		}
 		return def;
 	}
@@ -120,9 +121,9 @@ public class ProjectileWeaponMod : BaseEntity
 			return def;
 		}
 		IEnumerable<float> mods = GetMods(parentEnt, selector_modifier, selector_value);
-		if (mods.Count() != 0)
+		if (Enumerable.Count<float>(mods) != 0)
 		{
-			return mods.Max();
+			return Enumerable.Max(mods);
 		}
 		return def;
 	}
@@ -134,20 +135,16 @@ public class ProjectileWeaponMod : BaseEntity
 			return def;
 		}
 		IEnumerable<float> mods = GetMods(parentEnt, selector_modifier, selector_value);
-		if (mods.Count() != 0)
+		if (Enumerable.Count<float>(mods) != 0)
 		{
-			return mods.Min();
+			return Enumerable.Min(mods);
 		}
 		return def;
 	}
 
 	public static IEnumerable<float> GetMods(BaseEntity parentEnt, Func<ProjectileWeaponMod, Modifier> selector_modifier, Func<Modifier, float> selector_value)
 	{
-		return (from x in (from ProjectileWeaponMod x in parentEnt.children
-				where (Object)(object)x != (Object)null && (!x.needsOnForEffects || x.HasFlag(Flags.On))
-				select x).Select(selector_modifier)
-			where x.enabled
-			select x).Select(selector_value);
+		return Enumerable.Select<Modifier, float>(Enumerable.Where<Modifier>(Enumerable.Select<ProjectileWeaponMod, Modifier>(Enumerable.Where<ProjectileWeaponMod>(Enumerable.Cast<ProjectileWeaponMod>((IEnumerable)parentEnt.children), (Func<ProjectileWeaponMod, bool>)((ProjectileWeaponMod x) => (Object)(object)x != (Object)null && (!x.needsOnForEffects || x.HasFlag(Flags.On)))), selector_modifier), (Func<Modifier, bool>)((Modifier x) => x.enabled)), selector_value);
 	}
 
 	public static bool HasBrokenWeaponMod(BaseEntity parentEnt)
@@ -156,7 +153,7 @@ public class ProjectileWeaponMod : BaseEntity
 		{
 			return false;
 		}
-		if (parentEnt.children.Cast<ProjectileWeaponMod>().Any((ProjectileWeaponMod x) => (Object)(object)x != (Object)null && x.IsBroken()))
+		if (Enumerable.Any<ProjectileWeaponMod>(Enumerable.Cast<ProjectileWeaponMod>((IEnumerable)parentEnt.children), (Func<ProjectileWeaponMod, bool>)((ProjectileWeaponMod x) => (Object)(object)x != (Object)null && x.IsBroken())))
 		{
 			return true;
 		}

@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Rust.UI;
 using TMPro;
@@ -35,9 +37,7 @@ public class ItemListTools : MonoBehaviour
 	{
 		if (allItems == null)
 		{
-			allItems = from x in ItemManager.GetItemDefinitions()
-				orderby x.displayName.get_translated()
-				select x;
+			allItems = Enumerable.OrderBy<ItemDefinition, string>((IEnumerable<ItemDefinition>)ItemManager.GetItemDefinitions(), (Func<ItemDefinition, string>)((ItemDefinition x) => x.displayName.get_translated()));
 		}
 	}
 
@@ -59,16 +59,13 @@ public class ItemListTools : MonoBehaviour
 			}
 		}
 		categoryButton.SetActive(true);
-		foreach (IGrouping<ItemCategory, ItemDefinition> item in from x in ItemManager.GetItemDefinitions()
-			group x by x.category into x
-			orderby x.First().category
-			select x)
+		foreach (IGrouping<ItemCategory, ItemDefinition> item in (IEnumerable<IGrouping<ItemCategory, ItemDefinition>>)Enumerable.OrderBy<IGrouping<ItemCategory, ItemDefinition>, ItemCategory>(Enumerable.GroupBy<ItemDefinition, ItemCategory>((IEnumerable<ItemDefinition>)ItemManager.GetItemDefinitions(), (Func<ItemDefinition, ItemCategory>)((ItemDefinition x) => x.category)), (Func<IGrouping<ItemCategory, ItemDefinition>, ItemCategory>)((IGrouping<ItemCategory, ItemDefinition> x) => Enumerable.First<ItemDefinition>((IEnumerable<ItemDefinition>)x).category)))
 		{
 			GameObject val = Object.Instantiate<GameObject>(categoryButton);
 			val.get_transform().SetParent(categoryButton.get_transform().get_parent(), false);
-			((TMP_Text)val.GetComponentInChildren<TextMeshProUGUI>()).set_text(item.First().category.ToString());
+			((TMP_Text)val.GetComponentInChildren<TextMeshProUGUI>()).set_text(Enumerable.First<ItemDefinition>((IEnumerable<ItemDefinition>)item).category.ToString());
 			Button btn = val.GetComponentInChildren<Button>();
-			ItemDefinition[] itemArray = item.ToArray();
+			ItemDefinition[] itemArray = Enumerable.ToArray<ItemDefinition>((IEnumerable<ItemDefinition>)item);
 			((UnityEvent)btn.get_onClick()).AddListener((UnityAction)delegate
 			{
 				if (Object.op_Implicit((Object)(object)lastCategory))
@@ -91,7 +88,7 @@ public class ItemListTools : MonoBehaviour
 
 	private void SwitchItemCategory(ItemDefinition[] defs)
 	{
-		currentItems = defs.OrderBy((ItemDefinition x) => x.displayName.get_translated());
+		currentItems = Enumerable.OrderBy<ItemDefinition, string>((IEnumerable<ItemDefinition>)defs, (Func<ItemDefinition, string>)((ItemDefinition x) => x.displayName.get_translated()));
 		searchInputText.set_Text("");
 		FilterItems(null);
 	}
@@ -115,7 +112,7 @@ public class ItemListTools : MonoBehaviour
 		string value = (flag ? searchText.ToLower() : null);
 		IOrderedEnumerable<ItemDefinition> obj = (flag ? allItems : currentItems);
 		int num = 0;
-		foreach (ItemDefinition item in obj)
+		foreach (ItemDefinition item in (IEnumerable<ItemDefinition>)obj)
 		{
 			if (!item.hidden && (!flag || item.displayName.get_translated().ToLower().Contains(value)))
 			{

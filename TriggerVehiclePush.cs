@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class TriggerVehiclePush : TriggerBase, IServerComponent
@@ -20,7 +22,7 @@ public class TriggerVehiclePush : TriggerBase, IServerComponent
 
 	public bool useCentreOfMass;
 
-	public int ContentsCount => entityContents?.Count ?? 0;
+	public int ContentsCount => entityContents?.get_Count() ?? 0;
 
 	internal override GameObject InterestedInObject(GameObject obj)
 	{
@@ -49,6 +51,8 @@ public class TriggerVehiclePush : TriggerBase, IServerComponent
 	{
 		//IL_001e: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0023: Unknown result type (might be due to invalid IL or missing references)
+		//IL_002a: Unknown result type (might be due to invalid IL or missing references)
+		//IL_002f: Unknown result type (might be due to invalid IL or missing references)
 		//IL_009c: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00a9: Unknown result type (might be due to invalid IL or missing references)
 		//IL_00b4: Unknown result type (might be due to invalid IL or missing references)
@@ -92,36 +96,45 @@ public class TriggerVehiclePush : TriggerBase, IServerComponent
 			return;
 		}
 		Vector3 position = ((Component)this).get_transform().get_position();
-		foreach (BaseEntity entityContent in entityContents)
+		Enumerator<BaseEntity> enumerator = entityContents.GetEnumerator();
+		try
 		{
-			if (!entityContent.IsValid() || entityContent.EqualNetID(thisEntity))
+			while (enumerator.MoveNext())
 			{
-				continue;
-			}
-			Rigidbody val = ((Component)entityContent).GetComponent<Rigidbody>();
-			if ((Object)(object)val == (Object)null && allowParentRigidbody)
-			{
-				val = ((Component)entityContent).GetComponentInParent<Rigidbody>();
-			}
-			if (Object.op_Implicit((Object)(object)val) && !val.get_isKinematic())
-			{
-				float num = Vector3Ex.Distance2D(useRigidbodyPosition ? ((Component)val).get_transform().get_position() : ((Component)entityContent).get_transform().get_position(), ((Component)this).get_transform().get_position());
-				float num2 = 1f - Mathf.InverseLerp(minRadius, maxRadius, num);
-				float num3 = 1f - Mathf.InverseLerp(minRadius - 1f, minRadius, num);
-				Vector3 val2 = entityContent.ClosestPoint(position);
-				Vector3 val3 = Vector3Ex.Direction2D(val2, position);
-				val3 = Vector3Ex.Direction2D(useCentreOfMass ? val.get_worldCenterOfMass() : val2, position);
-				if (snapToAxis)
+				BaseEntity current = enumerator.get_Current();
+				if (!current.IsValid() || current.EqualNetID(thisEntity))
 				{
-					Vector3 val4 = ((Component)this).get_transform().InverseTransformDirection(val3);
-					val3 = ((!(Vector3.Angle(val4, axisToSnapTo) < Vector3.Angle(val4, -axisToSnapTo))) ? (-((Component)this).get_transform().TransformDirection(axisToSnapTo)) : ((Component)this).get_transform().TransformDirection(axisToSnapTo));
+					continue;
 				}
-				val.AddForceAtPosition(val3 * maxPushVelocity * num2, val2, (ForceMode)5);
-				if (num3 > 0f)
+				Rigidbody val = ((Component)current).GetComponent<Rigidbody>();
+				if ((Object)(object)val == (Object)null && allowParentRigidbody)
 				{
-					val.AddForceAtPosition(val3 * 1f * num3, val2, (ForceMode)2);
+					val = ((Component)current).GetComponentInParent<Rigidbody>();
+				}
+				if (Object.op_Implicit((Object)(object)val) && !val.get_isKinematic())
+				{
+					float num = Vector3Ex.Distance2D(useRigidbodyPosition ? ((Component)val).get_transform().get_position() : ((Component)current).get_transform().get_position(), ((Component)this).get_transform().get_position());
+					float num2 = 1f - Mathf.InverseLerp(minRadius, maxRadius, num);
+					float num3 = 1f - Mathf.InverseLerp(minRadius - 1f, minRadius, num);
+					Vector3 val2 = current.ClosestPoint(position);
+					Vector3 val3 = Vector3Ex.Direction2D(val2, position);
+					val3 = Vector3Ex.Direction2D(useCentreOfMass ? val.get_worldCenterOfMass() : val2, position);
+					if (snapToAxis)
+					{
+						Vector3 val4 = ((Component)this).get_transform().InverseTransformDirection(val3);
+						val3 = ((!(Vector3.Angle(val4, axisToSnapTo) < Vector3.Angle(val4, -axisToSnapTo))) ? (-((Component)this).get_transform().TransformDirection(axisToSnapTo)) : ((Component)this).get_transform().TransformDirection(axisToSnapTo));
+					}
+					val.AddForceAtPosition(val3 * maxPushVelocity * num2, val2, (ForceMode)5);
+					if (num3 > 0f)
+					{
+						val.AddForceAtPosition(val3 * 1f * num3, val2, (ForceMode)2);
+					}
 				}
 			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 	}
 

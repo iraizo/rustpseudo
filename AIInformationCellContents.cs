@@ -5,9 +5,9 @@ public class AIInformationCellContents<T> where T : AIPoint
 {
 	public HashSet<T> Items = new HashSet<T>();
 
-	public int Count => Items.Count;
+	public int Count => Items.get_Count();
 
-	public bool Empty => Items.Count == 0;
+	public bool Empty => Items.get_Count() == 0;
 
 	public void Init(Bounds cellBounds, GameObject root)
 	{

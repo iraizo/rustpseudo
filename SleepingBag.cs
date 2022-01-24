@@ -291,12 +291,12 @@ public class SleepingBag : DecayEntity
 
 	public static SleepingBag[] FindForPlayer(ulong playerID, bool ignoreTimers)
 	{
-		return sleepingBags.Where((SleepingBag x) => x.ValidForPlayer(playerID, ignoreTimers)).ToArray();
+		return Enumerable.ToArray<SleepingBag>(Enumerable.Where<SleepingBag>((IEnumerable<SleepingBag>)sleepingBags, (Func<SleepingBag, bool>)((SleepingBag x) => x.ValidForPlayer(playerID, ignoreTimers))));
 	}
 
 	public static SleepingBag FindForPlayer(ulong playerID, uint sleepingBagID, bool ignoreTimers)
 	{
-		return sleepingBags.FirstOrDefault((SleepingBag x) => x.deployerUserID == playerID && x.net.ID == sleepingBagID && (ignoreTimers || x.unlockTime < Time.get_realtimeSinceStartup()));
+		return Enumerable.FirstOrDefault<SleepingBag>((IEnumerable<SleepingBag>)sleepingBags, (Func<SleepingBag, bool>)((SleepingBag x) => x.deployerUserID == playerID && x.net.ID == sleepingBagID && (ignoreTimers || x.unlockTime < Time.get_realtimeSinceStartup())));
 	}
 
 	public static bool SpawnPlayer(BasePlayer player, uint sleepingBag)
@@ -306,7 +306,7 @@ public class SleepingBag : DecayEntity
 		//IL_008c: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0094: Unknown result type (might be due to invalid IL or missing references)
 		SleepingBag[] array = FindForPlayer(player.userID, ignoreTimers: true);
-		SleepingBag sleepingBag2 = array.FirstOrDefault((SleepingBag x) => x.ValidForPlayer(player.userID, ignoreTimers: false) && x.net.ID == sleepingBag && x.unlockTime < Time.get_realtimeSinceStartup());
+		SleepingBag sleepingBag2 = Enumerable.FirstOrDefault<SleepingBag>((IEnumerable<SleepingBag>)array, (Func<SleepingBag, bool>)((SleepingBag x) => x.ValidForPlayer(player.userID, ignoreTimers: false) && x.net.ID == sleepingBag && x.unlockTime < Time.get_realtimeSinceStartup()));
 		if ((Object)(object)sleepingBag2 == (Object)null)
 		{
 			return false;
@@ -420,7 +420,7 @@ public class SleepingBag : DecayEntity
 		}
 		deployerUserID = player.userID;
 		float realtimeSinceStartup = Time.get_realtimeSinceStartup();
-		SleepingBag[] array = sleepingBags.Where((SleepingBag x) => x.deployerUserID == player.userID && x.unlockTime > Time.get_realtimeSinceStartup()).ToArray();
+		SleepingBag[] array = Enumerable.ToArray<SleepingBag>(Enumerable.Where<SleepingBag>((IEnumerable<SleepingBag>)sleepingBags, (Func<SleepingBag, bool>)((SleepingBag x) => x.deployerUserID == player.userID && x.unlockTime > Time.get_realtimeSinceStartup())));
 		foreach (SleepingBag sleepingBag in array)
 		{
 			if (sleepingBag.unlockTime > realtimeSinceStartup && Vector3.Distance(((Component)sleepingBag).get_transform().get_position(), ((Component)this).get_transform().get_position()) <= Server.respawnresetrange)

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -88,7 +89,7 @@ public class LootSpawn : ScriptableObject
 
 	private void SubCategoryIntoContainer(ItemContainer container)
 	{
-		int num = subSpawn.Sum((Entry x) => x.weight);
+		int num = Enumerable.Sum<Entry>((IEnumerable<Entry>)subSpawn, (Func<Entry, int>)((Entry x) => x.weight));
 		int num2 = Random.Range(0, num);
 		for (int i = 0; i < subSpawn.Length; i++)
 		{

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -5,7 +6,7 @@ public class PrefabPool
 {
 	public Stack<Poolable> stack = new Stack<Poolable>();
 
-	public int Count => stack.Count;
+	public int Count => stack.get_Count();
 
 	public void Push(Poolable info)
 	{
@@ -23,7 +24,7 @@ public class PrefabPool
 	{
 		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
-		while (stack.Count > 0)
+		while (stack.get_Count() > 0)
 		{
 			Poolable poolable = stack.Pop();
 			if (Object.op_Implicit((Object)(object)poolable))
@@ -39,12 +40,23 @@ public class PrefabPool
 
 	public void Clear()
 	{
-		foreach (Poolable item in stack)
+		//IL_0006: Unknown result type (might be due to invalid IL or missing references)
+		//IL_000b: Unknown result type (might be due to invalid IL or missing references)
+		Enumerator<Poolable> enumerator = stack.GetEnumerator();
+		try
 		{
-			if (Object.op_Implicit((Object)(object)item))
+			while (enumerator.MoveNext())
 			{
-				Object.Destroy((Object)(object)((Component)item).get_gameObject());
+				Poolable current = enumerator.get_Current();
+				if (Object.op_Implicit((Object)(object)current))
+				{
+					Object.Destroy((Object)(object)((Component)current).get_gameObject());
+				}
 			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 		stack.Clear();
 	}

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -139,13 +140,13 @@ public class GenerateDungeonBase : ProceduralComponent
 				}
 				if (list.Count > 5)
 				{
-					list = list.OrderByDescending((DungeonSegment x) => Vector3Ex.SqrMagnitude2D(x.position - segmentStart.position)).ToList();
+					list = Enumerable.ToList<DungeonSegment>((IEnumerable<DungeonSegment>)Enumerable.OrderByDescending<DungeonSegment, float>((IEnumerable<DungeonSegment>)list, (Func<DungeonSegment, float>)((DungeonSegment x) => Vector3Ex.SqrMagnitude2D(x.position - segmentStart.position))));
 					PlaceSegments(ref seed2, 1, 5, 3, attachToFemale: true, attachToMale: false, list, array);
 				}
 				if (list.Count > 25)
 				{
 					DungeonSegment segmentEnd = list[list.Count - 1];
-					list = list.OrderByDescending((DungeonSegment x) => Mathf.Min(Vector3Ex.SqrMagnitude2D(x.position - segmentStart.position), Vector3Ex.SqrMagnitude2D(x.position - segmentEnd.position))).ToList();
+					list = Enumerable.ToList<DungeonSegment>((IEnumerable<DungeonSegment>)Enumerable.OrderByDescending<DungeonSegment, float>((IEnumerable<DungeonSegment>)list, (Func<DungeonSegment, float>)((DungeonSegment x) => Mathf.Min(Vector3Ex.SqrMagnitude2D(x.position - segmentStart.position), Vector3Ex.SqrMagnitude2D(x.position - segmentEnd.position)))));
 					PlaceSegments(ref seed2, 1, 6, 3, attachToFemale: true, attachToMale: false, list, array);
 				}
 				bool flag = true;

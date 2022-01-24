@@ -192,36 +192,36 @@ namespace UnityEngine.UI.Extensions
 			{
 				return;
 			}
-			Stack<Vector2> stack = new Stack<Vector2>();
-			stack.Push(sourcePoints[0]);
-			Vector2 val = sourcePoints[1];
+			Stack<Vector2> val = new Stack<Vector2>();
+			val.Push(sourcePoints[0]);
+			Vector2 val2 = sourcePoints[1];
 			int num = 2;
-			Vector2 val2;
+			Vector2 val3;
 			for (num = 2; num < sourcePoints.Count; num++)
 			{
-				val2 = val - sourcePoints[num];
-				if (((Vector2)(ref val2)).get_sqrMagnitude() > minSqrDistance)
+				val3 = val2 - sourcePoints[num];
+				if (((Vector2)(ref val3)).get_sqrMagnitude() > minSqrDistance)
 				{
-					val2 = stack.Peek() - sourcePoints[num];
-					if (((Vector2)(ref val2)).get_sqrMagnitude() > maxSqrDistance)
+					val3 = val.Peek() - sourcePoints[num];
+					if (((Vector2)(ref val3)).get_sqrMagnitude() > maxSqrDistance)
 					{
-						stack.Push(val);
+						val.Push(val2);
 					}
 				}
-				val = sourcePoints[num];
+				val2 = sourcePoints[num];
 			}
-			Vector2 val3 = stack.Pop();
-			Vector2 val4 = stack.Peek();
-			val2 = val4 - val;
-			Vector2 normalized = ((Vector2)(ref val2)).get_normalized();
-			val2 = val - val3;
-			float magnitude = ((Vector2)(ref val2)).get_magnitude();
-			val2 = val3 - val4;
-			float magnitude2 = ((Vector2)(ref val2)).get_magnitude();
-			val3 += normalized * ((magnitude2 - magnitude) / 2f);
-			stack.Push(val3);
-			stack.Push(val);
-			Interpolate(new List<Vector2>(stack), scale);
+			Vector2 val4 = val.Pop();
+			Vector2 val5 = val.Peek();
+			val3 = val5 - val2;
+			Vector2 normalized = ((Vector2)(ref val3)).get_normalized();
+			val3 = val2 - val4;
+			float magnitude = ((Vector2)(ref val3)).get_magnitude();
+			val3 = val4 - val5;
+			float magnitude2 = ((Vector2)(ref val3)).get_magnitude();
+			val4 += normalized * ((magnitude2 - magnitude) / 2f);
+			val.Push(val4);
+			val.Push(val2);
+			Interpolate(new List<Vector2>((IEnumerable<Vector2>)val), scale);
 		}
 
 		public Vector2 CalculateBezierPoint(int curveIndex, float t)

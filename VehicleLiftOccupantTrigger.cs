@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Rust;
 using UnityEngine;
 
@@ -46,23 +48,34 @@ public class VehicleLiftOccupantTrigger : TriggerBase
 
 	internal override void OnEntityLeave(BaseEntity ent)
 	{
+		//IL_0038: Unknown result type (might be due to invalid IL or missing references)
+		//IL_003d: Unknown result type (might be due to invalid IL or missing references)
 		base.OnEntityLeave(ent);
 		if (!((Object)(object)carOccupant == (Object)(object)ent))
 		{
 			return;
 		}
 		carOccupant = null;
-		if (entityContents == null || entityContents.Count <= 0)
+		if (entityContents == null || entityContents.get_Count() <= 0)
 		{
 			return;
 		}
-		foreach (BaseEntity entityContent in entityContents)
+		Enumerator<BaseEntity> enumerator = entityContents.GetEnumerator();
+		try
 		{
-			if ((Object)(object)entityContent != (Object)null)
+			while (enumerator.MoveNext())
 			{
-				carOccupant = (ModularCar)entityContent;
-				break;
+				BaseEntity current = enumerator.get_Current();
+				if ((Object)(object)current != (Object)null)
+				{
+					carOccupant = (ModularCar)current;
+					break;
+				}
 			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 	}
 }

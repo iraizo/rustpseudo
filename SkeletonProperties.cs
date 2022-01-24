@@ -35,10 +35,10 @@ public class SkeletonProperties : ScriptableObject
 			Debug.LogWarning((object)"boneReference is null", (Object)(object)this);
 			return;
 		}
-		List<BoneProperty> list = bones.ToList();
+		List<BoneProperty> list = Enumerable.ToList<BoneProperty>((IEnumerable<BoneProperty>)bones);
 		foreach (Transform child in boneReference.get_transform().GetAllChildren())
 		{
-			if (list.All((BoneProperty x) => (Object)(object)x.bone != (Object)(object)((Component)child).get_gameObject()))
+			if (Enumerable.All<BoneProperty>((IEnumerable<BoneProperty>)list, (Func<BoneProperty, bool>)((BoneProperty x) => (Object)(object)x.bone != (Object)(object)((Component)child).get_gameObject())))
 			{
 				list.Add(new BoneProperty
 				{

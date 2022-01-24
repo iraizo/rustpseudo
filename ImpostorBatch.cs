@@ -20,7 +20,7 @@ public class ImpostorBatch
 
 	public int Count => Positions.Count;
 
-	public bool Visible => Positions.Count - recycle.Count > 0;
+	public bool Visible => Positions.Count - recycle.get_Count() > 0;
 
 	private ComputeBuffer SafeRelease(ComputeBuffer buffer)
 	{
@@ -61,7 +61,7 @@ public class ImpostorBatch
 		//IL_0033: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0056: Unknown result type (might be due to invalid IL or missing references)
 		data.Batch = this;
-		if (recycle.Count > 0)
+		if (recycle.get_Count() > 0)
 		{
 			data.BatchIndex = recycle.Dequeue();
 			Positions[data.BatchIndex] = data.PositionAndScale();

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -623,7 +624,7 @@ public abstract class TerrainMap<T> : TerrainMap where T : struct
 
 	public IEnumerable<T> ToEnumerable()
 	{
-		return src.Cast<T>();
+		return Enumerable.Cast<T>((IEnumerable)src);
 	}
 
 	public int BytesPerElement()

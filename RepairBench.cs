@@ -211,11 +211,11 @@ public class RepairBench : StorageContainer
 			return;
 		}
 		nextSkinChangeTime = Time.get_realtimeSinceStartup() + 0.75f;
-		ItemSkinDirectory.Skin skin = slot.info.skins.FirstOrDefault((ItemSkinDirectory.Skin x) => (ulong)x.id == Skin);
+		ItemSkinDirectory.Skin skin = Enumerable.FirstOrDefault<ItemSkinDirectory.Skin>((IEnumerable<ItemSkinDirectory.Skin>)slot.info.skins, (Func<ItemSkinDirectory.Skin, bool>)((ItemSkinDirectory.Skin x) => (ulong)x.id == Skin));
 		if ((Object)(object)slot.info.isRedirectOf != (Object)null)
 		{
 			Skin = ItemDefinition.FindSkin(slot.info.isRedirectOf.itemid, num);
-			skin = slot.info.isRedirectOf.skins.FirstOrDefault((ItemSkinDirectory.Skin x) => (ulong)x.id == Skin);
+			skin = Enumerable.FirstOrDefault<ItemSkinDirectory.Skin>((IEnumerable<ItemSkinDirectory.Skin>)slot.info.isRedirectOf.skins, (Func<ItemSkinDirectory.Skin, bool>)((ItemSkinDirectory.Skin x) => (ulong)x.id == Skin));
 		}
 		ItemSkin itemSkin = ((skin.id == 0) ? null : (skin.invItem as ItemSkin));
 		if (Object.op_Implicit((Object)(object)itemSkin) && ((Object)(object)itemSkin.Redirect != (Object)null || (Object)(object)slot.info.isRedirectOf != (Object)null))

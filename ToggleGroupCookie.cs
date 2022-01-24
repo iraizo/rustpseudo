@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Rust;
 using UnityEngine;
@@ -31,7 +33,7 @@ public class ToggleGroupCookie : MonoBehaviour
 				}
 			}
 		}
-		Toggle val2 = group.ActiveToggles().FirstOrDefault((Toggle x) => x.get_isOn());
+		Toggle val2 = Enumerable.FirstOrDefault<Toggle>(group.ActiveToggles(), (Func<Toggle, bool>)((Toggle x) => x.get_isOn()));
 		if (Object.op_Implicit((Object)(object)val2))
 		{
 			val2.set_isOn(false);
@@ -63,7 +65,7 @@ public class ToggleGroupCookie : MonoBehaviour
 
 	private void OnToggleChanged(bool b)
 	{
-		Toggle val = ((Component)this).GetComponentsInChildren<Toggle>().FirstOrDefault((Toggle x) => x.get_isOn());
+		Toggle val = Enumerable.FirstOrDefault<Toggle>((IEnumerable<Toggle>)((Component)this).GetComponentsInChildren<Toggle>(), (Func<Toggle, bool>)((Toggle x) => x.get_isOn()));
 		if (Object.op_Implicit((Object)(object)val))
 		{
 			PlayerPrefs.SetString("ToggleGroupCookie_" + ((Object)this).get_name(), ((Object)((Component)val).get_gameObject()).get_name());

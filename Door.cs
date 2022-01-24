@@ -838,25 +838,36 @@ public class Door : AnimatedBuildingBlock, INotifyTrigger
 
 	public void OnObjects(TriggerNotify trigger)
 	{
+		//IL_0013: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
 		if (!base.isServer)
 		{
 			return;
 		}
 		bool flag = false;
-		foreach (BaseEntity entityContent in trigger.entityContents)
+		Enumerator<BaseEntity> enumerator = trigger.entityContents.GetEnumerator();
+		try
 		{
-			BaseMountable baseMountable;
-			if ((baseMountable = entityContent as BaseMountable) != null && baseMountable.BlocksDoors)
+			while (enumerator.MoveNext())
 			{
-				flag = true;
-				break;
+				BaseEntity current = enumerator.get_Current();
+				BaseMountable baseMountable;
+				if ((baseMountable = current as BaseMountable) != null && baseMountable.BlocksDoors)
+				{
+					flag = true;
+					break;
+				}
+				BaseVehicleModule baseVehicleModule;
+				if ((baseVehicleModule = current as BaseVehicleModule) != null && (Object)(object)baseVehicleModule.Vehicle != (Object)null && baseVehicleModule.Vehicle.BlocksDoors)
+				{
+					flag = true;
+					break;
+				}
 			}
-			BaseVehicleModule baseVehicleModule;
-			if ((baseVehicleModule = entityContent as BaseVehicleModule) != null && (Object)(object)baseVehicleModule.Vehicle != (Object)null && baseVehicleModule.Vehicle.BlocksDoors)
-			{
-				flag = true;
-				break;
-			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 		if (flag)
 		{

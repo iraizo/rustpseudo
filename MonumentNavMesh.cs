@@ -226,7 +226,7 @@ public class MonumentNavMesh : FacepunchBehaviour, IServerComponent
 			{
 				NavMeshDataInstance = NavMesh.AddNavMeshData(NavMeshData);
 			}
-			Debug.Log((object)$"Monument Navmesh Build took {BuildTimer.Elapsed.TotalSeconds:0.00} seconds");
+			Debug.Log((object)$"Monument Navmesh Build took {BuildTimer.get_Elapsed().TotalSeconds:0.00} seconds");
 			BuildingOperation = null;
 		}
 	}
@@ -247,5 +247,7 @@ public class MonumentNavMesh : FacepunchBehaviour, IServerComponent
 	public MonumentNavMesh()
 		: this()
 	{
-	}
+	}//IL_002e: Unknown result type (might be due to invalid IL or missing references)
+	//IL_0038: Expected O, but got Unknown
+
 }

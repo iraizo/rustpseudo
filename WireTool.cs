@@ -426,7 +426,7 @@ public class WireTool : HeldEntity
 		}
 		List<Collider> list = Pool.GetList<Collider>();
 		GamePhysics.OverlapSphere(player.eyes.position, 0.1f, list, 536870912, (QueryTriggerInteraction)2);
-		bool result = list.All((Collider collider) => ((Component)collider).get_gameObject().CompareTag("IgnoreWireCheck"));
+		bool result = Enumerable.All<Collider>((IEnumerable<Collider>)list, (Func<Collider, bool>)((Collider collider) => ((Component)collider).get_gameObject().CompareTag("IgnoreWireCheck")));
 		Pool.FreeList<Collider>(ref list);
 		return result;
 	}

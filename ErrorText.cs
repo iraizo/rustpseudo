@@ -46,7 +46,7 @@ public class ErrorText : MonoBehaviour
 
 	protected void Update()
 	{
-		if (stopwatch != null && stopwatch.Elapsed.TotalSeconds > 30.0)
+		if (stopwatch != null && stopwatch.get_Elapsed().TotalSeconds > 30.0)
 		{
 			((TMP_Text)text).set_text(string.Empty);
 			stopwatch = null;

@@ -20,7 +20,7 @@ public static class Auth_Steam
 		}
 		waitingList.Add(connection);
 		Stopwatch timeout = Stopwatch.StartNew();
-		while (timeout.Elapsed.TotalSeconds < 30.0 && connection.active && !(connection.authStatus != ""))
+		while (timeout.get_Elapsed().TotalSeconds < 30.0 && connection.active && !(connection.authStatus != ""))
 		{
 			yield return null;
 		}

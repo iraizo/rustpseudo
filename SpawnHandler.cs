@@ -52,7 +52,7 @@ public class SpawnHandler : SingletonComponent<SpawnHandler>
 
 	protected void OnEnable()
 	{
-		AllSpawnPopulations = SpawnPopulations.Concat(ConvarSpawnPopulations).ToArray();
+		AllSpawnPopulations = Enumerable.ToArray<SpawnPopulation>(Enumerable.Concat<SpawnPopulation>((IEnumerable<SpawnPopulation>)SpawnPopulations, (IEnumerable<SpawnPopulation>)ConvarSpawnPopulations));
 		((MonoBehaviour)this).StartCoroutine(SpawnTick());
 		((MonoBehaviour)this).StartCoroutine(SpawnGroupTick());
 		((MonoBehaviour)this).StartCoroutine(SpawnIndividualTick());
@@ -534,7 +534,7 @@ public class SpawnHandler : SingletonComponent<SpawnHandler>
 		Debug.Log((object)string.Concat(population, " has ", array.Length, " objects, but max allowed is ", targetCount));
 		int num = array.Length - targetCount;
 		Debug.Log((object)(" - deleting " + num + " objects"));
-		foreach (Spawnable item in array.Take(num))
+		foreach (Spawnable item in Enumerable.Take<Spawnable>((IEnumerable<Spawnable>)array, num))
 		{
 			BaseEntity baseEntity = ((Component)item).get_gameObject().ToBaseEntity();
 			if (baseEntity.IsValid())
@@ -550,9 +550,7 @@ public class SpawnHandler : SingletonComponent<SpawnHandler>
 
 	public Spawnable[] FindAll(SpawnPopulation population)
 	{
-		return (from x in Object.FindObjectsOfType<Spawnable>()
-			where ((Component)x).get_gameObject().get_activeInHierarchy() && x.Population == population
-			select x).ToArray();
+		return Enumerable.ToArray<Spawnable>(Enumerable.Where<Spawnable>((IEnumerable<Spawnable>)Object.FindObjectsOfType<Spawnable>(), (Func<Spawnable, bool>)((Spawnable x) => ((Component)x).get_gameObject().get_activeInHierarchy() && x.Population == population)));
 	}
 
 	public int GetTargetCount(SpawnPopulation population, SpawnDistribution distribution)

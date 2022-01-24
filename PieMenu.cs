@@ -149,7 +149,7 @@ public class PieMenu : UIBehaviour
 
 	public void AddOption(MenuOption option)
 	{
-		List<MenuOption> list = options.ToList();
+		List<MenuOption> list = Enumerable.ToList<MenuOption>((IEnumerable<MenuOption>)options);
 		list.Add(option);
 		options = list.ToArray();
 	}
@@ -249,7 +249,7 @@ public class PieMenu : UIBehaviour
 
 	public void Rebuild()
 	{
-		options = options.OrderBy((MenuOption x) => x.order).ToArray();
+		options = Enumerable.ToArray<MenuOption>((IEnumerable<MenuOption>)Enumerable.OrderBy<MenuOption, int>((IEnumerable<MenuOption>)options, (Func<MenuOption, int>)((MenuOption x) => x.order)));
 		while (optionsCanvas.get_transform().get_childCount() > 0)
 		{
 			if (Application.get_isPlaying())
@@ -280,7 +280,7 @@ public class PieMenu : UIBehaviour
 				options[i].wantsMerge = flag;
 			}
 			int num = options.Length;
-			int num2 = options.Where((MenuOption x) => x.wantsMerge).Count();
+			int num2 = Enumerable.Count<MenuOption>(Enumerable.Where<MenuOption>((IEnumerable<MenuOption>)options, (Func<MenuOption, bool>)((MenuOption x) => x.wantsMerge)));
 			int num3 = num - num2;
 			int num4 = num3 + num2 / 2;
 			float num5 = radiusSize / (float)num * 0.75f;

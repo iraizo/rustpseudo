@@ -839,7 +839,7 @@ public class ModularCarGarage : ContainerIOEntity
 	private void RefreshLoot()
 	{
 		List<BasePlayer> list = Pool.GetList<BasePlayer>();
-		list.AddRange(lootingPlayers);
+		list.AddRange((IEnumerable<BasePlayer>)lootingPlayers);
 		foreach (BasePlayer item in list)
 		{
 			item.inventory.loot.Clear();

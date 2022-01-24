@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,7 +28,7 @@ namespace CompanionServer
 			{
 				return false;
 			}
-			if (_subscriptions.Count >= 50)
+			if (_subscriptions.get_Count() >= 50)
 			{
 				return false;
 			}
@@ -48,12 +47,23 @@ namespace CompanionServer
 
 		public List<ulong> ToList()
 		{
+			//IL_000c: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0011: Unknown result type (might be due to invalid IL or missing references)
 			List<ulong> list = Pool.GetList<ulong>();
-			foreach (ulong subscription in _subscriptions)
+			Enumerator<ulong> enumerator = _subscriptions.GetEnumerator();
+			try
 			{
-				list.Add(subscription);
+				while (enumerator.MoveNext())
+				{
+					ulong current = enumerator.get_Current();
+					list.Add(current);
+				}
+				return list;
 			}
-			return list;
+			finally
+			{
+				((IDisposable)enumerator).Dispose();
+			}
 		}
 
 		public void LoadFrom(List<ulong> steamIds)
@@ -76,7 +86,7 @@ namespace CompanionServer
 			{
 				list.Add(player.userid);
 			}
-			_subscriptions.IntersectWith(list);
+			_subscriptions.IntersectWith((IEnumerable<ulong>)list);
 			Pool.FreeList<ulong>(ref list);
 		}
 
@@ -93,7 +103,7 @@ namespace CompanionServer
 				serverPairingData["type"] = type;
 			}
 			_lastSend = realtimeSinceStartup;
-			return SendNotificationImpl(_subscriptions, channel, title, body, serverPairingData);
+			return SendNotificationImpl((ICollection<ulong>)_subscriptions, channel, title, body, serverPairingData);
 		}
 
 		public static async Task<NotificationSendResult> SendNotificationTo(ICollection<ulong> steamIds, NotificationChannel channel, string title, string body, Dictionary<string, string> data)
@@ -111,7 +121,7 @@ namespace CompanionServer
 			HashSet<ulong> set = Pool.Get<HashSet<ulong>>();
 			set.Clear();
 			set.Add(steamId);
-			NotificationSendResult result = await SendNotificationImpl(set, channel, title, body, data);
+			NotificationSendResult result = await SendNotificationImpl((ICollection<ulong>)set, channel, title, body, data);
 			set.Clear();
 			Pool.Free<HashSet<ulong>>(ref set);
 			return result;
@@ -153,7 +163,7 @@ namespace CompanionServer
 					DebugEx.LogWarning((object)$"Failed to send notification: {httpResponseMessage.StatusCode}", (StackTraceLogType)0);
 					return NotificationSendResult.ServerError;
 				}
-				if (httpResponseMessage.StatusCode == HttpStatusCode.Accepted)
+				if ((int)httpResponseMessage.StatusCode == 202)
 				{
 					return NotificationSendResult.NoTargetsFound;
 				}

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -56,12 +57,12 @@ public class ItemSkinDirectory : ScriptableObject
 
 	public static Skin[] ForItem(ItemDefinition item)
 	{
-		return Instance.skins.Where((Skin x) => x.isSkin && x.itemid == item.itemid).ToArray();
+		return Enumerable.ToArray<Skin>(Enumerable.Where<Skin>((IEnumerable<Skin>)Instance.skins, (Func<Skin, bool>)((Skin x) => x.isSkin && x.itemid == item.itemid)));
 	}
 
 	public static Skin FindByInventoryDefinitionId(int id)
 	{
-		return Instance.skins.Where((Skin x) => x.id == id).FirstOrDefault();
+		return Enumerable.FirstOrDefault<Skin>(Enumerable.Where<Skin>((IEnumerable<Skin>)Instance.skins, (Func<Skin, bool>)((Skin x) => x.id == id)));
 	}
 
 	public ItemSkinDirectory()

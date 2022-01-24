@@ -148,12 +148,14 @@ public static class NexusServer
 		//IL_01aa: Unknown result type (might be due to invalid IL or missing references)
 		//IL_01bd: Unknown result type (might be due to invalid IL or missing references)
 		//IL_01bf: Unknown result type (might be due to invalid IL or missing references)
+		//IL_027b: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0280: Unknown result type (might be due to invalid IL or missing references)
 		if (_existingIslands == null)
 		{
 			_existingIslands = new Dictionary<string, NexusIsland>();
 		}
-		HashSet<NexusIsland> hashSet = Pool.Get<HashSet<NexusIsland>>();
-		hashSet.Clear();
+		HashSet<NexusIsland> val = Pool.Get<HashSet<NexusIsland>>();
+		val.Clear();
 		if (_existingIslands.Count == 0)
 		{
 			Enumerator<BaseNetworkable> enumerator = BaseNetworkable.serverEntities.GetEnumerator();
@@ -166,7 +168,7 @@ public static class NexusServer
 					{
 						if (string.IsNullOrEmpty(nexusIsland.ZoneName) || _existingIslands.ContainsKey(nexusIsland.ZoneName))
 						{
-							hashSet.Add(nexusIsland);
+							val.Add(nexusIsland);
 						}
 						else
 						{
@@ -199,17 +201,17 @@ public static class NexusServer
 			{
 				if (_existingIslands.TryGetValue(item.Key, out var value))
 				{
-					hashSet.Add(value);
+					val.Add(value);
 				}
 				continue;
 			}
-			var (val, val2) = CalculateIslandTransform(item.Value);
+			var (val2, val3) = CalculateIslandTransform(item.Value);
 			if (_existingIslands.TryGetValue(item.Key, out var value2) && (Object)(object)value2 != (Object)null)
 			{
-				((Component)value2).get_transform().SetPositionAndRotation(val, val2);
+				((Component)value2).get_transform().SetPositionAndRotation(val2, val3);
 				continue;
 			}
-			BaseEntity baseEntity = GameManager.server.CreateEntity("assets/content/nexus/island/nexusisland.prefab", val, val2);
+			BaseEntity baseEntity = GameManager.server.CreateEntity("assets/content/nexus/island/nexusisland.prefab", val2, val3);
 			NexusIsland nexusIsland2;
 			if ((nexusIsland2 = baseEntity as NexusIsland) != null)
 			{
@@ -227,22 +229,31 @@ public static class NexusServer
 		{
 			if (!dictionary.ContainsKey(existingIsland.Key))
 			{
-				hashSet.Add(existingIsland.Value);
+				val.Add(existingIsland.Value);
 			}
 		}
-		foreach (NexusIsland item2 in hashSet)
+		Enumerator<NexusIsland> enumerator5 = val.GetEnumerator();
+		try
 		{
-			if (item2 != null)
+			while (enumerator5.MoveNext())
 			{
-				if (item2.ZoneName != null)
+				NexusIsland current4 = enumerator5.get_Current();
+				if (current4 != null)
 				{
-					_existingIslands.Remove(item2.ZoneName);
+					if (current4.ZoneName != null)
+					{
+						_existingIslands.Remove(current4.ZoneName);
+					}
+					current4.Kill();
 				}
-				item2.Kill();
 			}
 		}
-		hashSet.Clear();
-		Pool.Free<HashSet<NexusIsland>>(ref hashSet);
+		finally
+		{
+			((IDisposable)enumerator5).Dispose();
+		}
+		val.Clear();
+		Pool.Free<HashSet<NexusIsland>>(ref val);
 		dictionary.Clear();
 		Pool.Free<Dictionary<string, NexusZoneDetails>>(ref dictionary);
 	}
@@ -495,7 +506,7 @@ public static class NexusServer
 		WriterStream.SetLength(0L);
 		WriterStream.Position = 0L;
 		packet.WriteToStream((Stream)WriterStream);
-		System.Memory<byte> memory = new System.Memory<byte>(WriterStream.GetBuffer(), 0, (int)WriterStream.Length);
+		Memory<byte> memory = new Memory<byte>(WriterStream.GetBuffer(), 0, (int)WriterStream.Length);
 		packet.Dispose();
 		return ZoneClient.SendMessage(toZoneName, id, memory, ttl);
 	}
@@ -868,9 +879,9 @@ public static class NexusServer
 		pendingEntities.Clear();
 		HashSet<uint> seenEntityIds = Pool.Get<HashSet<uint>>();
 		seenEntityIds.Clear();
-		pendingEntities.Enqueue(rootEntity);
+		pendingEntities.Enqueue((BaseNetworkable)rootEntity);
 		seenEntityIds.Add(rootEntity.net.ID);
-		while (pendingEntities.Count > 0)
+		while (pendingEntities.get_Count() > 0)
 		{
 			BaseNetworkable baseNetworkable = pendingEntities.Dequeue();
 			Entity val = null;
@@ -882,7 +893,7 @@ public static class NexusServer
 			{
 				if ((Object)(object)child != (Object)null && seenEntityIds.Add(child.net.ID))
 				{
-					pendingEntities.Enqueue(child);
+					pendingEntities.Enqueue((BaseNetworkable)child);
 				}
 			}
 			BaseMountable baseMountable;
@@ -891,7 +902,7 @@ public static class NexusServer
 				BasePlayer mounted = baseMountable.GetMounted();
 				if ((Object)(object)mounted != (Object)null && seenEntityIds.Add(mounted.net.ID))
 				{
-					pendingEntities.Enqueue(mounted);
+					pendingEntities.Enqueue((BaseNetworkable)mounted);
 				}
 			}
 			if (val != null)

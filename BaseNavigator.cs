@@ -815,7 +815,7 @@ public class BaseNavigator : BaseMonoBehaviour
 	{
 		//IL_0026: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0032: Unknown result type (might be due to invalid IL or missing references)
-		if (currentAStarPath != null && currentAStarPath.Count > 0)
+		if (currentAStarPath != null && currentAStarPath.get_Count() > 0)
 		{
 			return ((Component)currentAStarPath.Peek()).get_transform().get_position();
 		}
@@ -904,14 +904,14 @@ public class BaseNavigator : BaseMonoBehaviour
 		//IL_024f: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0268: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0270: Unknown result type (might be due to invalid IL or missing references)
-		if (CurrentNavigationType == NavigationType.AStar && currentAStarPath != null && currentAStarPath.Count > 0)
+		if (CurrentNavigationType == NavigationType.AStar && currentAStarPath != null && currentAStarPath.get_Count() > 0)
 		{
 			((Component)this).get_transform().set_position(Vector3.MoveTowards(((Component)this).get_transform().get_position(), moveToPosition, Agent.get_speed() * delta));
 			BaseEntity.ServerPosition = ((Component)this).get_transform().get_localPosition();
 			if (ReachedPosition(moveToPosition))
 			{
 				currentAStarPath.Pop();
-				if (currentAStarPath.Count == 0)
+				if (currentAStarPath.get_Count() == 0)
 				{
 					Stop();
 					return;

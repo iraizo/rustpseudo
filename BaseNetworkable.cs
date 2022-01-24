@@ -325,7 +325,7 @@ public abstract class BaseNetworkable : BaseMonoBehaviour, IPrefabPostProcess, I
 	{
 		if (!serverside)
 		{
-			postNetworkUpdateComponents = ((Component)this).GetComponentsInChildren<IOnPostNetworkUpdate>(true).Cast<Component>().ToList();
+			postNetworkUpdateComponents = Enumerable.ToList<Component>(Enumerable.Cast<Component>((IEnumerable)((Component)this).GetComponentsInChildren<IOnPostNetworkUpdate>(true)));
 		}
 	}
 
@@ -337,7 +337,7 @@ public abstract class BaseNetworkable : BaseMonoBehaviour, IPrefabPostProcess, I
 		{
 			return;
 		}
-		subscribers = subscribers.ToList();
+		subscribers = Enumerable.ToList<Connection>((IEnumerable<Connection>)subscribers);
 		subscribers.RemoveAll((Connection x) => ShouldNetworkTo(x.player as BasePlayer));
 		OnNetworkSubscribersLeave(subscribers);
 		if (children == null)
@@ -711,7 +711,7 @@ public abstract class BaseNetworkable : BaseMonoBehaviour, IPrefabPostProcess, I
 		}
 		if (_NetworkCache == null)
 		{
-			_NetworkCache = ((EntityMemoryStreamPool.Count > 0) ? (_NetworkCache = EntityMemoryStreamPool.Dequeue()) : new MemoryStream(8));
+			_NetworkCache = ((EntityMemoryStreamPool.get_Count() > 0) ? (_NetworkCache = EntityMemoryStreamPool.Dequeue()) : new MemoryStream(8));
 			ToStream(_NetworkCache, saveInfo);
 			ConVar.Server.netcachesize += (int)_NetworkCache.Length;
 		}
@@ -751,7 +751,7 @@ public abstract class BaseNetworkable : BaseMonoBehaviour, IPrefabPostProcess, I
 	{
 		if (_SaveCache == null)
 		{
-			if (EntityMemoryStreamPool.Count > 0)
+			if (EntityMemoryStreamPool.get_Count() > 0)
 			{
 				_SaveCache = EntityMemoryStreamPool.Dequeue();
 			}

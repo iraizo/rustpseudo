@@ -25,10 +25,12 @@ namespace CompanionServer
 			{
 				if (_subscriptions.TryGetValue(key, out var value2))
 				{
-					value2.Add(value);
+					((HashSet<_003F>)(object)value2).Add(value);
 					return;
 				}
-				value2 = new HashSet<TTarget> { value };
+				HashSet<_003F> obj = new HashSet<_003F>();
+				obj.Add(value);
+				value2 = (HashSet<TTarget>)(object)obj;
 				_subscriptions.Add(key, value2);
 			}
 		}
@@ -39,8 +41,8 @@ namespace CompanionServer
 			{
 				if (_subscriptions.TryGetValue(key, out var value2))
 				{
-					value2.Remove(value);
-					if (value2.Count == 0)
+					((HashSet<_003F>)(object)value2).Remove(value);
+					if (((HashSet<_003F>)(object)value2).get_Count() == 0)
 					{
 						_subscriptions.Remove(key);
 					}
@@ -54,13 +56,15 @@ namespace CompanionServer
 			{
 				if (_subscriptions.TryGetValue(key, out var value))
 				{
-					value.Clear();
+					((HashSet<_003F>)(object)value).Clear();
 				}
 			}
 		}
 
-		public void Send(TKey key, TMessage message)
+		public unsafe void Send(TKey key, TMessage message)
 		{
+			//IL_002a: Unknown result type (might be due to invalid IL or missing references)
+			//IL_002f: Unknown result type (might be due to invalid IL or missing references)
 			List<TTarget> list;
 			lock (_syncRoot)
 			{
@@ -69,9 +73,18 @@ namespace CompanionServer
 					return;
 				}
 				list = Pool.GetList<TTarget>();
-				foreach (TTarget item in value)
+				Enumerator<TTarget> enumerator = ((HashSet<_003F>)(object)value).GetEnumerator();
+				try
 				{
-					list.Add(item);
+					while (((Enumerator<_003F>*)(&enumerator))->MoveNext())
+					{
+						TTarget current = ((Enumerator<_003F>*)(&enumerator))->get_Current();
+						list.Add(current);
+					}
+				}
+				finally
+				{
+					((IDisposable)enumerator).Dispose();
 				}
 			}
 			_sender.BroadcastTo(list, message);

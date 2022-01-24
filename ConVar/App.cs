@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Net;
-using System.Net.Sockets;
 using CompanionServer;
 using Facepunch.Extend;
 using Steamworks;
@@ -80,25 +79,31 @@ namespace ConVar
 
 		public static IPAddress GetListenIP()
 		{
+			//IL_001b: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0021: Invalid comparison between Unknown and I4
 			if (!string.IsNullOrWhiteSpace(listenip))
 			{
-				if (!IPAddress.TryParse(listenip, out var address) || address.AddressFamily != AddressFamily.InterNetwork)
+				IPAddress val = default(IPAddress);
+				if (!IPAddress.TryParse(listenip, ref val) || (int)val.get_AddressFamily() != 2)
 				{
 					Debug.LogError((object)("Invalid app.listenip: " + listenip));
 					return IPAddress.Any;
 				}
-				return address;
+				return val;
 			}
 			return IPAddress.Any;
 		}
 
 		public static string GetPublicIP()
 		{
-			if (!string.IsNullOrWhiteSpace(publicip) && IPAddress.TryParse(publicip, out var address) && address.AddressFamily == AddressFamily.InterNetwork)
+			//IL_001b: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0021: Invalid comparison between Unknown and I4
+			IPAddress val = default(IPAddress);
+			if (!string.IsNullOrWhiteSpace(publicip) && IPAddress.TryParse(publicip, ref val) && (int)val.get_AddressFamily() == 2)
 			{
 				return publicip;
 			}
-			return SteamServer.get_PublicIp().ToString();
+			return ((object)SteamServer.get_PublicIp()).ToString();
 		}
 
 		public App()

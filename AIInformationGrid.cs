@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class AIInformationGrid : MonoBehaviour
@@ -94,6 +96,8 @@ public class AIInformationGrid : MonoBehaviour
 	public AIMovePoint[] GetMovePointsInRange(Vector3 position, float maxRange, out int pointCount)
 	{
 		//IL_0004: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
+		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
 		pointCount = 0;
 		int cellCount;
 		AIInformationCell[] cellsInRange = GetCellsInRange(position, maxRange, out cellCount);
@@ -105,10 +109,19 @@ public class AIInformationGrid : MonoBehaviour
 				{
 					continue;
 				}
-				foreach (AIMovePoint item in cellsInRange[i].MovePoints.Items)
+				Enumerator<AIMovePoint> enumerator = cellsInRange[i].MovePoints.Items.GetEnumerator();
+				try
 				{
-					movePointResults[pointCount] = item;
-					pointCount++;
+					while (enumerator.MoveNext())
+					{
+						AIMovePoint current = enumerator.get_Current();
+						movePointResults[pointCount] = current;
+						pointCount++;
+					}
+				}
+				finally
+				{
+					((IDisposable)enumerator).Dispose();
 				}
 			}
 		}
@@ -118,6 +131,8 @@ public class AIInformationGrid : MonoBehaviour
 	public AICoverPoint[] GetCoverPointsInRange(Vector3 position, float maxRange, out int pointCount)
 	{
 		//IL_0004: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0028: Unknown result type (might be due to invalid IL or missing references)
+		//IL_002d: Unknown result type (might be due to invalid IL or missing references)
 		pointCount = 0;
 		int cellCount;
 		AIInformationCell[] cellsInRange = GetCellsInRange(position, maxRange, out cellCount);
@@ -129,10 +144,19 @@ public class AIInformationGrid : MonoBehaviour
 				{
 					continue;
 				}
-				foreach (AICoverPoint item in cellsInRange[i].CoverPoints.Items)
+				Enumerator<AICoverPoint> enumerator = cellsInRange[i].CoverPoints.Items.GetEnumerator();
+				try
 				{
-					coverPointResults[pointCount] = item;
-					pointCount++;
+					while (enumerator.MoveNext())
+					{
+						AICoverPoint current = enumerator.get_Current();
+						coverPointResults[pointCount] = current;
+						pointCount++;
+					}
+				}
+				finally
+				{
+					((IDisposable)enumerator).Dispose();
 				}
 			}
 		}

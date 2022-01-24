@@ -32,7 +32,7 @@ public class BaseFirework : BaseCombatEntity, IIgniteable
 
 	public static int NumActiveFireworks()
 	{
-		return _activeFireworks.Count;
+		return _activeFireworks.get_Count();
 	}
 
 	public virtual void TryLightFuse()

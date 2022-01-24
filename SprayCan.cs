@@ -325,7 +325,7 @@ public class SprayCan : HeldEntity
 			}
 			ItemDefinition itemDefinition = null;
 			ulong num = ItemDefinition.FindSkin(def.itemid, targetSkin);
-			ItemSkinDirectory.Skin skin = def.skins.FirstOrDefault((ItemSkinDirectory.Skin x) => x.id == targetSkin);
+			ItemSkinDirectory.Skin skin = Enumerable.FirstOrDefault<ItemSkinDirectory.Skin>((IEnumerable<ItemSkinDirectory.Skin>)def.skins, (Func<ItemSkinDirectory.Skin, bool>)((ItemSkinDirectory.Skin x) => x.id == targetSkin));
 			ItemSkin itemSkin;
 			if ((Object)(object)skin.invItem != (Object)null && (itemSkin = skin.invItem as ItemSkin) != null)
 			{

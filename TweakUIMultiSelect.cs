@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -39,9 +41,7 @@ public class TweakUIMultiSelect : TweakUIBase
 	{
 		if (conVar != null)
 		{
-			Toggle val = (from x in ((Component)toggleGroup).GetComponentsInChildren<Toggle>()
-				where x.get_isOn()
-				select x).FirstOrDefault();
+			Toggle val = Enumerable.FirstOrDefault<Toggle>(Enumerable.Where<Toggle>((IEnumerable<Toggle>)((Component)toggleGroup).GetComponentsInChildren<Toggle>(), (Func<Toggle, bool>)((Toggle x) => x.get_isOn())));
 			if (!((Object)(object)val == (Object)null) && !(conVar.get_String() == ((Object)val).get_name()))
 			{
 				conVar.Set(((Object)val).get_name());

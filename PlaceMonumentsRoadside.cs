@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -169,8 +170,7 @@ public class PlaceMonumentsRoadside : ProceduralComponent
 		//IL_074c: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0753: Unknown result type (might be due to invalid IL or missing references)
 		//IL_075a: Unknown result type (might be due to invalid IL or missing references)
-		string[] array = (from folder in ResourceFolder.Split(',')
-			select "assets/bundled/prefabs/autospawn/" + folder + "/").ToArray();
+		string[] array = Enumerable.ToArray<string>(Enumerable.Select<string, string>((IEnumerable<string>)ResourceFolder.Split(new char[1] { ',' }), (Func<string, string>)((string folder) => "assets/bundled/prefabs/autospawn/" + folder + "/")));
 		if (World.Networked)
 		{
 			World.Spawn("Monument", array);

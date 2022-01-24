@@ -236,9 +236,7 @@ namespace UnityEngine.Rendering.PostProcessing
 
 		private void UpdateBundleSortList(List<SerializedBundleRef> sortedList, PostProcessEvent evt)
 		{
-			List<PostProcessBundle> effects = (from kvp in m_Bundles
-				where kvp.Value.attribute.eventType == evt && !kvp.Value.attribute.builtinEffect
-				select kvp.Value).ToList();
+			List<PostProcessBundle> effects = Enumerable.ToList<PostProcessBundle>(Enumerable.Select<KeyValuePair<Type, PostProcessBundle>, PostProcessBundle>(Enumerable.Where<KeyValuePair<Type, PostProcessBundle>>((IEnumerable<KeyValuePair<Type, PostProcessBundle>>)m_Bundles, (Func<KeyValuePair<Type, PostProcessBundle>, bool>)((KeyValuePair<Type, PostProcessBundle> kvp) => kvp.Value.attribute.eventType == evt && !kvp.Value.attribute.builtinEffect)), (Func<KeyValuePair<Type, PostProcessBundle>, PostProcessBundle>)((KeyValuePair<Type, PostProcessBundle> kvp) => kvp.Value)));
 			sortedList.RemoveAll(delegate(SerializedBundleRef x)
 			{
 				string searchStr = x.assemblyQualifiedName;

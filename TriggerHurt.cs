@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Rust;
 using UnityEngine;
@@ -47,7 +48,7 @@ public class TriggerHurt : TriggerBase, IServerComponent, IHurtTrigger
 		{
 			return;
 		}
-		BaseEntity[] array = entityContents.ToArray();
+		BaseEntity[] array = Enumerable.ToArray<BaseEntity>((IEnumerable<BaseEntity>)entityContents);
 		foreach (BaseEntity baseEntity in array)
 		{
 			if (baseEntity.IsValid())

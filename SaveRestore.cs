@@ -33,14 +33,14 @@ public class SaveRestore : SingletonComponent<SaveRestore>
 			return;
 		}
 		DebugEx.Log((object)("Destroying " + array.Length + " old entities"), (StackTraceLogType)0);
-		Stopwatch stopwatch = Stopwatch.StartNew();
+		Stopwatch val = Stopwatch.StartNew();
 		for (int i = 0; i < array.Length; i++)
 		{
 			array[i].Kill();
-			if (stopwatch.Elapsed.TotalMilliseconds > 2000.0)
+			if (val.get_Elapsed().TotalMilliseconds > 2000.0)
 			{
-				stopwatch.Reset();
-				stopwatch.Start();
+				val.Reset();
+				val.Start();
 				DebugEx.Log((object)("\t" + (i + 1) + " / " + array.Length), (StackTraceLogType)0);
 			}
 		}
@@ -96,10 +96,10 @@ public class SaveRestore : SingletonComponent<SaveRestore>
 					}
 				}
 				ClearMapEntities();
-				Assert.IsTrue(BaseEntity.saveList.Count == 0, "BaseEntity.saveList isn't empty!");
+				Assert.IsTrue(BaseEntity.saveList.get_Count() == 0, "BaseEntity.saveList isn't empty!");
 				Net.sv.Reset();
 				Application.isLoadingSave = true;
-				HashSet<uint> hashSet = new HashSet<uint>();
+				HashSet<uint> val = new HashSet<uint>();
 				while (fileStream.Position < fileStream.Length)
 				{
 					RCon.Update();
@@ -117,19 +117,19 @@ public class SaveRestore : SingletonComponent<SaveRestore>
 						fileStream.Position = position + num;
 						continue;
 					}
-					if (entData.basePlayer != null && dictionary.Any((KeyValuePair<BaseEntity, Entity> x) => x.Value.basePlayer != null && x.Value.basePlayer.userid == entData.basePlayer.userid))
+					if (entData.basePlayer != null && Enumerable.Any<KeyValuePair<BaseEntity, Entity>>((IEnumerable<KeyValuePair<BaseEntity, Entity>>)dictionary, (Func<KeyValuePair<BaseEntity, Entity>, bool>)((KeyValuePair<BaseEntity, Entity> x) => x.Value.basePlayer != null && x.Value.basePlayer.userid == entData.basePlayer.userid)))
 					{
 						Debug.LogWarning((object)("Skipping entity " + entData.baseNetworkable.uid + " - it's a player " + entData.basePlayer.userid + " who is in the save multiple times"));
 						continue;
 					}
-					if (entData.baseNetworkable.uid != 0 && hashSet.Contains(entData.baseNetworkable.uid))
+					if (entData.baseNetworkable.uid != 0 && val.Contains(entData.baseNetworkable.uid))
 					{
 						Debug.LogWarning((object)("Skipping entity " + entData.baseNetworkable.uid + " " + StringPool.Get(entData.baseNetworkable.prefabID) + " - uid is used multiple times"));
 						continue;
 					}
 					if (entData.baseNetworkable.uid != 0)
 					{
-						hashSet.Add(entData.baseNetworkable.uid);
+						val.Add(entData.baseNetworkable.uid);
 					}
 					BaseEntity baseEntity = GameManager.server.CreateEntity(StringPool.Get(entData.baseNetworkable.prefabID), entData.baseEntity.pos, Quaternion.Euler(entData.baseEntity.rot));
 					if (Object.op_Implicit((Object)(object)baseEntity))
@@ -142,7 +142,7 @@ public class SaveRestore : SingletonComponent<SaveRestore>
 			DebugEx.Log((object)("Spawning " + dictionary.Count + " entities"), (StackTraceLogType)0);
 			BaseNetworkable.LoadInfo info = default(BaseNetworkable.LoadInfo);
 			info.fromDisk = true;
-			Stopwatch stopwatch = Stopwatch.StartNew();
+			Stopwatch val2 = Stopwatch.StartNew();
 			int num2 = 0;
 			foreach (KeyValuePair<BaseEntity, Entity> item in dictionary)
 			{
@@ -158,10 +158,10 @@ public class SaveRestore : SingletonComponent<SaveRestore>
 				if (key.IsValid())
 				{
 					num2++;
-					if (stopwatch.Elapsed.TotalMilliseconds > 2000.0)
+					if (val2.get_Elapsed().TotalMilliseconds > 2000.0)
 					{
-						stopwatch.Reset();
-						stopwatch.Start();
+						val2.Reset();
+						val2.Start();
 						DebugEx.Log((object)("\t" + num2 + " / " + dictionary.Count), (StackTraceLogType)0);
 					}
 				}
@@ -198,23 +198,23 @@ public class SaveRestore : SingletonComponent<SaveRestore>
 
 	public static void GetSaveCache()
 	{
-		BaseEntity[] array = BaseEntity.saveList.ToArray();
+		BaseEntity[] array = Enumerable.ToArray<BaseEntity>((IEnumerable<BaseEntity>)BaseEntity.saveList);
 		if (array.Length == 0)
 		{
 			return;
 		}
 		DebugEx.Log((object)("Initializing " + array.Length + " entity save caches"), (StackTraceLogType)0);
-		Stopwatch stopwatch = Stopwatch.StartNew();
+		Stopwatch val = Stopwatch.StartNew();
 		for (int i = 0; i < array.Length; i++)
 		{
 			BaseEntity baseEntity = array[i];
 			if (baseEntity.IsValid())
 			{
 				baseEntity.GetSaveCache();
-				if (stopwatch.Elapsed.TotalMilliseconds > 2000.0)
+				if (val.get_Elapsed().TotalMilliseconds > 2000.0)
 				{
-					stopwatch.Reset();
-					stopwatch.Start();
+					val.Reset();
+					val.Start();
 					DebugEx.Log((object)("\t" + (i + 1) + " / " + array.Length), (StackTraceLogType)0);
 				}
 			}
@@ -224,23 +224,21 @@ public class SaveRestore : SingletonComponent<SaveRestore>
 
 	public static void InitializeEntityLinks()
 	{
-		BaseEntity[] array = (from x in BaseNetworkable.serverEntities
-			where x is BaseEntity
-			select x as BaseEntity).ToArray();
+		BaseEntity[] array = Enumerable.ToArray<BaseEntity>(Enumerable.Select<BaseNetworkable, BaseEntity>(Enumerable.Where<BaseNetworkable>((IEnumerable<BaseNetworkable>)BaseNetworkable.serverEntities, (Func<BaseNetworkable, bool>)((BaseNetworkable x) => x is BaseEntity)), (Func<BaseNetworkable, BaseEntity>)((BaseNetworkable x) => x as BaseEntity)));
 		if (array.Length == 0)
 		{
 			return;
 		}
 		DebugEx.Log((object)("Initializing " + array.Length + " entity links"), (StackTraceLogType)0);
-		Stopwatch stopwatch = Stopwatch.StartNew();
+		Stopwatch val = Stopwatch.StartNew();
 		for (int i = 0; i < array.Length; i++)
 		{
 			RCon.Update();
 			array[i].RefreshEntityLinks();
-			if (stopwatch.Elapsed.TotalMilliseconds > 2000.0)
+			if (val.get_Elapsed().TotalMilliseconds > 2000.0)
 			{
-				stopwatch.Reset();
-				stopwatch.Start();
+				val.Reset();
+				val.Start();
 				DebugEx.Log((object)("\t" + (i + 1) + " / " + array.Length), (StackTraceLogType)0);
 			}
 		}
@@ -253,23 +251,21 @@ public class SaveRestore : SingletonComponent<SaveRestore>
 		{
 			return;
 		}
-		StabilityEntity[] array = (from x in BaseNetworkable.serverEntities
-			where x is StabilityEntity
-			select x as StabilityEntity).ToArray();
+		StabilityEntity[] array = Enumerable.ToArray<StabilityEntity>(Enumerable.Select<BaseNetworkable, StabilityEntity>(Enumerable.Where<BaseNetworkable>((IEnumerable<BaseNetworkable>)BaseNetworkable.serverEntities, (Func<BaseNetworkable, bool>)((BaseNetworkable x) => x is StabilityEntity)), (Func<BaseNetworkable, StabilityEntity>)((BaseNetworkable x) => x as StabilityEntity)));
 		if (array.Length == 0)
 		{
 			return;
 		}
 		DebugEx.Log((object)("Initializing " + array.Length + " stability supports"), (StackTraceLogType)0);
-		Stopwatch stopwatch = Stopwatch.StartNew();
+		Stopwatch val = Stopwatch.StartNew();
 		for (int i = 0; i < array.Length; i++)
 		{
 			RCon.Update();
 			array[i].InitializeSupports();
-			if (stopwatch.Elapsed.TotalMilliseconds > 2000.0)
+			if (val.get_Elapsed().TotalMilliseconds > 2000.0)
 			{
-				stopwatch.Reset();
-				stopwatch.Start();
+				val.Reset();
+				val.Start();
 				DebugEx.Log((object)("\t" + (i + 1) + " / " + array.Length), (StackTraceLogType)0);
 			}
 		}
@@ -278,23 +274,21 @@ public class SaveRestore : SingletonComponent<SaveRestore>
 
 	public static void InitializeEntityConditionals()
 	{
-		BuildingBlock[] array = (from x in BaseNetworkable.serverEntities
-			where x is BuildingBlock
-			select x as BuildingBlock).ToArray();
+		BuildingBlock[] array = Enumerable.ToArray<BuildingBlock>(Enumerable.Select<BaseNetworkable, BuildingBlock>(Enumerable.Where<BaseNetworkable>((IEnumerable<BaseNetworkable>)BaseNetworkable.serverEntities, (Func<BaseNetworkable, bool>)((BaseNetworkable x) => x is BuildingBlock)), (Func<BaseNetworkable, BuildingBlock>)((BaseNetworkable x) => x as BuildingBlock)));
 		if (array.Length == 0)
 		{
 			return;
 		}
 		DebugEx.Log((object)("Initializing " + array.Length + " conditional models"), (StackTraceLogType)0);
-		Stopwatch stopwatch = Stopwatch.StartNew();
+		Stopwatch val = Stopwatch.StartNew();
 		for (int i = 0; i < array.Length; i++)
 		{
 			RCon.Update();
 			array[i].UpdateSkin(force: true);
-			if (stopwatch.Elapsed.TotalMilliseconds > 2000.0)
+			if (val.get_Elapsed().TotalMilliseconds > 2000.0)
 			{
-				stopwatch.Reset();
-				stopwatch.Start();
+				val.Reset();
+				val.Start();
 				DebugEx.Log((object)("\t" + (i + 1) + " / " + array.Length), (StackTraceLogType)0);
 			}
 		}
@@ -316,7 +310,7 @@ public class SaveRestore : SingletonComponent<SaveRestore>
 		try
 		{
 			Stopwatch sw = Stopwatch.StartNew();
-			BaseEntity[] array = BaseEntity.saveList.ToArray();
+			BaseEntity[] array = Enumerable.ToArray<BaseEntity>((IEnumerable<BaseEntity>)BaseEntity.saveList);
 			foreach (BaseEntity baseEntity in array)
 			{
 				if ((Object)(object)baseEntity == (Object)null || !baseEntity.IsValid())
@@ -331,7 +325,7 @@ public class SaveRestore : SingletonComponent<SaveRestore>
 				{
 					Debug.LogException(ex);
 				}
-				if (sw.Elapsed.TotalMilliseconds > 5.0)
+				if (sw.get_Elapsed().TotalMilliseconds > 5.0)
 				{
 					if (!AndWait)
 					{
@@ -367,36 +361,45 @@ public class SaveRestore : SingletonComponent<SaveRestore>
 			{
 				yield return CoroutineEx.waitForEndOfFrame;
 			}
-			foreach (BaseEntity save in BaseEntity.saveList)
+			Enumerator<BaseEntity> enumerator = BaseEntity.saveList.GetEnumerator();
+			try
 			{
-				if ((Object)(object)save == (Object)null || save.IsDestroyed)
+				while (enumerator.MoveNext())
 				{
-					Debug.LogWarning((object)("Entity is NULL but is still in saveList - not destroyed properly? " + save), (Object)(object)save);
-					continue;
-				}
-				MemoryStream memoryStream = null;
-				try
-				{
-					memoryStream = save.GetSaveCache();
-				}
-				catch (Exception ex2)
-				{
-					Debug.LogException(ex2);
-				}
-				if (memoryStream == null || memoryStream.Length <= 0)
-				{
-					Debug.LogWarningFormat("Skipping saving entity {0} - because {1}", new object[2]
+					BaseEntity current = enumerator.get_Current();
+					if ((Object)(object)current == (Object)null || current.IsDestroyed)
 					{
-						save,
-						(memoryStream == null) ? "savecache is null" : "savecache is 0"
-					});
+						Debug.LogWarning((object)("Entity is NULL but is still in saveList - not destroyed properly? " + current), (Object)(object)current);
+						continue;
+					}
+					MemoryStream memoryStream = null;
+					try
+					{
+						memoryStream = current.GetSaveCache();
+					}
+					catch (Exception ex2)
+					{
+						Debug.LogException(ex2);
+					}
+					if (memoryStream == null || memoryStream.Length <= 0)
+					{
+						Debug.LogWarningFormat("Skipping saving entity {0} - because {1}", new object[2]
+						{
+							current,
+							(memoryStream == null) ? "savecache is null" : "savecache is 0"
+						});
+					}
+					else
+					{
+						writer.Write((uint)memoryStream.Length);
+						writer.Write(memoryStream.GetBuffer(), 0, (int)memoryStream.Length);
+						iEnts++;
+					}
 				}
-				else
-				{
-					writer.Write((uint)memoryStream.Length);
-					writer.Write(memoryStream.GetBuffer(), 0, (int)memoryStream.Length);
-					iEnts++;
-				}
+			}
+			finally
+			{
+				((IDisposable)enumerator).Dispose();
 			}
 		}
 		finally
@@ -441,7 +444,7 @@ public class SaveRestore : SingletonComponent<SaveRestore>
 				}
 				yield break;
 			}
-			File.Copy(text, strFilename, overwrite: true);
+			File.Copy(text, strFilename, true);
 			File.Delete(text);
 		}
 		catch (Exception ex4)
@@ -457,9 +460,9 @@ public class SaveRestore : SingletonComponent<SaveRestore>
 		Debug.LogFormat("Saved {0} ents, cache({1}), write({2}), disk({3}).", new object[4]
 		{
 			iEnts.ToString("N0"),
-			timerCache.Elapsed.TotalSeconds.ToString("0.00"),
-			timerWrite.Elapsed.TotalSeconds.ToString("0.00"),
-			timerDisk.Elapsed.TotalSeconds.ToString("0.00")
+			timerCache.get_Elapsed().TotalSeconds.ToString("0.00"),
+			timerWrite.get_Elapsed().TotalSeconds.ToString("0.00"),
+			timerDisk.get_Elapsed().TotalSeconds.ToString("0.00")
 		});
 		NexusServer.PostGameSaved();
 	}
@@ -496,7 +499,7 @@ public class SaveRestore : SingletonComponent<SaveRestore>
 				}
 				text = text2;
 			}
-			File.Copy(fileName, text, overwrite: true);
+			File.Copy(fileName, text, true);
 		}
 		catch (Exception ex)
 		{

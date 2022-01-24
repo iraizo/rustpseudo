@@ -143,12 +143,12 @@ public class TriggerHurtNotChild : TriggerBase, IServerComponent, IHurtTrigger
 		//IL_0157: Unknown result type (might be due to invalid IL or missing references)
 		//IL_015d: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0162: Unknown result type (might be due to invalid IL or missing references)
-		if (entityContents.IsNullOrEmpty())
+		if (((ICollection<BaseEntity>)entityContents).IsNullOrEmpty())
 		{
 			return;
 		}
 		List<BaseEntity> list = Pool.GetList<BaseEntity>();
-		list.AddRange(entityContents);
+		list.AddRange((IEnumerable<BaseEntity>)entityContents);
 		IHurtTriggerUser hurtTriggerUser = SourceEntity as IHurtTriggerUser;
 		foreach (BaseEntity item in list)
 		{

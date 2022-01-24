@@ -100,7 +100,7 @@ namespace ConVar
 					dictionary2.Add(((object)val).GetType(), runtimeMemorySize);
 				}
 			}
-			foreach (KeyValuePair<Type, long> item in dictionary2.OrderByDescending(delegate(KeyValuePair<Type, long> x)
+			foreach (KeyValuePair<Type, long> item in (IEnumerable<KeyValuePair<Type, long>>)Enumerable.OrderByDescending<KeyValuePair<Type, long>, long>((IEnumerable<KeyValuePair<Type, long>>)dictionary2, (Func<KeyValuePair<Type, long>, long>)delegate(KeyValuePair<Type, long> x)
 			{
 				KeyValuePair<Type, long> keyValuePair = x;
 				return keyValuePair.Value;
@@ -121,7 +121,7 @@ namespace ConVar
 			foreach (Texture val in array2)
 			{
 				string text2 = NumberExtensions.FormatBytes<int>(Profiler.GetRuntimeMemorySize((Object)(object)val), false);
-				text = text + ((object)val).ToString().PadRight(30) + ((Object)val).get_name().PadRight(30) + text2 + "\n";
+				text = text + ((object)val).ToString()!.PadRight(30) + ((Object)val).get_name().PadRight(30) + text2 + "\n";
 			}
 			args.ReplyWith(text);
 		}
@@ -130,12 +130,8 @@ namespace ConVar
 		[ClientVar]
 		public static void colliders(Arg args)
 		{
-			int num = (from x in Object.FindObjectsOfType<Collider>()
-				where x.get_enabled()
-				select x).Count();
-			int num2 = (from x in Object.FindObjectsOfType<Collider>()
-				where !x.get_enabled()
-				select x).Count();
+			int num = Enumerable.Count<Collider>(Enumerable.Where<Collider>((IEnumerable<Collider>)Object.FindObjectsOfType<Collider>(), (Func<Collider, bool>)((Collider x) => x.get_enabled())));
+			int num2 = Enumerable.Count<Collider>(Enumerable.Where<Collider>((IEnumerable<Collider>)Object.FindObjectsOfType<Collider>(), (Func<Collider, bool>)((Collider x) => !x.get_enabled())));
 			string text = num + " colliders enabled, " + num2 + " disabled";
 			args.ReplyWith(text);
 		}

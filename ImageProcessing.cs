@@ -231,11 +231,11 @@ public static class ImageProcessing
 
 	public static void FloodFill2D(int x, int y, int[] data, int len1, int len2, int mask_any, int mask_not, Func<int, int> action)
 	{
-		Stack<KeyValuePair<int, int>> stack = new Stack<KeyValuePair<int, int>>();
-		stack.Push(new KeyValuePair<int, int>(x, y));
-		while (stack.Count > 0)
+		Stack<KeyValuePair<int, int>> val = new Stack<KeyValuePair<int, int>>();
+		val.Push(new KeyValuePair<int, int>(x, y));
+		while (val.get_Count() > 0)
 		{
-			KeyValuePair<int, int> keyValuePair = stack.Pop();
+			KeyValuePair<int, int> keyValuePair = val.Pop();
 			x = keyValuePair.Key;
 			y = keyValuePair.Value;
 			int num;
@@ -264,7 +264,7 @@ public static class ImageProcessing
 					bool flag3 = (num4 & mask_any) != 0 && (num4 & mask_not) == 0;
 					if (!flag2 && flag3)
 					{
-						stack.Push(new KeyValuePair<int, int>(x - 1, num));
+						val.Push(new KeyValuePair<int, int>(x - 1, num));
 						flag2 = true;
 					}
 					else if (flag2 && !flag3)
@@ -278,7 +278,7 @@ public static class ImageProcessing
 					bool flag4 = (num5 & mask_any) != 0 && (num5 & mask_not) == 0;
 					if (!flag && flag4)
 					{
-						stack.Push(new KeyValuePair<int, int>(x + 1, num));
+						val.Push(new KeyValuePair<int, int>(x + 1, num));
 						flag = true;
 					}
 					else if (flag && !flag4)

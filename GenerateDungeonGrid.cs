@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -560,7 +561,7 @@ public class GenerateDungeonGrid : ProceduralComponent
 		{
 			return;
 		}
-		array4 = array4.OrderByDescending((Prefab<DungeonGridLink> x) => x.Component.Priority).ToArray();
+		array4 = Enumerable.ToArray<Prefab<DungeonGridLink>>((IEnumerable<Prefab<DungeonGridLink>>)Enumerable.OrderByDescending<Prefab<DungeonGridLink>, int>((IEnumerable<Prefab<DungeonGridLink>>)array4, (Func<Prefab<DungeonGridLink>, int>)((Prefab<DungeonGridLink> x) => x.Component.Priority)));
 		List<DungeonGridInfo> list = (Object.op_Implicit((Object)(object)TerrainMeta.Path) ? TerrainMeta.Path.DungeonGridEntrances : null);
 		WorldSpaceGrid<Prefab<DungeonGridCell>> val = new WorldSpaceGrid<Prefab<DungeonGridCell>>(TerrainMeta.Size.x * 2f, (float)CellSize);
 		int[,] array5 = new int[val.CellCount, val.CellCount];
@@ -734,7 +735,7 @@ public class GenerateDungeonGrid : ProceduralComponent
 			if (unconnectedNodeList.Count == 0)
 			{
 				PathNode node3 = secondaryNodeList[0];
-				unconnectedNodeList.AddRange(secondaryNodeList.Where((PathNode x) => (Object)(object)x.monument == (Object)(object)node3.monument));
+				unconnectedNodeList.AddRange(Enumerable.Where<PathNode>((IEnumerable<PathNode>)secondaryNodeList, (Func<PathNode, bool>)((PathNode x) => (Object)(object)x.monument == (Object)(object)node3.monument)));
 				secondaryNodeList.RemoveAll((PathNode x) => (Object)(object)x.monument == (Object)(object)node3.monument);
 				Vector2i val4 = val.WorldToGridCoords(((Component)node3.monument).get_transform().get_position());
 				pathFinder.PushPoint = new PathFinder.Point(val4.x, val4.y);
@@ -743,16 +744,16 @@ public class GenerateDungeonGrid : ProceduralComponent
 				pathFinder.PushMultiplier = 4;
 			}
 			list7.Clear();
-			list7.AddRange(unconnectedNodeList.Select((PathNode x) => x.node.point));
+			list7.AddRange(Enumerable.Select<PathNode, PathFinder.Point>((IEnumerable<PathNode>)unconnectedNodeList, (Func<PathNode, PathFinder.Point>)((PathNode x) => x.node.point)));
 			list6.Clear();
-			list6.AddRange(list4.Select((PathNode x) => x.node.point));
-			list6.AddRange(secondaryNodeList.Select((PathNode x) => x.node.point));
+			list6.AddRange(Enumerable.Select<PathNode, PathFinder.Point>((IEnumerable<PathNode>)list4, (Func<PathNode, PathFinder.Point>)((PathNode x) => x.node.point)));
+			list6.AddRange(Enumerable.Select<PathNode, PathFinder.Point>((IEnumerable<PathNode>)secondaryNodeList, (Func<PathNode, PathFinder.Point>)((PathNode x) => x.node.point)));
 			list6.AddRange(list5);
 			PathFinder.Node node4 = pathFinder.FindPathUndirected(list6, list7, 100000);
 			if (node4 == null)
 			{
 				PathNode node2 = unconnectedNodeList[0];
-				secondaryNodeList.AddRange(unconnectedNodeList.Where((PathNode x) => (Object)(object)x.monument == (Object)(object)node2.monument));
+				secondaryNodeList.AddRange(Enumerable.Where<PathNode>((IEnumerable<PathNode>)unconnectedNodeList, (Func<PathNode, bool>)((PathNode x) => (Object)(object)x.monument == (Object)(object)node2.monument)));
 				unconnectedNodeList.RemoveAll((PathNode x) => (Object)(object)x.monument == (Object)(object)node2.monument);
 				secondaryNodeList.Remove(node2);
 				list4.Add(node2);
@@ -772,7 +773,7 @@ public class GenerateDungeonGrid : ProceduralComponent
 			}
 			list2.Add(segment);
 			PathNode node = unconnectedNodeList.Find((PathNode x) => x.node.point == segment.start.point || x.node.point == segment.end.point);
-			secondaryNodeList.AddRange(unconnectedNodeList.Where((PathNode x) => (Object)(object)x.monument == (Object)(object)node.monument));
+			secondaryNodeList.AddRange(Enumerable.Where<PathNode>((IEnumerable<PathNode>)unconnectedNodeList, (Func<PathNode, bool>)((PathNode x) => (Object)(object)x.monument == (Object)(object)node.monument)));
 			unconnectedNodeList.RemoveAll((PathNode x) => (Object)(object)x.monument == (Object)(object)node.monument);
 			secondaryNodeList.Remove(node);
 			list4.Add(node);

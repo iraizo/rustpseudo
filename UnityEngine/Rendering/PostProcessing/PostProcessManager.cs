@@ -59,9 +59,7 @@ namespace UnityEngine.Rendering.PostProcessing
 		private void ReloadBaseTypes()
 		{
 			CleanBaseTypes();
-			foreach (Type item in from t in RuntimeUtilities.GetAllAssemblyTypes()
-				where t.IsSubclassOf(typeof(PostProcessEffectSettings)) && t.IsDefined(typeof(PostProcessAttribute), inherit: false) && !t.IsAbstract
-				select t)
+			foreach (Type item in Enumerable.Where<Type>(RuntimeUtilities.GetAllAssemblyTypes(), (Func<Type, bool>)((Type t) => t.IsSubclassOf(typeof(PostProcessEffectSettings)) && t.IsDefined(typeof(PostProcessAttribute), inherit: false) && !t.IsAbstract)))
 			{
 				settingsTypes.Add(item, item.GetAttribute<PostProcessAttribute>());
 				PostProcessEffectSettings postProcessEffectSettings = (PostProcessEffectSettings)(object)ScriptableObject.CreateInstance(item);

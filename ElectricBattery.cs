@@ -146,6 +146,8 @@ public class ElectricBattery : IOEntity, IInstanceDataReceiver
 
 	public int GetDrain()
 	{
+		//IL_003c: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0041: Unknown result type (might be due to invalid IL or missing references)
 		connectedList.Clear();
 		IOEntity iOEntity = outputs[0].connectedTo.Get();
 		if (Object.op_Implicit((Object)(object)iOEntity))
@@ -153,15 +155,24 @@ public class ElectricBattery : IOEntity, IInstanceDataReceiver
 			AddConnectedRecursive(iOEntity, ref connectedList);
 		}
 		int num = 0;
-		foreach (IOEntity connected in connectedList)
+		Enumerator<IOEntity> enumerator = connectedList.GetEnumerator();
+		try
 		{
-			num += connected.DesiredPower();
-			if (num >= maxOutput)
+			while (enumerator.MoveNext())
 			{
-				return maxOutput;
+				IOEntity current = enumerator.get_Current();
+				num += current.DesiredPower();
+				if (num >= maxOutput)
+				{
+					return maxOutput;
+				}
 			}
+			return num;
 		}
-		return num;
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
+		}
 	}
 
 	public override void OnCircuitChanged(bool forceUpdate)

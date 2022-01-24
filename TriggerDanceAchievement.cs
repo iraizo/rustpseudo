@@ -46,33 +46,55 @@ public class TriggerDanceAchievement : TriggerBase
 
 	public void NotifyDanceStarted()
 	{
+		//IL_0011: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0016: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0073: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0078: Unknown result type (might be due to invalid IL or missing references)
 		if (entityContents == null)
 		{
 			return;
 		}
 		int num = 0;
-		foreach (BaseEntity entityContent in entityContents)
+		Enumerator<BaseEntity> enumerator = entityContents.GetEnumerator();
+		try
 		{
-			if ((Object)(object)entityContent.ToPlayer() != (Object)null && entityContent.ToPlayer().CurrentGestureIsDance)
+			while (enumerator.MoveNext())
 			{
-				num++;
-				if (num >= RequiredPlayerCount)
+				BaseEntity current = enumerator.get_Current();
+				if ((Object)(object)current.ToPlayer() != (Object)null && current.ToPlayer().CurrentGestureIsDance)
 				{
-					break;
+					num++;
+					if (num >= RequiredPlayerCount)
+					{
+						break;
+					}
 				}
 			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 		if (num < RequiredPlayerCount)
 		{
 			return;
 		}
-		foreach (BaseEntity entityContent2 in entityContents)
+		enumerator = entityContents.GetEnumerator();
+		try
 		{
-			if (!triggeredPlayers.Contains(entityContent2.net.ID) && (Object)(object)entityContent2.ToPlayer() != (Object)null)
+			while (enumerator.MoveNext())
 			{
-				entityContent2.ToPlayer().GiveAchievement(AchievementName);
-				triggeredPlayers.Add(entityContent2.net.ID);
+				BaseEntity current2 = enumerator.get_Current();
+				if (!triggeredPlayers.Contains(current2.net.ID) && (Object)(object)current2.ToPlayer() != (Object)null)
+				{
+					current2.ToPlayer().GiveAchievement(AchievementName);
+					triggeredPlayers.Add(current2.net.ID);
+				}
 			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 	}
 }

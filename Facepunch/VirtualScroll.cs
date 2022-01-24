@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -66,7 +67,7 @@ namespace Facepunch
 
 		public void FullRebuild()
 		{
-			int[] array = ActivePool.Keys.ToArray();
+			int[] array = Enumerable.ToArray<int>((IEnumerable<int>)ActivePool.Keys);
 			foreach (int key in array)
 			{
 				Recycle(key);
@@ -112,9 +113,7 @@ namespace Facepunch
 
 		private void RecycleOutOfRange(int startVisible, float endVisible)
 		{
-			int[] array = (from x in ActivePool.Keys
-				where x < startVisible || (float)x > endVisible
-				select (x)).ToArray();
+			int[] array = Enumerable.ToArray<int>(Enumerable.Select<int, int>(Enumerable.Where<int>((IEnumerable<int>)ActivePool.Keys, (Func<int, bool>)((int x) => x < startVisible || (float)x > endVisible)), (Func<int, int>)((int x) => x)));
 			foreach (int key in array)
 			{
 				Recycle(key);
@@ -159,7 +158,7 @@ namespace Facepunch
 		private GameObject GetItem()
 		{
 			//IL_003c: Unknown result type (might be due to invalid IL or missing references)
-			if (InactivePool.Count == 0)
+			if (InactivePool.get_Count() == 0)
 			{
 				GameObject val = Object.Instantiate<GameObject>(SourceObject);
 				val.get_transform().SetParent(((Transform)ScrollRect.get_viewport()).GetChild(0), false);

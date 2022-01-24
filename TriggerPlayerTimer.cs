@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Rust;
 using UnityEngine;
 
@@ -39,14 +40,24 @@ public class TriggerPlayerTimer : TriggerBase
 
 	private void DamageTarget()
 	{
+		//IL_0008: Unknown result type (might be due to invalid IL or missing references)
+		//IL_000d: Unknown result type (might be due to invalid IL or missing references)
 		bool flag = false;
-		foreach (BaseEntity entityContent in entityContents)
+		Enumerator<BaseEntity> enumerator = entityContents.GetEnumerator();
+		try
 		{
-			BasePlayer basePlayer;
-			if ((basePlayer = entityContent as BasePlayer) != null && !basePlayer.isMounted)
+			while (enumerator.MoveNext())
 			{
-				flag = true;
+				BasePlayer basePlayer;
+				if ((basePlayer = enumerator.get_Current() as BasePlayer) != null && !basePlayer.isMounted)
+				{
+					flag = true;
+				}
 			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 		if (flag && (Object)(object)TargetEntity != (Object)null)
 		{

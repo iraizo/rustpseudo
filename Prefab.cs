@@ -319,7 +319,7 @@ public class Prefab : IComparable<Prefab>
 
 	private static string[] FindPrefabNames(string strPrefab, bool useProbabilities = false)
 	{
-		strPrefab = strPrefab.TrimEnd('/').ToLower();
+		strPrefab = strPrefab.TrimEnd(new char[1] { '/' }).ToLower();
 		GameObject[] array = FileSystem.LoadPrefabs(strPrefab + "/");
 		List<string> list = new List<string>(array.Length);
 		GameObject[] array2 = array;

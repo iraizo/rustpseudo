@@ -16,13 +16,15 @@ public class WaterCollision : MonoBehaviour
 
 	public void Clear()
 	{
+		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
 		//IL_002c: Unknown result type (might be due to invalid IL or missing references)
-		if (waterColliders.Count == 0)
+		if (waterColliders.get_Count() == 0)
 		{
 			return;
 		}
-		HashSet<Collider>.Enumerator enumerator = waterColliders.GetEnumerator();
+		Enumerator<Collider> enumerator = waterColliders.GetEnumerator();
 		while (enumerator.MoveNext())
 		{
 			Enumerator<Collider> enumerator2 = ignoredColliders.get_Keys().GetEnumerator();
@@ -30,7 +32,7 @@ public class WaterCollision : MonoBehaviour
 			{
 				while (enumerator2.MoveNext())
 				{
-					Physics.IgnoreCollision(enumerator2.get_Current(), enumerator.Current, false);
+					Physics.IgnoreCollision(enumerator2.get_Current(), enumerator.get_Current(), false);
 				}
 			}
 			finally
@@ -43,12 +45,14 @@ public class WaterCollision : MonoBehaviour
 
 	public void Reset(Collider collider)
 	{
-		if (waterColliders.Count != 0 && Object.op_Implicit((Object)(object)collider))
+		//IL_001c: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0021: Unknown result type (might be due to invalid IL or missing references)
+		if (waterColliders.get_Count() != 0 && Object.op_Implicit((Object)(object)collider))
 		{
-			HashSet<Collider>.Enumerator enumerator = waterColliders.GetEnumerator();
+			Enumerator<Collider> enumerator = waterColliders.GetEnumerator();
 			while (enumerator.MoveNext())
 			{
-				Physics.IgnoreCollision(collider, enumerator.Current, false);
+				Physics.IgnoreCollision(collider, enumerator.get_Current(), false);
 			}
 			ignoredColliders.Remove(collider);
 		}
@@ -85,7 +89,7 @@ public class WaterCollision : MonoBehaviour
 
 	public bool GetIgnore(Collider collider)
 	{
-		if (waterColliders.Count == 0 || !Object.op_Implicit((Object)(object)collider))
+		if (waterColliders.get_Count() == 0 || !Object.op_Implicit((Object)(object)collider))
 		{
 			return false;
 		}
@@ -94,7 +98,9 @@ public class WaterCollision : MonoBehaviour
 
 	public void SetIgnore(Collider collider, Collider trigger, bool ignore = true)
 	{
-		if (waterColliders.Count == 0 || !Object.op_Implicit((Object)(object)collider))
+		//IL_0035: Unknown result type (might be due to invalid IL or missing references)
+		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
+		if (waterColliders.get_Count() == 0 || !Object.op_Implicit((Object)(object)collider))
 		{
 			return;
 		}
@@ -103,10 +109,10 @@ public class WaterCollision : MonoBehaviour
 			if (ignore)
 			{
 				List<Collider> list = new List<Collider> { trigger };
-				HashSet<Collider>.Enumerator enumerator = waterColliders.GetEnumerator();
+				Enumerator<Collider> enumerator = waterColliders.GetEnumerator();
 				while (enumerator.MoveNext())
 				{
-					Physics.IgnoreCollision(collider, enumerator.Current, true);
+					Physics.IgnoreCollision(collider, enumerator.get_Current(), true);
 				}
 				ignoredColliders.Add(collider, list);
 			}
@@ -128,6 +134,8 @@ public class WaterCollision : MonoBehaviour
 
 	protected void LateUpdate()
 	{
+		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
 		for (int i = 0; i < ignoredColliders.get_Count(); i++)
 		{
 			KeyValuePair<Collider, List<Collider>> byIndex = ignoredColliders.GetByIndex(i);
@@ -139,10 +147,10 @@ public class WaterCollision : MonoBehaviour
 			}
 			else if (value.Count == 0)
 			{
-				HashSet<Collider>.Enumerator enumerator = waterColliders.GetEnumerator();
+				Enumerator<Collider> enumerator = waterColliders.GetEnumerator();
 				while (enumerator.MoveNext())
 				{
-					Physics.IgnoreCollision(key, enumerator.Current, false);
+					Physics.IgnoreCollision(key, enumerator.get_Current(), false);
 				}
 				ignoredColliders.RemoveAt(i--);
 			}

@@ -138,12 +138,12 @@ namespace Facepunch.Unity
 				list.Add(item);
 			}
 			string text = string.Format(Application.get_dataPath() + "/../RenderInfo-{0:yyyy-MM-dd_hh-mm-ss-tt}.txt", DateTime.Now);
-			string contents = JsonConvert.SerializeObject((object)list, (Formatting)1);
-			File.WriteAllText(text, contents);
-			string text2 = Application.get_streamingAssetsPath() + "/RenderInfo.exe";
-			string text3 = "\"" + text + "\"";
-			Debug.Log((object)("Launching " + text2 + " " + text3));
-			Os.StartProcess(text2, text3);
+			string text2 = JsonConvert.SerializeObject((object)list, (Formatting)1);
+			File.WriteAllText(text, text2);
+			string text3 = Application.get_streamingAssetsPath() + "/RenderInfo.exe";
+			string text4 = "\"" + text + "\"";
+			Debug.Log((object)("Launching " + text3 + " " + text4));
+			Os.StartProcess(text3, text4);
 		}
 	}
 }

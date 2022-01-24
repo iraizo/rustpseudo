@@ -434,18 +434,28 @@ public class TrainEngine : BaseTrain, IEngineControllerUser, IEntity
 
 	private bool AnyPlayersOnTrain()
 	{
+		//IL_0022: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0027: Unknown result type (might be due to invalid IL or missing references)
 		if (AnyMounted())
 		{
 			return true;
 		}
 		if (platformParentTrigger.HasAnyEntityContents)
 		{
-			foreach (BaseEntity entityContent in platformParentTrigger.entityContents)
+			Enumerator<BaseEntity> enumerator = platformParentTrigger.entityContents.GetEnumerator();
+			try
 			{
-				if ((Object)(object)entityContent.ToPlayer() != (Object)null)
+				while (enumerator.MoveNext())
 				{
-					return true;
+					if ((Object)(object)enumerator.get_Current().ToPlayer() != (Object)null)
+					{
+						return true;
+					}
 				}
+			}
+			finally
+			{
+				((IDisposable)enumerator).Dispose();
 			}
 		}
 		return false;

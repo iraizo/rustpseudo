@@ -525,7 +525,7 @@ public class BaseRidableAnimal : BaseVehicle
 	{
 		float realtimeSinceStartup = Time.get_realtimeSinceStartup();
 		float num = framebudgetms / 1000f;
-		while (_processQueue.Count > 0 && Time.get_realtimeSinceStartup() < realtimeSinceStartup + num)
+		while (_processQueue.get_Count() > 0 && Time.get_realtimeSinceStartup() < realtimeSinceStartup + num)
 		{
 			BaseRidableAnimal baseRidableAnimal = _processQueue.Dequeue();
 			if ((Object)(object)baseRidableAnimal != (Object)null)

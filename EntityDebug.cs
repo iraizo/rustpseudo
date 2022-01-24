@@ -11,12 +11,12 @@ public class EntityDebug : EntityComponent<BaseEntity>
 		{
 			((Behaviour)this).set_enabled(false);
 		}
-		else if (!(stopwatch.Elapsed.TotalSeconds < 0.5))
+		else if (!(stopwatch.get_Elapsed().TotalSeconds < 0.5))
 		{
 			_ = base.baseEntity.isClient;
 			if (base.baseEntity.isServer)
 			{
-				base.baseEntity.DebugServer(1, (float)stopwatch.Elapsed.TotalSeconds);
+				base.baseEntity.DebugServer(1, (float)stopwatch.get_Elapsed().TotalSeconds);
 			}
 			stopwatch.Reset();
 			stopwatch.Start();

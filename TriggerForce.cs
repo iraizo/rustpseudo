@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class TriggerForce : TriggerBase, IServerComponent
@@ -52,18 +54,29 @@ public class TriggerForce : TriggerBase, IServerComponent
 		//IL_000f: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0014: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0019: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0025: Unknown result type (might be due to invalid IL or missing references)
 		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
 		if (entityContents == null)
 		{
 			return;
 		}
 		Vector3 val = ((Component)this).get_transform().TransformDirection(velocity);
-		foreach (BaseEntity entityContent in entityContents)
+		Enumerator<BaseEntity> enumerator = entityContents.GetEnumerator();
+		try
 		{
-			if ((Object)(object)entityContent != (Object)null)
+			while (enumerator.MoveNext())
 			{
-				entityContent.ApplyInheritedVelocity(val);
+				BaseEntity current = enumerator.get_Current();
+				if ((Object)(object)current != (Object)null)
+				{
+					current.ApplyInheritedVelocity(val);
+				}
 			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 	}
 }

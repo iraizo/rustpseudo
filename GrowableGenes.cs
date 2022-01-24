@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
@@ -64,16 +66,16 @@ public class GrowableGenes
 
 	private GrowableGenetics.GeneType PickWeightedGeneType()
 	{
-		IOrderedEnumerable<GrowableGenetics.GeneWeighting> orderedEnumerable = slotWeights.OrderBy((GrowableGenetics.GeneWeighting w) => w.Weighting);
+		IOrderedEnumerable<GrowableGenetics.GeneWeighting> val = Enumerable.OrderBy<GrowableGenetics.GeneWeighting, float>((IEnumerable<GrowableGenetics.GeneWeighting>)slotWeights, (Func<GrowableGenetics.GeneWeighting, float>)((GrowableGenetics.GeneWeighting w) => w.Weighting));
 		float num = 0f;
-		foreach (GrowableGenetics.GeneWeighting item in orderedEnumerable)
+		foreach (GrowableGenetics.GeneWeighting item in (IEnumerable<GrowableGenetics.GeneWeighting>)val)
 		{
 			num += item.Weighting;
 		}
 		GrowableGenetics.GeneType result = GrowableGenetics.GeneType.Empty;
 		float num2 = Random.Range(0f, num);
 		float num3 = 0f;
-		foreach (GrowableGenetics.GeneWeighting item2 in orderedEnumerable)
+		foreach (GrowableGenetics.GeneWeighting item2 in (IEnumerable<GrowableGenetics.GeneWeighting>)val)
 		{
 			num3 += item2.Weighting;
 			if (num2 < num3)

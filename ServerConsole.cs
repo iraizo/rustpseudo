@@ -39,10 +39,10 @@ public class ServerConsole : SingletonComponent<ServerConsole>
 		console.Initialize();
 		input.OnInputText += OnInputText;
 		Output.OnMessage += HandleLog;
-		input.ClearLine(System.Console.WindowHeight);
-		for (int i = 0; i < System.Console.WindowHeight; i++)
+		input.ClearLine(Console.get_WindowHeight());
+		for (int i = 0; i < Console.get_WindowHeight(); i++)
 		{
-			System.Console.WriteLine("");
+			Console.WriteLine("");
 		}
 	}
 
@@ -61,6 +61,7 @@ public class ServerConsole : SingletonComponent<ServerConsole>
 
 	public static void PrintColoured(params object[] objects)
 	{
+		//IL_003a: Unknown result type (might be due to invalid IL or missing references)
 		if ((Object)(object)SingletonComponent<ServerConsole>.Instance == (Object)null)
 		{
 			return;
@@ -70,16 +71,16 @@ public class ServerConsole : SingletonComponent<ServerConsole>
 		{
 			if (i % 2 == 0)
 			{
-				System.Console.ForegroundColor = (ConsoleColor)objects[i];
+				Console.set_ForegroundColor((ConsoleColor)objects[i]);
 			}
 			else
 			{
-				System.Console.Write((string)objects[i]);
+				Console.Write((string)objects[i]);
 			}
 		}
-		if (System.Console.CursorLeft != 0)
+		if (Console.get_CursorLeft() != 0)
 		{
-			System.Console.CursorTop++;
+			Console.set_CursorTop(Console.get_CursorTop() + 1);
 		}
 		SingletonComponent<ServerConsole>.Instance.input.RedrawInputLine();
 	}
@@ -103,26 +104,26 @@ public class ServerConsole : SingletonComponent<ServerConsole>
 			{
 				return;
 			}
-			System.Console.ForegroundColor = ConsoleColor.Yellow;
+			Console.set_ForegroundColor((ConsoleColor)14);
 		}
 		else if ((int)type == 0)
 		{
-			System.Console.ForegroundColor = ConsoleColor.Red;
+			Console.set_ForegroundColor((ConsoleColor)12);
 		}
 		else if ((int)type == 4)
 		{
-			System.Console.ForegroundColor = ConsoleColor.Red;
+			Console.set_ForegroundColor((ConsoleColor)12);
 		}
 		else if ((int)type == 1)
 		{
-			System.Console.ForegroundColor = ConsoleColor.Red;
+			Console.set_ForegroundColor((ConsoleColor)12);
 		}
 		else
 		{
-			System.Console.ForegroundColor = ConsoleColor.Gray;
+			Console.set_ForegroundColor((ConsoleColor)7);
 		}
 		input.ClearLine(input.statusText.Length);
-		System.Console.WriteLine(message);
+		Console.WriteLine(message);
 		input.RedrawInputLine();
 	}
 

@@ -153,9 +153,7 @@ public class ItemDefinition : MonoBehaviour
 			if (PlatformService.Instance.get_IsValid() && PlatformService.Instance.get_ItemDefinitions() != null)
 			{
 				string prefabname = ((Object)this).get_name();
-				_skins2 = (from x in PlatformService.Instance.get_ItemDefinitions()
-					where (x.get_ItemShortName() == shortname || x.get_ItemShortName() == prefabname) && x.get_WorkshopId() != 0
-					select x).ToArray();
+				_skins2 = Enumerable.ToArray<IPlayerItemDefinition>(Enumerable.Where<IPlayerItemDefinition>((IEnumerable<IPlayerItemDefinition>)PlatformService.Instance.get_ItemDefinitions(), (Func<IPlayerItemDefinition, bool>)((IPlayerItemDefinition x) => (x.get_ItemShortName() == shortname || x.get_ItemShortName() == prefabname) && x.get_WorkshopId() != 0)));
 			}
 			return _skins2;
 		}
@@ -244,7 +242,7 @@ public class ItemDefinition : MonoBehaviour
 		{
 			array[i].ModInit();
 		}
-		Children = itemList.Where((ItemDefinition x) => (Object)(object)x.Parent == (Object)(object)this).ToArray();
+		Children = Enumerable.ToArray<ItemDefinition>(Enumerable.Where<ItemDefinition>((IEnumerable<ItemDefinition>)itemList, (Func<ItemDefinition, bool>)((ItemDefinition x) => (Object)(object)x.Parent == (Object)(object)this)));
 		ItemModWearable = ((Component)this).GetComponent<ItemModWearable>();
 		isHoldable = (Object)(object)((Component)this).GetComponent<ItemModEntity>() != (Object)null;
 		isUsable = (Object)(object)((Component)this).GetComponent<ItemModEntity>() != (Object)null || (Object)(object)((Component)this).GetComponent<ItemModConsume>() != (Object)null;

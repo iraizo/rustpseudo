@@ -104,7 +104,7 @@ namespace ConVar
 				text = text + "hostname: " + Server.hostname + "\n";
 				text = text + "version : " + 2326 + " secure (secure mode enabled, connected to Steam3)\n";
 				text = text + "map     : " + Server.level + "\n";
-				text += $"players : {((IEnumerable<BasePlayer>)BasePlayer.activePlayerList).Count()} ({Server.maxplayers} max) ({SingletonComponent<ServerMgr>.Instance.connectionQueue.Queued} queued) ({SingletonComponent<ServerMgr>.Instance.connectionQueue.Joining} joining)\n\n";
+				text += $"players : {Enumerable.Count<BasePlayer>((IEnumerable<BasePlayer>)BasePlayer.activePlayerList)} ({Server.maxplayers} max) ({SingletonComponent<ServerMgr>.Instance.connectionQueue.Queued} queued) ({SingletonComponent<ServerMgr>.Instance.connectionQueue.Joining} joining)\n\n";
 			}
 			TextTable val = new TextTable();
 			val.AddColumn("id");
@@ -340,7 +340,7 @@ namespace ConVar
 		[ServerVar]
 		public static void kickall(Arg arg)
 		{
-			BasePlayer[] array = ((IEnumerable<BasePlayer>)BasePlayer.activePlayerList).ToArray();
+			BasePlayer[] array = Enumerable.ToArray<BasePlayer>((IEnumerable<BasePlayer>)BasePlayer.activePlayerList);
 			for (int i = 0; i < array.Length; i++)
 			{
 				array[i].Kick("Kicked: " + arg.GetString(1, "No Reason Given"));
@@ -779,13 +779,11 @@ namespace ConVar
 		[ServerVar(Help = "Print a list of currently muted players")]
 		public static void mutelist(Arg arg)
 		{
-			var enumerable = from x in BasePlayer.allPlayerList
-				where x.HasPlayerFlag(BasePlayer.PlayerFlags.ChatMute)
-				select new
-				{
-					SteamId = x.UserIDString,
-					Name = x.displayName
-				};
+			var enumerable = Enumerable.Select(Enumerable.Where<BasePlayer>(BasePlayer.allPlayerList, (Func<BasePlayer, bool>)((BasePlayer x) => x.HasPlayerFlag(BasePlayer.PlayerFlags.ChatMute))), (BasePlayer x) => new
+			{
+				SteamId = x.UserIDString,
+				Name = x.displayName
+			});
 			arg.ReplyWith((object)enumerable);
 		}
 
@@ -814,6 +812,8 @@ namespace ConVar
 		{
 			//IL_0005: Unknown result type (might be due to invalid IL or missing references)
 			//IL_000b: Expected O, but got Unknown
+			//IL_0066: Unknown result type (might be due to invalid IL or missing references)
+			//IL_006b: Unknown result type (might be due to invalid IL or missing references)
 			HashSet<ModularCar> allCarsList = ModularCar.allCarsList;
 			TextTable val = new TextTable();
 			val.AddColumn("id");
@@ -823,47 +823,56 @@ namespace ConVar
 			val.AddColumn("engine");
 			val.AddColumn("health");
 			val.AddColumn("location");
-			int count = allCarsList.Count;
+			int count = allCarsList.get_Count();
 			int num = 0;
 			int num2 = 0;
 			int num3 = 0;
-			foreach (ModularCar item in allCarsList)
+			Enumerator<ModularCar> enumerator = allCarsList.GetEnumerator();
+			try
 			{
-				string text = item.net.ID.ToString();
-				string text2 = item.TotalSockets.ToString();
-				string text3 = item.NumAttachedModules.ToString();
-				string text4;
-				if (item.IsComplete())
+				while (enumerator.MoveNext())
 				{
-					text4 = "Complete";
-					num++;
+					ModularCar current = enumerator.get_Current();
+					string text = current.net.ID.ToString();
+					string text2 = current.TotalSockets.ToString();
+					string text3 = current.NumAttachedModules.ToString();
+					string text4;
+					if (current.IsComplete())
+					{
+						text4 = "Complete";
+						num++;
+					}
+					else
+					{
+						text4 = "Partial";
+					}
+					string text5;
+					if (current.HasAnyWorkingEngines())
+					{
+						text5 = "Working";
+						num2++;
+					}
+					else
+					{
+						text5 = "Broken";
+					}
+					string text6 = ((current.TotalMaxHealth() != 0f) ? $"{current.TotalHealth() / current.TotalMaxHealth():0%}" : "0");
+					string text7;
+					if (current.IsOutside())
+					{
+						text7 = "Outside";
+					}
+					else
+					{
+						text7 = "Inside";
+						num3++;
+					}
+					val.AddRow(new string[7] { text, text2, text3, text4, text5, text6, text7 });
 				}
-				else
-				{
-					text4 = "Partial";
-				}
-				string text5;
-				if (item.HasAnyWorkingEngines())
-				{
-					text5 = "Working";
-					num2++;
-				}
-				else
-				{
-					text5 = "Broken";
-				}
-				string text6 = ((item.TotalMaxHealth() != 0f) ? $"{item.TotalHealth() / item.TotalMaxHealth():0%}" : "0");
-				string text7;
-				if (item.IsOutside())
-				{
-					text7 = "Outside";
-				}
-				else
-				{
-					text7 = "Inside";
-					num3++;
-				}
-				val.AddRow(new string[7] { text, text2, text3, text4, text5, text6, text7 });
+			}
+			finally
+			{
+				((IDisposable)enumerator).Dispose();
 			}
 			string text8 = "";
 			text8 = ((count != 1) ? (text8 + $"\nThe world contains {count} modular cars.") : (text8 + "\nThe world contains 1 modular car."));
@@ -899,7 +908,7 @@ namespace ConVar
 			val.AddColumn("leader");
 			foreach (ulong memberId in playerTeam.members)
 			{
-				bool flag = Net.sv.connections.FirstOrDefault((Connection c) => c.connected && c.userid == memberId) != null;
+				bool flag = Enumerable.FirstOrDefault<Connection>((IEnumerable<Connection>)Net.sv.connections, (Func<Connection, bool>)((Connection c) => c.connected && c.userid == memberId)) != null;
 				val.AddRow(new string[4]
 				{
 					memberId.ToString(),
@@ -1035,7 +1044,7 @@ namespace ConVar
 
 		public static string GetPlayerName(ulong steamId)
 		{
-			BasePlayer basePlayer = BasePlayer.allPlayerList.FirstOrDefault((BasePlayer p) => p.userID == steamId);
+			BasePlayer basePlayer = Enumerable.FirstOrDefault<BasePlayer>(BasePlayer.allPlayerList, (Func<BasePlayer, bool>)((BasePlayer p) => p.userID == steamId));
 			string text;
 			if (!((Object)(object)basePlayer != (Object)null))
 			{
@@ -1055,7 +1064,7 @@ namespace ConVar
 		[ServerVar(Help = "Get a list of players")]
 		public static PlayerInfo[] playerlist()
 		{
-			return ((IEnumerable<BasePlayer>)BasePlayer.activePlayerList).Select(delegate(BasePlayer x)
+			return Enumerable.ToArray<PlayerInfo>(Enumerable.Select<BasePlayer, PlayerInfo>((IEnumerable<BasePlayer>)BasePlayer.activePlayerList, (Func<BasePlayer, PlayerInfo>)delegate(BasePlayer x)
 			{
 				PlayerInfo result = default(PlayerInfo);
 				result.SteamID = x.UserIDString;
@@ -1067,13 +1076,13 @@ namespace ConVar
 				result.VoiationLevel = x.violationLevel;
 				result.Health = x.Health();
 				return result;
-			}).ToArray();
+			}));
 		}
 
 		[ServerVar(Help = "List of banned users")]
 		public static ServerUsers.User[] Bans()
 		{
-			return ServerUsers.GetAll(ServerUsers.UserGroup.Banned).ToArray();
+			return Enumerable.ToArray<ServerUsers.User>(ServerUsers.GetAll(ServerUsers.UserGroup.Banned));
 		}
 
 		[ServerVar(Help = "Get a list of information about the server")]

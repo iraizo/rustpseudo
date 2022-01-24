@@ -122,8 +122,6 @@ public class ModularCar : BaseModularVehicle, TakeCollisionDamage.ICanRestoreVel
 	[ServerVar(Help = "How many minutes before a ModularCar loses all its health while outside")]
 	public static float outsidedecayminutes = 216f;
 
-	public const BUTTON MouseSteerButton = BUTTON.DUCK;
-
 	public const BUTTON RapidSteerButton = BUTTON.SPRINT;
 
 	public ModularCarLock carLock;
@@ -726,7 +724,7 @@ public class ModularCar : BaseModularVehicle, TakeCollisionDamage.ICanRestoreVel
 		{
 			num *= 0.1f;
 		}
-		float num3 = (base.HasAnyModules ? base.AttachedModuleEntities.Max((BaseVehicleModule module) => module.MaxHealth()) : MaxHealth());
+		float num3 = (base.HasAnyModules ? Enumerable.Max<BaseVehicleModule>((IEnumerable<BaseVehicleModule>)base.AttachedModuleEntities, (Func<BaseVehicleModule, float>)((BaseVehicleModule module) => module.MaxHealth())) : MaxHealth());
 		DoDecayDamage(num3 * num);
 	}
 

@@ -156,6 +156,8 @@ public class GunTrap : StorageContainer
 
 	public bool CheckTrigger()
 	{
+		//IL_001b: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0020: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0065: Unknown result type (might be due to invalid IL or missing references)
 		//IL_006b: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0077: Unknown result type (might be due to invalid IL or missing references)
@@ -169,34 +171,42 @@ public class GunTrap : StorageContainer
 		bool flag = false;
 		if (entityContents != null)
 		{
-			foreach (BaseEntity item in entityContents)
+			Enumerator<BaseEntity> enumerator = entityContents.GetEnumerator();
+			try
 			{
-				BasePlayer component = ((Component)item).GetComponent<BasePlayer>();
-				if (component.IsSleeping() || !component.IsAlive() || component.IsBuildingAuthed())
+				while (enumerator.MoveNext())
 				{
-					continue;
-				}
-				list.Clear();
-				Vector3 position = component.eyes.position;
-				Vector3 val = GetEyePosition() - component.eyes.position;
-				GamePhysics.TraceAll(new Ray(position, ((Vector3)(ref val)).get_normalized()), 0f, list, 9f, 1218519297, (QueryTriggerInteraction)0);
-				for (int i = 0; i < list.Count; i++)
-				{
-					BaseEntity entity = list[i].GetEntity();
-					if ((Object)(object)entity != (Object)null && ((Object)(object)entity == (Object)(object)this || entity.EqualNetID(this)))
+					BasePlayer component = ((Component)enumerator.get_Current()).GetComponent<BasePlayer>();
+					if (component.IsSleeping() || !component.IsAlive() || component.IsBuildingAuthed())
 					{
-						flag = true;
+						continue;
+					}
+					list.Clear();
+					Vector3 position = component.eyes.position;
+					Vector3 val = GetEyePosition() - component.eyes.position;
+					GamePhysics.TraceAll(new Ray(position, ((Vector3)(ref val)).get_normalized()), 0f, list, 9f, 1218519297, (QueryTriggerInteraction)0);
+					for (int i = 0; i < list.Count; i++)
+					{
+						BaseEntity entity = list[i].GetEntity();
+						if ((Object)(object)entity != (Object)null && ((Object)(object)entity == (Object)(object)this || entity.EqualNetID(this)))
+						{
+							flag = true;
+							break;
+						}
+						if (!((Object)(object)entity != (Object)null) || entity.ShouldBlockProjectiles())
+						{
+							break;
+						}
+					}
+					if (flag)
+					{
 						break;
 					}
-					if (!((Object)(object)entity != (Object)null) || entity.ShouldBlockProjectiles())
-					{
-						break;
-					}
 				}
-				if (flag)
-				{
-					break;
-				}
+			}
+			finally
+			{
+				((IDisposable)enumerator).Dispose();
 			}
 		}
 		Pool.FreeList<RaycastHit>(ref list);

@@ -268,7 +268,7 @@ public class NexusFerry : BaseEntity
 		if (_schedule == null || _schedule.Count == 0)
 		{
 			Debug.Log((object)"Ferry has no schedule set - generating one now");
-			_schedule = NexusServer.Zones.Select((NexusZoneDetails z) => z.get_Name()).ToList();
+			_schedule = Enumerable.ToList<string>(Enumerable.Select<NexusZoneDetails, string>((IEnumerable<NexusZoneDetails>)NexusServer.Zones, (Func<NexusZoneDetails, string>)((NexusZoneDetails z) => z.get_Name())));
 			_scheduleIndex = _schedule.IndexOf(NexusServer.ZoneName);
 		}
 	}

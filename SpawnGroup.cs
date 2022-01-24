@@ -221,7 +221,7 @@ public class SpawnGroup : BaseMonoBehaviour, IServerComponent, ISpawnPointUser, 
 
 	protected GameObjectRef GetPrefab()
 	{
-		float num = prefabs.Sum((SpawnEntry x) => (!preventDuplicates || !HasSpawned(x.prefab.resourceID)) ? x.weight : 0);
+		float num = Enumerable.Sum<SpawnEntry>((IEnumerable<SpawnEntry>)prefabs, (Func<SpawnEntry, int>)((SpawnEntry x) => (!preventDuplicates || !HasSpawned(x.prefab.resourceID)) ? x.weight : 0));
 		if (num == 0f)
 		{
 			return null;

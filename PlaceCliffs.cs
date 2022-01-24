@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -127,17 +129,17 @@ public class PlaceCliffs : ProceduralComponent
 		{
 			return;
 		}
-		Prefab[] array2 = array.Where((Prefab prefab) => (bool)prefab.Attribute.Find<DecorSocketMale>(prefab.ID) && (bool)prefab.Attribute.Find<DecorSocketFemale>(prefab.ID)).ToArray();
+		Prefab[] array2 = Enumerable.ToArray<Prefab>(Enumerable.Where<Prefab>((IEnumerable<Prefab>)array, (Func<Prefab, bool>)((Prefab prefab) => (bool)prefab.Attribute.Find<DecorSocketMale>(prefab.ID) && (bool)prefab.Attribute.Find<DecorSocketFemale>(prefab.ID))));
 		if (array2 == null || array2.Length == 0)
 		{
 			return;
 		}
-		Prefab[] array3 = array.Where((Prefab prefab) => prefab.Attribute.Find<DecorSocketMale>(prefab.ID)).ToArray();
+		Prefab[] array3 = Enumerable.ToArray<Prefab>(Enumerable.Where<Prefab>((IEnumerable<Prefab>)array, (Func<Prefab, bool>)((Prefab prefab) => prefab.Attribute.Find<DecorSocketMale>(prefab.ID))));
 		if (array3 == null || array3.Length == 0)
 		{
 			return;
 		}
-		Prefab[] array4 = array.Where((Prefab prefab) => prefab.Attribute.Find<DecorSocketFemale>(prefab.ID)).ToArray();
+		Prefab[] array4 = Enumerable.ToArray<Prefab>(Enumerable.Where<Prefab>((IEnumerable<Prefab>)array, (Func<Prefab, bool>)((Prefab prefab) => prefab.Attribute.Find<DecorSocketFemale>(prefab.ID))));
 		if (array4 == null || array4.Length == 0)
 		{
 			return;

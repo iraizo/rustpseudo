@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Facepunch;
 using Facepunch.Models;
@@ -15,7 +17,7 @@ public static class DeveloperList
 		{
 			return false;
 		}
-		return Application.Manifest.Administrators.Any((Administrator x) => x.UserId == steamid);
+		return Enumerable.Any<Administrator>((IEnumerable<Administrator>)Application.Manifest.Administrators, (Func<Administrator, bool>)((Administrator x) => x.UserId == steamid));
 	}
 
 	public static bool Contains(ulong steamid)

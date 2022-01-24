@@ -359,14 +359,24 @@ public class BaseArcadeMachine : BaseVehicle
 
 	public void NearbyClientMessage(string msg)
 	{
+		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
+		//IL_001d: Unknown result type (might be due to invalid IL or missing references)
 		if (networkTrigger.entityContents == null)
 		{
 			return;
 		}
-		foreach (BaseEntity entityContent in networkTrigger.entityContents)
+		Enumerator<BaseEntity> enumerator = networkTrigger.entityContents.GetEnumerator();
+		try
 		{
-			BasePlayer component = ((Component)entityContent).GetComponent<BasePlayer>();
-			ClientRPCPlayer(null, component, msg);
+			while (enumerator.MoveNext())
+			{
+				BasePlayer component = ((Component)enumerator.get_Current()).GetComponent<BasePlayer>();
+				ClientRPCPlayer(null, component, msg);
+			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 	}
 
@@ -374,16 +384,26 @@ public class BaseArcadeMachine : BaseVehicle
 	[RPC_Server.IsVisible(3f)]
 	public void DestroyMessageFromHost(RPCMessage msg)
 	{
+		//IL_0043: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0048: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer player = msg.player;
 		if ((Object)(object)player == (Object)null || (Object)(object)GetDriver() != (Object)(object)player || networkTrigger.entityContents == null)
 		{
 			return;
 		}
 		uint arg = msg.read.UInt32();
-		foreach (BaseEntity entityContent in networkTrigger.entityContents)
+		Enumerator<BaseEntity> enumerator = networkTrigger.entityContents.GetEnumerator();
+		try
 		{
-			BasePlayer component = ((Component)entityContent).GetComponent<BasePlayer>();
-			ClientRPCPlayer(null, component, "DestroyEntity", arg);
+			while (enumerator.MoveNext())
+			{
+				BasePlayer component = ((Component)enumerator.get_Current()).GetComponent<BasePlayer>();
+				ClientRPCPlayer(null, component, "DestroyEntity", arg);
+			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 	}
 
@@ -392,6 +412,8 @@ public class BaseArcadeMachine : BaseVehicle
 	[RPC_Server.IsVisible(3f)]
 	public void BroadcastEntityMessage(RPCMessage msg)
 	{
+		//IL_0054: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0059: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer player = msg.player;
 		if ((Object)(object)player == (Object)null || (Object)(object)GetDriver() != (Object)(object)player || networkTrigger.entityContents == null)
 		{
@@ -399,10 +421,18 @@ public class BaseArcadeMachine : BaseVehicle
 		}
 		uint arg = msg.read.UInt32();
 		string arg2 = msg.read.String(256);
-		foreach (BaseEntity entityContent in networkTrigger.entityContents)
+		Enumerator<BaseEntity> enumerator = networkTrigger.entityContents.GetEnumerator();
+		try
 		{
-			BasePlayer component = ((Component)entityContent).GetComponent<BasePlayer>();
-			ClientRPCPlayer(null, component, "GetEntityMessage", arg, arg2);
+			while (enumerator.MoveNext())
+			{
+				BasePlayer component = ((Component)enumerator.get_Current()).GetComponent<BasePlayer>();
+				ClientRPCPlayer(null, component, "GetEntityMessage", arg, arg2);
+			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 	}
 
@@ -411,6 +441,8 @@ public class BaseArcadeMachine : BaseVehicle
 	[RPC_Server.IsVisible(3f)]
 	public void GetSnapshotFromClient(RPCMessage msg)
 	{
+		//IL_004b: Unknown result type (might be due to invalid IL or missing references)
+		//IL_0050: Unknown result type (might be due to invalid IL or missing references)
 		BasePlayer player = msg.player;
 		if ((Object)(object)player == (Object)null || (Object)(object)player != (Object)(object)GetDriver())
 		{
@@ -423,10 +455,18 @@ public class BaseArcadeMachine : BaseVehicle
 		{
 			return;
 		}
-		foreach (BaseEntity entityContent in networkTrigger.entityContents)
+		Enumerator<BaseEntity> enumerator = networkTrigger.entityContents.GetEnumerator();
+		try
 		{
-			BasePlayer component = ((Component)entityContent).GetComponent<BasePlayer>();
-			ClientRPCPlayer<ArcadeGame>(sourceConnection, component, "GetSnapshotFromServer", val);
+			while (enumerator.MoveNext())
+			{
+				BasePlayer component = ((Component)enumerator.get_Current()).GetComponent<BasePlayer>();
+				ClientRPCPlayer<ArcadeGame>(sourceConnection, component, "GetSnapshotFromServer", val);
+			}
+		}
+		finally
+		{
+			((IDisposable)enumerator).Dispose();
 		}
 	}
 }

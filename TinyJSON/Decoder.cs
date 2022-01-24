@@ -32,7 +32,7 @@ namespace TinyJSON
 		{
 			get
 			{
-				int num = json.Peek();
+				int num = ((TextReader)(object)json).Peek();
 				if (num != -1)
 				{
 					return Convert.ToChar(num);
@@ -41,7 +41,7 @@ namespace TinyJSON
 			}
 		}
 
-		private char NextChar => Convert.ToChar(json.Read());
+		private char NextChar => Convert.ToChar(((TextReader)(object)json).Read());
 
 		private string NextWord
 		{
@@ -51,7 +51,7 @@ namespace TinyJSON
 				while (" \t\n\r{}[],:\"".IndexOf(PeekChar) == -1)
 				{
 					stringBuilder.Append(NextChar);
-					if (json.Peek() == -1)
+					if (((TextReader)(object)json).Peek() == -1)
 					{
 						break;
 					}
@@ -65,7 +65,7 @@ namespace TinyJSON
 			get
 			{
 				ConsumeWhiteSpace();
-				if (json.Peek() == -1)
+				if (((TextReader)(object)json).Peek() == -1)
 				{
 					return Token.None;
 				}
@@ -74,15 +74,15 @@ namespace TinyJSON
 				case '{':
 					return Token.OpenBrace;
 				case '}':
-					json.Read();
+					((TextReader)(object)json).Read();
 					return Token.CloseBrace;
 				case '[':
 					return Token.OpenBracket;
 				case ']':
-					json.Read();
+					((TextReader)(object)json).Read();
 					return Token.CloseBracket;
 				case ',':
-					json.Read();
+					((TextReader)(object)json).Read();
 					return Token.Comma;
 				case '"':
 					return Token.String;
@@ -114,6 +114,8 @@ namespace TinyJSON
 
 		private Decoder(string jsonString)
 		{
+			//IL_0008: Unknown result type (might be due to invalid IL or missing references)
+			//IL_0012: Expected O, but got Unknown
 			json = new StringReader(jsonString);
 		}
 
@@ -125,14 +127,14 @@ namespace TinyJSON
 
 		public void Dispose()
 		{
-			json.Dispose();
+			((TextReader)(object)json).Dispose();
 			json = null;
 		}
 
 		private ProxyObject DecodeObject()
 		{
 			ProxyObject proxyObject = new ProxyObject();
-			json.Read();
+			((TextReader)(object)json).Read();
 			while (true)
 			{
 				switch (NextToken)
@@ -153,7 +155,7 @@ namespace TinyJSON
 				{
 					return null;
 				}
-				json.Read();
+				((TextReader)(object)json).Read();
 				proxyObject.Add(text, DecodeValue());
 			}
 		}
@@ -161,7 +163,7 @@ namespace TinyJSON
 		private ProxyArray DecodeArray()
 		{
 			ProxyArray proxyArray = new ProxyArray();
-			json.Read();
+			((TextReader)(object)json).Read();
 			bool flag = true;
 			while (flag)
 			{
@@ -207,11 +209,11 @@ namespace TinyJSON
 		private Variant DecodeString()
 		{
 			StringBuilder stringBuilder = new StringBuilder();
-			json.Read();
+			((TextReader)(object)json).Read();
 			bool flag = true;
 			while (flag)
 			{
-				if (json.Peek() == -1)
+				if (((TextReader)(object)json).Peek() == -1)
 				{
 					flag = false;
 					break;
@@ -223,7 +225,7 @@ namespace TinyJSON
 					flag = false;
 					break;
 				case '\\':
-					if (json.Peek() == -1)
+					if (((TextReader)(object)json).Peek() == -1)
 					{
 						flag = false;
 						break;
@@ -280,8 +282,8 @@ namespace TinyJSON
 		{
 			while (" \t\n\r".IndexOf(PeekChar) != -1)
 			{
-				json.Read();
-				if (json.Peek() == -1)
+				((TextReader)(object)json).Read();
+				if (((TextReader)(object)json).Peek() == -1)
 				{
 					break;
 				}

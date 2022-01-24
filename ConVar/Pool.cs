@@ -47,7 +47,7 @@ namespace ConVar
 			val.AddColumn("hits");
 			val.AddColumn("misses");
 			val.AddColumn("spills");
-			foreach (KeyValuePair<Type, ICollection> item in Pool.directory.OrderByDescending((KeyValuePair<Type, ICollection> x) => x.Value.get_ItemsCreated()))
+			foreach (KeyValuePair<Type, ICollection> item in (IEnumerable<KeyValuePair<Type, ICollection>>)Enumerable.OrderByDescending<KeyValuePair<Type, ICollection>, long>((IEnumerable<KeyValuePair<Type, ICollection>>)Pool.directory, (Func<KeyValuePair<Type, ICollection>, long>)((KeyValuePair<Type, ICollection> x) => x.Value.get_ItemsCreated())))
 			{
 				string text = item.Key.ToString().Replace("System.Collections.Generic.", "");
 				ICollection value = item.Value;

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -108,7 +109,7 @@ namespace ConVar
 			//IL_0106: Unknown result type (might be due to invalid IL or missing references)
 			//IL_0108: Unknown result type (might be due to invalid IL or missing references)
 			//IL_0166: Unknown result type (might be due to invalid IL or missing references)
-			foreach (BaseNetworkable item in BaseNetworkable.serverEntities.Where((BaseNetworkable x) => x is IOEntity && PrefabAttribute.server.Find<Construction>(x.prefabID) == null).ToList())
+			foreach (BaseNetworkable item in Enumerable.ToList<BaseNetworkable>(Enumerable.Where<BaseNetworkable>((IEnumerable<BaseNetworkable>)BaseNetworkable.serverEntities, (Func<BaseNetworkable, bool>)((BaseNetworkable x) => x is IOEntity && PrefabAttribute.server.Find<Construction>(x.prefabID) == null))))
 			{
 				item.Kill();
 			}
@@ -137,7 +138,7 @@ namespace ConVar
 					{
 						List<Door> list = Pool.GetList<Door>();
 						global::Vis.Entities(((Component)newEntity).get_transform().get_position(), 10f, list, -1, (QueryTriggerInteraction)2);
-						Door door = list.OrderBy((Door x) => x.Distance(((Component)newEntity).get_transform().get_position())).FirstOrDefault();
+						Door door = Enumerable.FirstOrDefault<Door>((IEnumerable<Door>)Enumerable.OrderBy<Door, float>((IEnumerable<Door>)list, (Func<Door, float>)((Door x) => x.Distance(((Component)newEntity).get_transform().get_position()))));
 						if ((Object)(object)door != (Object)null)
 						{
 							doorManipulator.targetDoor = door;

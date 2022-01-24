@@ -52,7 +52,7 @@ public class BasePet : NPCPlayer, IThinker
 	{
 		float realtimeSinceStartup = Time.get_realtimeSinceStartup();
 		float num = movementupdatebudgetms / 1000f;
-		while (_movementProcessQueue.Count > 0 && Time.get_realtimeSinceStartup() < realtimeSinceStartup + num)
+		while (_movementProcessQueue.get_Count() > 0 && Time.get_realtimeSinceStartup() < realtimeSinceStartup + num)
 		{
 			BasePet basePet = _movementProcessQueue.Dequeue();
 			if ((Object)(object)basePet != (Object)null)
